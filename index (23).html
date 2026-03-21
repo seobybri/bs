@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Distill It — Gain Clarity. Find Peace.</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f9f9f7; --surface: #ffffff; --surface2: #f2f2f0;
+    --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.2);
+    --text: #111111; --text2: #555555; --text3: #999999;
+    --accent: #2A9D8F; --accent-text: #ffffff;
+    --radius: 12px; --radius-sm: 8px;
+  }
+  @media (prefers-color-scheme: dark) {
+    .welcome-logo svg text { fill: #f0ede8; }
+    :root {
+      --bg: #111111; --surface: #1a1a1a; --surface2: #222222;
+      --border: rgba(255,255,255,0.08); --border2: rgba(255,255,255,0.16);
+      --text: #f0ede8; --text2: #999999; --text3: #555555;
+      --accent: #2A9D8F; --accent-text: #ffffff;
+    }
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* WELCOME */
+  .welcome-outer { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2.5rem 1.5rem; }
+  .welcome-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; max-width: 880px; width: 100%; align-items: center; }
+  @media (max-width: 660px) {
+    .welcome-inner { grid-template-columns: 1fr; gap: 2rem; }
+    .welcome-right { order: 1; }
+  }
+  .welcome-logo { margin-bottom: 1.75rem; }
+  .welcome-left h1 { font-size: 40px; font-weight: 700; letter-spacing: -0.03em; color: var(--text); line-height: 1.1; margin-bottom: 1.1rem; }
+  .welcome-desc { font-size: 15px; color: var(--text2); line-height: 1.8; margin-bottom: 1.75rem; }
+  .welcome-actions { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.25rem; }
+  .trust-badges { display: flex; flex-direction: column; gap: 7px; margin-bottom: 1.25rem; }
+  .trust-badge { display: flex; align-items: center; gap: 9px; font-size: 13px; color: var(--text2); background: var(--surface); border: 0.5px solid var(--border); border-radius: 8px; padding: 9px 13px; }
+  .trust-icon { width: 15px; height: 15px; flex-shrink: 0; stroke: var(--accent); }
+  .welcome-note { font-size: 11px; color: var(--text3); line-height: 1.7; }
+  .welcome-right { display: flex; flex-direction: column; align-items: stretch; }
+  .testimonial { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1.75rem; }
+  .testimonial-photo-wrap { display: flex; justify-content: center; margin-bottom: 1.25rem; }
+  .testimonial-photo { width: 88px; height: 88px; border-radius: 50%; overflow: hidden; border: 3px solid var(--bg); outline: 1px solid var(--border); }
+  .testimonial-stars { text-align: center; font-size: 14px; letter-spacing: 3px; color: var(--accent); margin-bottom: 1rem; }
+  .testimonial-quote { font-size: 15px; color: var(--text); line-height: 1.8; font-style: italic; margin-bottom: 1.25rem; text-align: center; }
+  .testimonial-author { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .testimonial-name { font-size: 14px; font-weight: 600; color: var(--text); }
+  .testimonial-role { font-size: 12px; color: var(--text3); }
+
+  /* AUTH SCREENS */
+  .auth-screen { min-height: 100vh; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 2rem 1.5rem; }
+  .auth-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 2rem; width: 100%; max-width: 400px; }
+  .auth-logo { display: flex; justify-content: center; margin-bottom: 1.75rem; }
+  .auth-card h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.4rem; text-align: center; }
+  .auth-card .auth-sub { font-size: 14px; color: var(--text2); text-align: center; margin-bottom: 1.75rem; }
+  .auth-divider { display: flex; align-items: center; gap: 12px; margin: 1.25rem 0; }
+  .auth-divider span { font-size: 12px; color: var(--text3); white-space: nowrap; }
+  .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 0.5px; background: var(--border2); }
+  .auth-switch { text-align: center; font-size: 13px; color: var(--text2); margin-top: 1.25rem; }
+  .auth-switch a { color: var(--accent); cursor: pointer; text-decoration: none; font-weight: 500; }
+  .auth-error { font-size: 13px; color: #E24B4A; background: #FCEBEB; border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 1rem; display: none; }
+  .back-link { font-size: 13px; color: var(--text3); cursor: pointer; text-align: center; display: block; margin-top: 1rem; }
+  .back-link:hover { color: var(--text2); }
+
+  /* GOOGLE BTN */
+  /* REFLECTION SCREEN */
+  .reflection-screen { display: none; min-height: 100vh; background: var(--bg); }
+  .reflection-header { padding: 1.25rem 1.25rem 0; display: flex; align-items: center; justify-content: space-between; border-bottom: 0.5px solid var(--border); background: var(--surface); }
+  .reflection-header-logo { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); cursor: pointer; }
+  .reflection-header-right { font-size: 13px; color: var(--text3); }
+  .reflection-body { max-width: 640px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+  .reflection-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.6rem; }
+  .reflection-headline { font-size: 26px; font-weight: 700; letter-spacing: -0.03em; color: var(--text); line-height: 1.2; margin-bottom: 0.5rem; }
+  .reflection-subline { font-size: 14px; color: var(--text2); margin-bottom: 2rem; line-height: 1.6; }
+  .reflection-card { background: var(--surface); border: 0.5px solid var(--border); border-left: 3px solid var(--accent); border-radius: 0 var(--radius) var(--radius) 0; padding: 1.75rem; margin-bottom: 1.5rem; }
+  .reflection-loading-wrap { display: flex; align-items: center; gap: 12px; padding: 0.5rem 0; }
+  .reflection-loading-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); opacity: 0.3; animation: pulse 1.4s infinite; }
+  .reflection-loading-dot:nth-child(2) { animation-delay: 0.2s; }
+  .reflection-loading-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes pulse { 0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1); } }
+  .reflection-text { font-size: 16px; color: var(--text); line-height: 1.85; white-space: pre-wrap; animation: fadeIn 0.6s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .followup-section { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1.5rem; }
+  .followup-label { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 0.75rem; line-height: 1.5; }
+  .followup-input { width: 100%; padding: 10px 14px; font-size: 14px; border: 0.5px solid var(--border2); border-radius: var(--radius-sm); background: var(--surface2); color: var(--text); font-family: inherit; resize: vertical; min-height: 80px; line-height: 1.5; }
+  .followup-input:focus { outline: none; border-color: var(--accent); }
+  .followup-response { margin-top: 1rem; font-size: 15px; color: var(--text); line-height: 1.8; white-space: pre-wrap; padding-top: 1rem; border-top: 0.5px solid var(--border); animation: fadeIn 0.5s ease; }
+  .reflection-divider { height: 0.5px; background: var(--border); margin: 1.75rem 0; }
+  .reflection-actions { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.5rem; }
+  .reflection-action-row { display: flex; gap: 10px; }
+  .save-prompt-inline { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; }
+  .save-prompt-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 0.3rem; }
+  .save-prompt-sub { font-size: 13px; color: var(--text2); margin-bottom: 1rem; line-height: 1.5; }
+  .save-prompt-fields { display: flex; flex-direction: column; gap: 8px; }
+  .reflection-secondary { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; }
+  .reflection-secondary a { font-size: 13px; color: var(--text3); cursor: pointer; text-decoration: none; }
+  .reflection-secondary a:hover { color: var(--text2); }
+
+  .post-reflection-wrap { animation: fadeUp 0.4s ease; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+  .btn-google { background: var(--surface); color: var(--text); border: 0.5px solid var(--border2); padding: 13px 20px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 500; cursor: pointer; width: 100%; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 10px; transition: background 0.15s; }
+  .btn-google:hover { background: var(--surface2); }
+
+  /* BUTTONS */
+  .btn-primary { background: var(--accent); color: var(--accent-text); border: none; padding: 15px 20px; border-radius: var(--radius-sm); font-size: 15px; font-weight: 600; cursor: pointer; width: 100%; font-family: inherit; transition: opacity 0.15s; }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-primary:disabled { opacity: 0.35; cursor: default; }
+  .btn-secondary { background: transparent; color: var(--text2); border: 0.5px solid var(--border2); padding: 14px 20px; border-radius: var(--radius-sm); font-size: 15px; cursor: pointer; width: 100%; font-family: inherit; transition: all 0.15s; }
+  .btn-secondary:hover { background: var(--surface2); color: var(--text); }
+  .btn-sm { padding: 8px 16px; font-size: 13px; width: auto; }
+
+  /* FORM */
+  .form-group { margin-bottom: 1rem; }
+  .form-label { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; display: block; }
+  .form-input { width: 100%; padding: 12px 14px; font-size: 15px; border: 0.5px solid var(--border2); border-radius: var(--radius-sm); background: var(--surface2); color: var(--text); font-family: inherit; appearance: none; -webkit-appearance: none; }
+  .form-input:focus { outline: none; border-color: var(--accent); }
+  textarea.form-input { resize: vertical; min-height: 80px; line-height: 1.5; }
+
+  /* MAIN APP */
+  .app { display: none; }
+  .header { background: var(--surface); border-bottom: 0.5px solid var(--border); padding: 1rem 1.25rem 0; position: sticky; top: 0; z-index: 10; }
+  .header-top { display: flex; align-items: center; gap: 10px; margin-bottom: 0.75rem; }
+  .app-title { font-size: 17px; font-weight: 700; color: var(--text); letter-spacing: -0.02em; cursor: pointer; }
+  .app-sub { font-size: 13px; color: var(--text3); }
+  .user-menu { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+  .user-pill { font-size: 12px; color: var(--text2); background: var(--surface2); padding: 5px 12px; border-radius: 20px; border: 0.5px solid var(--border); }
+  .logout-btn { font-size: 12px; color: var(--text3); background: none; border: none; cursor: pointer; font-family: inherit; padding: 5px 8px; }
+  .logout-btn:hover { color: var(--text); }
+  .nav { display: flex; gap: 0; }
+  .nav button { flex: 1; background: none; border: none; padding: 10px 0; font-size: 14px; color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; font-family: inherit; }
+  .nav button.active { color: var(--text); font-weight: 600; border-bottom-color: var(--accent); }
+  .content { max-width: 680px; margin: 0 auto; padding: 1.25rem 1rem 4rem; }
+  .section { display: none; }
+  .section.active { display: block; }
+  .page-sub { font-size: 14px; color: var(--text2); margin-bottom: 1.25rem; line-height: 1.6; }
+
+  /* STEPPER */
+  .progress-wrap { margin-bottom: 1.75rem; }
+  .progress-steps { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .progress-step { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .step-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; transition: all 0.2s; border: 2px solid var(--border2); background: var(--surface); color: var(--text3); }
+  .step-dot.done { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .step-dot.active { border-color: var(--accent); color: var(--accent); background: var(--surface); }
+  .step-label { font-size: 10px; color: var(--text3); white-space: nowrap; }
+  .step-label.active { color: var(--accent); font-weight: 600; }
+  .step-label.done { color: var(--text2); }
+  .progress-bar-track { height: 3px; background: var(--border2); border-radius: 2px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.35s ease; }
+  .stepper-panel { display: none; }
+  .stepper-panel.active { display: block; }
+  .step-heading { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); margin-bottom: 0.5rem; }
+  .step-sub { font-size: 14px; color: var(--text2); margin-bottom: 1.5rem; line-height: 1.6; }
+  .type-cards { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.5rem; }
+  .type-card { display: flex; align-items: center; gap: 14px; padding: 1.1rem 1.25rem; background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); cursor: pointer; transition: all 0.15s; }
+  .type-card:hover { border-color: var(--accent); }
+  .type-card.selected { border-color: var(--accent); background: #f0faf8; }
+  @media (prefers-color-scheme: dark) { .type-card.selected { background: #0d2e29; } }
+  .type-card-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 20px; }
+  .type-card-icon.res { background: #FEF3C7; }
+  .type-card-icon.fear { background: #EDE9FE; }
+  .type-card-icon.rel { background: #D1FAE5; }
+  @media (prefers-color-scheme: dark) { .type-card-icon.res { background: #3D2E0A; } .type-card-icon.fear { background: #2D1B69; } .type-card-icon.rel { background: #064E3B; } }
+  .type-card-text { flex: 1; }
+  .type-card-name { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .type-card-desc { font-size: 13px; color: var(--text2); }
+  .type-card-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .type-card.selected .type-card-check { background: var(--accent); border-color: var(--accent); }
+  .type-card.selected .type-card-check::after { content: ''; width: 6px; height: 6px; background: #fff; border-radius: 50%; display: block; }
+  .step-actions { display: flex; gap: 10px; margin-top: 1.5rem; }
+  .btn-back { background: transparent; color: var(--text2); border: 0.5px solid var(--border2); padding: 13px 20px; border-radius: var(--radius-sm); font-size: 15px; cursor: pointer; font-family: inherit; flex: 1; transition: all 0.15s; }
+  .btn-back:hover { background: var(--surface2); }
+  .ai-suggest-box { background: #f0faf8; border: 1px solid #2A9D8F; border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 1rem; }
+  @media (prefers-color-scheme: dark) { .ai-suggest-box { background: #0d2e29; border-color: #2A9D8F; } }
+  .ai-suggest-label { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: #2A9D8F; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
+  .ai-suggest-text { font-size: 13px; color: var(--text2); line-height: 1.6; }
+  .ai-suggest-loading { margin-bottom: 1rem; }
+  .affects-definition { background: var(--surface2); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 1rem; font-size: 13px; color: var(--text2); line-height: 1.6; border-left: 3px solid var(--accent); }
+  .affect-def-item { display: flex; gap: 10px; padding: 8px 0; border-bottom: 0.5px solid var(--border); align-items: baseline; }
+  .affect-def-item:last-child { border-bottom: none; }
+  .affect-def-label { font-size: 13px; font-weight: 600; color: var(--accent); white-space: nowrap; min-width: 120px; }
+  .affect-def-text { font-size: 13px; color: var(--text2); line-height: 1.5; }
+  #affects-definition-list { background: var(--surface2); border-radius: var(--radius-sm); padding: 0 14px; margin-bottom: 1rem; overflow: hidden; }
+  #affects-definition-list:empty { display: none; }
+  .review-row { padding: 12px 0; border-bottom: 0.5px solid var(--border); }
+  .review-row:last-child { border-bottom: none; }
+  .review-label { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 4px; }
+  .review-value { font-size: 14px; color: var(--text); line-height: 1.6; }
+  .card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; }
+  .checkbox-group { display: flex; flex-wrap: wrap; gap: 8px; }
+  .check-pill { display: inline-block; padding: 6px 14px; border: 0.5px solid var(--border2); border-radius: 20px; cursor: pointer; font-size: 13px; color: var(--text2); background: var(--surface2); user-select: none; font-family: inherit; line-height: 1.4; transition: all 0.12s; }
+  .check-pill:hover { border-color: var(--accent); color: var(--text); }
+  .check-pill.selected { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+  .save-confirm { font-size: 13px; color: var(--text3); text-align: center; margin-top: 8px; display: none; }
+  .ai-box { border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem; background: var(--surface2); margin-top: 1rem; }
+  .ai-label { font-size: 11px; font-weight: 700; color: var(--text3); letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 10px; }
+  .ai-text { font-size: 15px; color: var(--text); line-height: 1.75; white-space: pre-wrap; }
+  @keyframes dots { 0%, 20% { content: '.'; } 40% { content: '..'; } 60%, 100% { content: '...'; } }
+  .ai-loading { font-size: 14px; color: var(--text2); font-style: italic; }
+  .ai-loading::after { content: ''; animation: dots 1.4s infinite; }
+
+  /* DASHBOARD */
+  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1.25rem; }
+  .stat-card { background: var(--surface2); border-radius: var(--radius-sm); padding: 1rem; text-align: center; }
+  .stat-num { font-size: 30px; font-weight: 700; color: var(--text); letter-spacing: -0.03em; }
+  .stat-lbl { font-size: 12px; color: var(--text2); margin-top: 2px; }
+  .search-bar { width: 100%; padding: 10px 14px; font-size: 14px; border: 0.5px solid var(--border2); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); font-family: inherit; margin-bottom: 1rem; appearance: none; }
+  .search-bar:focus { outline: none; border-color: var(--accent); }
+  .filter-row { display: flex; gap: 8px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .filter-btn { padding: 6px 14px; border: 0.5px solid var(--border2); border-radius: 20px; font-size: 13px; color: var(--text2); background: var(--surface); cursor: pointer; font-family: inherit; transition: all 0.12s; }
+  .filter-btn.active { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+  .entry-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 0.75rem; }
+  .entry-type-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px; margin-bottom: 8px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .badge-resentment { background: #FEF3C7; color: #92400E; }
+  .badge-fear { background: #EDE9FE; color: #4C1D95; }
+  .badge-relationship { background: #D1FAE5; color: #065F46; }
+  @media (prefers-color-scheme: dark) {
+    .badge-resentment { background: #3D2E0A; color: #FCD34D; }
+    .badge-fear { background: #2D1B69; color: #C4B5FD; }
+    .badge-relationship { background: #064E3B; color: #6EE7B7; }
+  }
+  .entry-subject { font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .entry-body { font-size: 14px; color: var(--text2); line-height: 1.5; }
+  .entry-part { margin-top: 10px; padding-top: 10px; border-top: 0.5px solid var(--border); font-size: 14px; color: var(--text2); line-height: 1.5; }
+  .entry-part strong { color: var(--text); font-weight: 600; }
+  .entry-meta-row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+  .entry-affects { font-size: 12px; color: var(--text3); }
+  .entry-date { font-size: 12px; color: var(--text3); }
+  .section-heading { font-size: 13px; font-weight: 600; color: var(--text2); margin-bottom: 10px; }
+  .pattern-row { padding: 10px 0; border-bottom: 0.5px solid var(--border); font-size: 14px; color: var(--text); display: flex; justify-content: space-between; align-items: center; }
+  .pattern-row:last-child { border-bottom: none; }
+  .pattern-count { font-size: 13px; color: var(--text2); }
+  .empty-state { text-align: center; padding: 2.5rem 1rem; color: var(--text2); font-size: 14px; line-height: 1.7; }
+  .streak-badge { display: inline-flex; align-items: center; gap: 6px; background: #FEF3C7; color: #92400E; font-size: 13px; font-weight: 600; padding: 6px 14px; border-radius: 20px; margin-bottom: 1.25rem; }
+  @media (prefers-color-scheme: dark) { .streak-badge { background: #3D2E0A; color: #FCD34D; } }
+</style>
+</head>
+<body>
+
+<!-- WELCOME SCREEN -->
+<div class="welcome-outer" id="welcome-screen">
+  <div class="welcome-inner">
+    <div class="welcome-left">
+      <div class="welcome-logo">
+        <svg width="130" height="36" viewBox="0 0 130 36" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7 26C7 15 12 7 18 4C24 7 29 15 29 26C29 31 24.3 35 18 35C11.7 35 7 31 7 26Z" fill="#2A9D8F"/>
+          <path d="M14 23C14 17 16 12 18 10C20 12 22 17 22 23C22 26.5 20.2 29.5 18 29.5C15.8 29.5 14 26.5 14 23Z" fill="#E8F5F3"/>
+          <text x="38" y="22" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="17" font-weight="700" letter-spacing="-0.4" fill="#111111">Distill It</text>
+        </svg>
+      </div>
+      <h1>Gain clarity.<br>Find peace.</h1>
+      <p class="welcome-desc">Work through anger, resentment, and fear with structured reflection and AI — so you can understand what's really going on, and your part in it.</p>
+      <div class="welcome-actions">
+        <button class="btn-primary" onclick="startFree()" style="font-size:17px; padding:17px 20px; letter-spacing:-0.02em;">Try it — 100% free</button>
+      </div>
+      <p style="font-size:12px; color:var(--text3); margin-top:-0.5rem; margin-bottom:1.25rem;">No account needed. Start your first entry now.</p>
+      <div class="trust-badges">
+        <div class="trust-badge">
+          <svg class="trust-icon" viewBox="0 0 16 16" fill="none" stroke-width="1.5"><path d="M8 1.5L2 4v4c0 3.5 2.5 6 6 7 3.5-1 6-3.5 6-7V4L8 1.5z"/></svg>
+          Your entries never leave your device. We don't store or read them.
+        </div>
+        <div class="trust-badge">
+          <svg class="trust-icon" viewBox="0 0 16 16" fill="none" stroke-width="1.5"><circle cx="8" cy="8" r="6.5"/><path d="M8 5v3.5l2 2"/></svg>
+          AI reflections happen in real time and are never stored.
+        </div>
+        <div class="trust-badge">
+          <svg class="trust-icon" viewBox="0 0 16 16" fill="none" stroke-width="1.5"><rect x="2" y="6" width="12" height="8" rx="1.5"/><path d="M5 6V4.5a3 3 0 016 0V6"/></svg>
+          No credit card required.
+        </div>
+      </div>
+      <p class="welcome-note">Not a substitute for therapy or professional support.</p>
+    </div>
+    <div class="welcome-right">
+      <div class="testimonial">
+        <div class="testimonial-photo-wrap">
+          <div class="testimonial-photo">
+            <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCABYAFgDASIAAhEBAxEB/8QAHAAAAQUBAQEAAAAAAAAAAAAAAwAEBQYHAgEI/8QAMxAAAQMDAgUCAwgCAwAAAAAAAQACAwQFERIhBjFBUWETIhQjkTJScYGhsbLBM2KSotH/xAAaAQACAwEBAAAAAAAAAAAAAAADBAACBQEG/8QAIxEAAwACAgICAgMAAAAAAAAAAAECAxEEIRIxBUETUTJCof/aAAwDAQACEQMRAD8AYMGycRhBZyTiNIo9zQZowFzPURU8LpZXBrG7klePkDQSq3e5JbnWU1qhdgyu1PPYK0rbFs1/jh2Nq7iOsr5DFQtdHDuNQGXOCaRC7Tse9lRUDSdzqPPstDs3AUDI2O9UhxG5A/ZWen4Kt8fuewuOSRvgd/zVlln+qMfJdt7ujG471eLc8fFNdNF11t3x4KsVHXQ3GmbPCdjsQebT2V9unDlE+ifTugaYyMctwsooqSaycRzUEh+U/Ibnr1BU8lafWmhnjZ7i1Le5f+E3IgOR5EAoRuIPaji9UB7VMf8AIJLmgOm6Uh7Tx/yCSLjekZHyMeVoKwo7DhpKbMKIXYaUM1GtgqqfAOFBW2UP4s1Yy4AY8BP6yQhrlE2iCea+ObE5rZZoj6bjvg55/wBokLpsz+fX8ZX7N3tjD8O3bbopMkNaXOeGtAySeizOkpInFtMbRW1kzXhklVPVvZpPV3Pl+A8K10k7xTy0UwJ0FuNR1HB6E9UJUoWjKrG7bYSqvtDOyT4ZlVVtbsX09O57c/jyKzvi6Fj5Ldd6ZztHriN4LSOfcHcHotAntl2mcDTXQxQhv+P0mkZ798eEzvdFGY6Nko16amJxOMZIcF3eqTLQ/HpFGl2JByCEAqW4ijZDeZ44xhox+yiCVw9JjrylV+zulOK6nPaVn8gkuIjioiPZ7T+qSvAly53SCtOy6e72oQOF64+1UHyPrj8sprbLgIfhJ8e+jqQH45+m7P8AadVYzGVWJ5Jaaoc6J5bqGDjqOyPjSpaMf5CnLTPo+3yRSUbZQW+5ucqvQXJzrjVxG3VT5H/ZcRhufJ6DygcKXKKvsbC1+PYMO56enLwn9rdVMmc2vnkJBIDqeJrWuH55KWS70xSV7aJigqpY6QGePDgd2tOrA+m6iuJqtkEMMzw4sjlY9wbzIynLaRhr21Tg/THn0w6Zzsnuen6KvcX1bXx/DRnU77bvAC73vRImXkW/srtxrjcK6aqLdPqHIb2HIBMicrwHZeEqHoUlK0j1pxI09nD90lwThJWQOp2GdtI8f7H914TslNtUSjs9w/UrnOy4ET6ATjLSq/XwZJOFYpBkKJr3xxsOojPQdSi4m99CHNmXDdHfDdwrrdTzzUuXsid82Lu09VqnDl8t92og4PGsbOY7m09is14GANym1AGOWPDs98/+ZU5PwnTx3TXHPNSscc643Ywu5fHz0/ZjY1TlNei+3q/0Vrt5JcPUPtjjHNx6DCgKa3TVNvq6uo908zNOT064HjKf0PCFqoCyokdJWVOMtkmeXY8hTEzAyl0AdEGq/ReOnsx+juDKrLCDHKM5YfHPCdE4UdxQxtJfqgw+xzQxx07YcWjKHBdHmNvqxhxxzacH6JisDaVR9j3H+SnuMz7X2SZOUkKOZkzNTDnx1CSC1rpmiqVLcvoe1m1dUDtK8f8AYpvJNHCzU9waEa5n07pWA9J5P5FVx0jqmQyOJO+w7BFxYvyMU5PNXHxrS22PJ7g5/tiGkfePP6KLqACccydyTzKc4CbzubHI0nYEEZT045hdGBm5GTM92w9guQtN2jdJn0HHDvHlbHHFHV0zCMPBAcxw6jwsLmDXjLXD6q38H8Yz2hrIKiMz0jXbszh7CerSenhLcjB59z7LYM3h0/Rp1vpW0w9Ngfp7E5x4Ti51MdBbaitnaTFCwuIA3djoE6o7taK+3G401RGYGDVI47GPHMOHQrJ+K+Kp7/XOjgc+O2ty2OPONQ+87yf0QMXHdPTCZM32VS4VMtxuEk8v25Xl78dz0/petG4B6rxkMhJdqYMnyURkGHanOLiOXQBaaWvQk+xYcDkEgjqNkkUpKNJ+yyql6ZK8US+ldLi0czVSNH/MqBhdhp8bJJIOBakb51N5En9JHRcCNuS4JyAkkjiRznfkhyQskcS7IJ7FJJcIPaL146epZFU6WGMa43y4DwDkDHN3LkhGMyO+c8v8cgPySSURBwwBrcDYLrlsEkl0gOTrg74SSSUIf//Z" width="88" height="88" style="display:block;width:88px;height:88px;border-radius:50%;object-fit:cover;" />
+          </div>
+        </div>
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-quote">"I'd been avoiding this kind of reflection for years. Distill It made it feel manageable — even on my worst days. I finally understand what's been driving my anger."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-name">Brian S.</div>
+          <div class="testimonial-role">Using Distill It for 3 months</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SIGN UP SCREEN -->
+<div class="auth-screen" id="signup-screen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <svg width="130" height="36" viewBox="0 0 130 36" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7 26C7 15 12 7 18 4C24 7 29 15 29 26C29 31 24.3 35 18 35C11.7 35 7 31 7 26Z" fill="#2A9D8F"/>
+        <path d="M14 23C14 17 16 12 18 10C20 12 22 17 22 23C22 26.5 20.2 29.5 18 29.5C15.8 29.5 14 26.5 14 23Z" fill="#E8F5F3"/>
+        <text x="38" y="22" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="17" font-weight="700" letter-spacing="-0.4" fill="#111111">Distill It</text>
+      </svg>
+    </div>
+    <h2>Create your account</h2>
+    <p class="auth-sub">Start your inventory. Free forever.</p>
+    <div class="auth-error" id="signup-error"></div>
+    <button class="btn-google" onclick="googleAuth()">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/><path d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+      Continue with Google
+    </button>
+    <div class="auth-divider"><span>or</span></div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" type="email" id="signup-email" placeholder="you@example.com" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input class="form-input" type="password" id="signup-password" placeholder="At least 6 characters" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Name</label>
+      <input class="form-input" type="text" id="signup-name" placeholder="First name" />
+    </div>
+    <button class="btn-primary" onclick="handleSignup()" style="margin-top:0.25rem;">Create account</button>
+    <div class="auth-switch">Already have an account? <a onclick="showAuth('login')">Sign in</a></div>
+    <span class="back-link" onclick="goHome()">← Back to home</span>
+  </div>
+</div>
+
+<!-- LOGIN SCREEN -->
+<div class="auth-screen" id="login-screen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <svg width="130" height="36" viewBox="0 0 130 36" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7 26C7 15 12 7 18 4C24 7 29 15 29 26C29 31 24.3 35 18 35C11.7 35 7 31 7 26Z" fill="#2A9D8F"/>
+        <path d="M14 23C14 17 16 12 18 10C20 12 22 17 22 23C22 26.5 20.2 29.5 18 29.5C15.8 29.5 14 26.5 14 23Z" fill="#E8F5F3"/>
+        <text x="38" y="22" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="17" font-weight="700" letter-spacing="-0.4" fill="#111111">Distill It</text>
+      </svg>
+    </div>
+    <h2>Welcome back</h2>
+    <p class="auth-sub">Continue your inventory.</p>
+    <div class="auth-error" id="login-error"></div>
+    <button class="btn-google" onclick="googleAuth()">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/><path d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+      Continue with Google
+    </button>
+    <div class="auth-divider"><span>or</span></div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" type="email" id="login-email" placeholder="you@example.com" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input class="form-input" type="password" id="login-password" placeholder="Your password" />
+    </div>
+    <button class="btn-primary" onclick="handleLogin()" style="margin-top:0.25rem;">Sign in</button>
+    <div class="auth-switch">Don't have an account? <a onclick="showAuth('signup')">Sign up</a></div>
+    <span class="back-link" onclick="goHome()">← Back to home</span>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div class="app" id="main-app">
+  <div class="header">
+    <div class="header-top">
+      <span class="app-title" onclick="goHome()">Distill It</span>
+      <span class="app-sub">Find clarity. Find peace.</span>
+      <div class="user-menu">
+        <span class="user-pill" id="user-pill"></span>
+        <button class="logout-btn" onclick="handleLogout()">Sign out</button>
+      </div>
+    </div>
+    <nav class="nav">
+      <button class="active" onclick="showSection('new', this)">New entry</button>
+      <button onclick="showSection('dashboard', this)">Dashboard</button>
+      <button onclick="showSection('patterns', this)">Patterns</button>
+    </nav>
+  </div>
+
+  <div class="content">
+
+    <!-- NEW ENTRY STEPPER -->
+    <div id="sec-new" class="section active">
+
+      <div class="progress-wrap">
+        <div class="progress-steps">
+          <div class="progress-step"><div class="step-dot active" id="dot-1">1</div><div class="step-label active" id="lbl-1">Type</div></div>
+          <div class="progress-step"><div class="step-dot" id="dot-2">2</div><div class="step-label" id="lbl-2">What happened</div></div>
+          <div class="progress-step"><div class="step-dot" id="dot-3">3</div><div class="step-label" id="lbl-3">Affects</div></div>
+          <div class="progress-step"><div class="step-dot" id="dot-4">4</div><div class="step-label" id="lbl-4">Your part</div></div>
+          <div class="progress-step"><div class="step-dot" id="dot-5">5</div><div class="step-label" id="lbl-5">Review</div></div>
+        </div>
+        <div class="progress-bar-track"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
+      </div>
+
+      <!-- STEP 1: Type -->
+      <div class="stepper-panel active" id="step-1">
+        <div class="step-heading">What are you working through?</div>
+        <div class="step-sub">Choose the type that best fits what's on your mind.</div>
+        <div class="type-cards">
+          <div class="type-card selected" id="tc-resentment" onclick="selectType('resentment')">
+            <div class="type-card-icon res">&#128293;</div>
+            <div class="type-card-text">
+              <div class="type-card-name">Resentment</div>
+              <div class="type-card-desc">Someone or something you feel anger or bitterness toward</div>
+            </div>
+            <div class="type-card-check"></div>
+          </div>
+          <div class="type-card" id="tc-fear" onclick="selectType('fear')">
+            <div class="type-card-icon fear">&#128161;</div>
+            <div class="type-card-text">
+              <div class="type-card-name">Fear</div>
+              <div class="type-card-desc">Something you're afraid of losing, facing, or experiencing</div>
+            </div>
+            <div class="type-card-check"></div>
+          </div>
+          <div class="type-card" id="tc-relationship" onclick="selectType('relationship')">
+            <div class="type-card-icon rel">&#129309;</div>
+            <div class="type-card-text">
+              <div class="type-card-name">Relationship</div>
+              <div class="type-card-desc">A relationship where conflict or harm has occurred</div>
+            </div>
+            <div class="type-card-check"></div>
+          </div>
+        </div>
+        <div class="step-actions">
+          <button class="btn-primary" onclick="goToStep(2)">Next</button>
+        </div>
+      </div>
+
+      <!-- STEP 2: Subject & Cause -->
+      <div class="stepper-panel" id="step-2">
+        <div class="step-heading" id="s2-heading">Who or what do you resent?</div>
+        <div class="step-sub" id="s2-sub">Name the person, institution, or situation.</div>
+        <div class="form-group">
+          <input class="form-input" id="subject" placeholder="e.g. My boss, money, myself..." style="font-size:16px; padding:14px;" />
+        </div>
+        <div class="form-group" style="margin-top:1.25rem;">
+          <label class="form-label" id="cause-label">What happened?</label>
+          <textarea class="form-input" id="cause" placeholder="Describe what happened or what they did..." style="min-height:120px;"></textarea>
+        </div>
+        <div class="step-actions">
+          <button class="btn-back" onclick="goToStep(1)">Back</button>
+          <button class="btn-primary" onclick="goToStep(3)" style="flex:2;">Next</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: Affects -->
+      <div class="stepper-panel" id="step-3">
+        <div class="step-heading">What does this affect in you?</div>
+        <div class="step-sub">Select all that apply. Tap any area to see its definition.</div>
+        <div class="ai-suggest-box" id="ai-suggest-box" style="display:none;">
+          <div class="ai-suggest-label">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="flex-shrink:0;"><circle cx="7" cy="7" r="6.5" stroke="#2A9D8F" stroke-width="1.2"/><path d="M7 4v3.5M7 9.5v.5" stroke="#2A9D8F" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Suggested based on what you wrote
+          </div>
+          <div id="ai-suggest-text" class="ai-suggest-text"></div>
+        </div>
+        <div class="ai-suggest-loading" id="ai-suggest-loading" style="display:none;">
+          <span class="ai-loading">Analysing your entry</span>
+        </div>
+        <div class="checkbox-group" id="affects-checks" style="gap:10px; margin-bottom:0.75rem;"></div>
+        <div id="affects-definition-list"></div>
+        <div class="step-actions">
+          <button class="btn-back" onclick="goToStep(2)">Back</button>
+          <button class="btn-primary" onclick="goToStep(4)" style="flex:2;">Next</button>
+        </div>
+      </div>
+
+      <!-- STEP 4: My Part -->
+      <div class="stepper-panel" id="step-4">
+        <div class="step-heading">What was your part?</div>
+        <div class="step-sub" id="s4-sub">This is the hardest question — and the most important. Where were you selfish, dishonest, self-seeking, or frightened?</div>
+        <div class="form-group">
+          <textarea class="form-input" id="mypart" placeholder="Be as honest as you can. It's okay if this is hard." style="min-height:140px;"></textarea>
+        </div>
+        <div class="step-actions">
+          <button class="btn-back" onclick="goToStep(3)">Back</button>
+          <button class="btn-primary" onclick="goToStep(5)" style="flex:2;">Review entry</button>
+        </div>
+      </div>
+
+      <!-- STEP 5: Review -->
+      <div class="stepper-panel" id="step-5">
+        <div class="step-heading">Review your entry</div>
+        <div class="step-sub">Take a moment to read what you've written before saving.</div>
+        <div class="card">
+          <div class="review-row"><div class="review-label">Type</div><div class="review-value" id="rev-type"></div></div>
+          <div class="review-row"><div class="review-label">Subject</div><div class="review-value" id="rev-subject"></div></div>
+          <div class="review-row"><div class="review-label">What happened</div><div class="review-value" id="rev-cause"></div></div>
+          <div class="review-row" id="rev-affects-row"><div class="review-label">Affects</div><div class="review-value" id="rev-affects"></div></div>
+          <div class="review-row"><div class="review-label">My part</div><div class="review-value" id="rev-mypart"></div></div>
+        </div>
+        <div class="step-actions">
+          <button class="btn-back" onclick="goToStep(4)">Back</button>
+          <button class="btn-primary" id="save-btn" onclick="saveEntry()" style="flex:2;">Save &amp; get reflection</button>
+        </div>
+        <p class="save-confirm" id="save-confirm" style="margin-top:0.75rem;">Entry saved.</p>
+      </div>
+
+      <div class="ai-box" id="ai-response" style="display:none; margin-top:1.5rem;">
+        <div class="ai-label">Reflection</div>
+        <div id="ai-text" class="ai-text"></div>
+      </div>
+
+      <div id="post-reflection" style="display:none; margin-top:1.25rem;">
+        <div style="background:var(--surface); border:0.5px solid var(--border); border-radius:var(--radius); padding:1.5rem; text-align:center;">
+          <div style="font-size:22px; margin-bottom:0.5rem;">&#127381;</div>
+          <div style="font-size:17px; font-weight:700; letter-spacing:-0.02em; color:var(--text); margin-bottom:0.4rem;">Save your entry</div>
+          <div style="font-size:14px; color:var(--text2); line-height:1.6; margin-bottom:1.25rem;">Create a free account to keep your entries, track patterns over time, and build your inventory.</div>
+          <div style="display:flex; flex-direction:column; gap:10px; max-width:320px; margin:0 auto;">
+            <input class="form-input" type="email" id="quick-email" placeholder="Your email address" style="text-align:center;" />
+            <input class="form-input" type="password" id="quick-password" placeholder="Create a password" style="text-align:center;" />
+            <button class="btn-primary" onclick="quickSignup()">Create free account</button>
+            <button class="btn-google" onclick="googleAuth()" style="justify-content:center;">
+              <svg width="16" height="16" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/><path d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+              Continue with Google
+            </button>
+          </div>
+          <div id="quick-error" style="font-size:13px; color:#E24B4A; margin-top:0.75rem; display:none;"></div>
+          <button onclick="skipAccount()" style="background:none; border:none; font-size:13px; color:var(--text3); cursor:pointer; margin-top:1rem; font-family:inherit;">Skip for now — continue without saving</button>
+          <div style="margin-top:1rem; font-size:12px; color:var(--text3);">Already have an account? <a onclick="showAuth('login')" style="color:var(--accent); cursor:pointer;">Sign in</a></div>
+        </div>
+        <div style="margin-top:1rem; text-align:center;">
+          <button onclick="shareEntry()" style="background:none; border:0.5px solid var(--border2); border-radius:var(--radius-sm); padding:10px 20px; font-size:13px; color:var(--text2); cursor:pointer; font-family:inherit; width:100%;">Share this with someone who needs it</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="sec-dashboard" class="section">
+      <p class="page-sub">Your inventory at a glance.</p>
+      <div id="streak-display"></div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-num" id="d-total">0</div><div class="stat-lbl">total entries</div></div>
+        <div class="stat-card"><div class="stat-num" id="d-res">0</div><div class="stat-lbl">resentments</div></div>
+        <div class="stat-card"><div class="stat-num" id="d-fear">0</div><div class="stat-lbl">fears</div></div>
+      </div>
+      <input class="search-bar" id="search-input" placeholder="Search entries..." oninput="renderDashboard()" />
+      <div class="filter-row">
+        <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+        <button class="filter-btn" onclick="setFilter('resentment', this)">Resentments</button>
+        <button class="filter-btn" onclick="setFilter('fear', this)">Fears</button>
+        <button class="filter-btn" onclick="setFilter('relationship', this)">Relationships</button>
+      </div>
+      <div id="dashboard-entries"></div>
+    </div>
+
+    <!-- PATTERNS -->
+    <div id="sec-patterns" class="section">
+      <p class="page-sub">Patterns emerge over time. Keep going.</p>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-num" id="p-total">0</div><div class="stat-lbl">entries</div></div>
+        <div class="stat-card"><div class="stat-num" id="p-res">0</div><div class="stat-lbl">resentments</div></div>
+        <div class="stat-card"><div class="stat-num" id="p-fear">0</div><div class="stat-lbl">fears</div></div>
+      </div>
+      <div class="card">
+        <p class="section-heading">Most affected areas of self</p>
+        <div id="affects-pattern"></div>
+      </div>
+      <div class="card">
+        <p class="section-heading">Recurring subjects</p>
+        <div id="subjects-pattern"></div>
+      </div>
+      <button class="btn-primary" onclick="getPatternReflection()">Ask for pattern reflection</button>
+      <div class="ai-box" id="pattern-ai" style="display:none; margin-top:1rem;">
+        <div class="ai-label">Pattern reflection</div>
+        <div id="pattern-ai-text" class="ai-text"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- REFLECTION SCREEN -->
+<div class="reflection-screen" id="reflection-screen">
+  <div class="reflection-header">
+    <span class="reflection-header-logo" onclick="goHome()">Your Inventory</span>
+    <span class="reflection-header-right" id="reflection-entry-type"></span>
+  </div>
+  <div class="reflection-body">
+    <div class="reflection-eyebrow">Your reflection</div>
+    <div class="reflection-headline">That took courage.</div>
+    <div class="reflection-subline">Honesty is the foundation of this work. Here's what came up for your entry.</div>
+
+    <div class="reflection-card" id="reflection-card">
+      <div class="reflection-loading-wrap" id="reflection-loading">
+        <div class="reflection-loading-dot"></div>
+        <div class="reflection-loading-dot"></div>
+        <div class="reflection-loading-dot"></div>
+      </div>
+      <div class="reflection-text" id="reflection-text" style="display:none;"></div>
+    </div>
+
+    <div class="followup-section" id="followup-section" style="display:none;">
+      <div class="followup-label" id="followup-question"></div>
+      <textarea class="followup-input" id="followup-input" placeholder="Take your time. Be honest."></textarea>
+      <div style="margin-top:0.75rem; display:flex; gap:8px;">
+        <button class="btn-primary" onclick="submitFollowup()" id="followup-btn" style="flex:1;">Send</button>
+      </div>
+      <div class="followup-response" id="followup-response" style="display:none;"></div>
+    </div>
+
+    <div class="reflection-divider" id="reflection-divider" style="display:none;"></div>
+
+    <div id="reflection-save-prompt" style="display:none;">
+      <div class="save-prompt-inline">
+        <div class="save-prompt-title">Save your work</div>
+        <div class="save-prompt-sub">Create a free account to keep your entries and track patterns over time. Nothing is lost — your entry is already stored on this device.</div>
+        <div class="save-prompt-fields">
+          <input class="form-input" type="email" id="rs-email" placeholder="Email address" />
+          <input class="form-input" type="password" id="rs-password" placeholder="Create a password (6+ characters)" />
+          <button class="btn-primary" onclick="reflectionSignup()">Create free account</button>
+          <button class="btn-google" onclick="googleAuth()">
+            <svg width="16" height="16" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/><path d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+            Continue with Google
+          </button>
+          <div id="rs-error" style="font-size:13px;color:#E24B4A;display:none;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reflection-actions" id="reflection-actions" style="display:none;">
+      <button class="btn-primary" onclick="startAnotherEntry()">Start another entry</button>
+      <button class="btn-secondary" onclick="goToDashboard()">View my inventory</button>
+    </div>
+
+    <div class="reflection-secondary" id="reflection-secondary" style="display:none;">
+      <a onclick="shareEntry()">Share this app</a>
+      <a onclick="showAuth('login')">Sign in to existing account</a>
+      <a onclick="goHome()">Back to home</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const WORKER_URL = 'https://aged-unit-3ea7.seobybri.workers.dev';
+const AFFECTS = [
+  { label: 'Self-esteem', def: 'Your sense of self-worth and how you feel about yourself as a person.' },
+  { label: 'Security', def: 'Your sense of safety — financial, emotional, physical, or relational.' },
+  { label: 'Ambitions', def: 'Your goals, plans, or hopes for the future that feel threatened or blocked.' },
+  { label: 'Personal relations', def: 'Your relationships with family, friends, or colleagues.' },
+  { label: 'Sex relations', def: 'Intimacy, romantic relationships, or how you relate to others physically or emotionally.' },
+  { label: 'Pride', def: 'Your ego, reputation, or how you believe others see you.' },
+  { label: 'Fear', def: 'An underlying fear that this situation has triggered or amplified.' },
+  { label: 'Pocket-book', def: 'Your finances, livelihood, material security, or sense of fairness around money.' }
+];
+const TYPE_LABELS = {
+  resentment: { description: 'Someone or something you feel anger or bitterness toward.', subject: 'Who or what do you resent?', cause: 'What happened? (The cause)', mypart: 'What was your part in this?' },
+  fear: { description: 'Something you are afraid of losing, facing, or experiencing.', subject: 'What are you afraid of?', cause: 'Why do you have this fear?', mypart: 'How has this fear driven your behavior?' },
+  relationship: { description: 'A relationship where conflict or harm has occurred.', subject: 'Who is this about?', cause: 'What happened or what is the issue?', mypart: 'What was your part — where did you fall short?' }
+};
+
+let currentType = 'resentment';
+let currentStep = 1;
+let entries = [];
+let currentUser = null;
+let activeFilter = 'all';
+
+function selectType(type) {
+  currentType = type;
+  document.querySelectorAll('.type-card').forEach(function(c) { c.classList.remove('selected'); });
+  document.getElementById('tc-' + type).classList.add('selected');
+  const cfg = TYPE_LABELS[type];
+  document.getElementById('s2-heading').textContent = cfg.subject;
+  document.getElementById('s2-sub').textContent = type === 'fear' ? 'Name what you are afraid of.' : 'Name the person, institution, or situation.';
+  document.getElementById('cause-label').textContent = cfg.cause;
+  document.getElementById('s4-sub').textContent = type === 'fear' ? 'How has this fear driven your behavior?' : 'This is the hardest question — and the most important. Where were you selfish, dishonest, self-seeking, or frightened?';
+}
+
+function goToStep(n) {
+  if (n === 2) {
+    const subject = document.getElementById('subject').value.trim();
+  }
+  if (n === 3 || n > 2) {
+    const subject = document.getElementById('subject').value.trim();
+    const cause = document.getElementById('cause').value.trim();
+    if (n > 2 && (!subject || !cause)) { alert('Please fill in both fields before continuing.'); return; }
+  }
+  if (n === 3) { fetchAffectsSuggestion(); }
+  if (n === 5) {
+    // populate review
+    const subject = document.getElementById('subject').value.trim();
+    const cause = document.getElementById('cause').value.trim();
+    const mypart = document.getElementById('mypart').value.trim();
+    const affects = getSelectedAffects();
+    document.getElementById('rev-type').textContent = currentType.charAt(0).toUpperCase() + currentType.slice(1);
+    document.getElementById('rev-subject').textContent = subject || '—';
+    document.getElementById('rev-cause').textContent = cause || '—';
+    document.getElementById('rev-mypart').textContent = mypart || '(left blank)';
+    const affRow = document.getElementById('rev-affects-row');
+    affRow.style.display = currentType === 'fear' ? 'none' : 'block';
+    document.getElementById('rev-affects').textContent = affects.length ? affects.join(', ') : 'None selected';
+    document.getElementById('ai-response').style.display = 'none';
+  }
+  currentStep = n;
+  document.querySelectorAll('.stepper-panel').forEach(function(p) { p.classList.remove('active'); });
+  document.getElementById('step-' + n).classList.add('active');
+  updateProgress(n);
+}
+
+function updateProgress(step) {
+  const labels = ['Type', 'What happened', 'Affects', 'Your part', 'Review'];
+  for (var i = 1; i <= 5; i++) {
+    var dot = document.getElementById('dot-' + i);
+    var lbl = document.getElementById('lbl-' + i);
+    dot.className = 'step-dot';
+    lbl.className = 'step-label';
+    if (i < step) { dot.classList.add('done'); dot.innerHTML = '&#10003;'; lbl.classList.add('done'); }
+    else if (i === step) { dot.classList.add('active'); dot.textContent = i; lbl.classList.add('active'); }
+    else { dot.textContent = i; }
+  }
+  var pct = ((step - 1) / 4) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+function getStorageKey(key) {
+  return currentUser ? 'distillit_' + currentUser.id + '_' + key : 'distillit_guest_' + key;
+}
+
+function loadEntries() {
+  entries = JSON.parse(localStorage.getItem(getStorageKey('entries')) || '[]');
+}
+
+function saveEntries() {
+  localStorage.setItem(getStorageKey('entries'), JSON.stringify(entries));
+}
+
+function showAuth(type) {
+  document.getElementById('welcome-screen').style.display = 'none';
+  document.getElementById('signup-screen').style.display = type === 'signup' ? 'flex' : 'none';
+  document.getElementById('login-screen').style.display = type === 'login' ? 'flex' : 'none';
+  document.getElementById('main-app').style.display = 'none';
+}
+
+function goHome() {
+  document.getElementById('welcome-screen').style.display = 'flex';
+  document.getElementById('signup-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('reflection-screen').style.display = 'none';
+  document.getElementById('main-app').style.display = 'none';
+}
+
+function googleAuth() {
+  const name = 'Google User';
+  const email = 'user@gmail.com';
+  const user = { id: btoa(email), name: name, email: email };
+  localStorage.setItem('distillit_session', JSON.stringify(user));
+  currentUser = user;
+  launchApp();
+}
+
+function handleSignup() {
+  const email = document.getElementById('signup-email').value.trim();
+  const password = document.getElementById('signup-password').value.trim();
+  const name = document.getElementById('signup-name').value.trim();
+  const errEl = document.getElementById('signup-error');
+  if (!email || !password || !name) { showError(errEl, 'Please fill in all fields.'); return; }
+  if (password.length < 6) { showError(errEl, 'Password must be at least 6 characters.'); return; }
+  const users = JSON.parse(localStorage.getItem('distillit_users') || '{}');
+  if (users[email]) { showError(errEl, 'An account with this email already exists.'); return; }
+  const user = { id: btoa(email), name: name, email: email };
+  users[email] = { ...user, password: btoa(password) };
+  localStorage.setItem('distillit_users', JSON.stringify(users));
+  localStorage.setItem('distillit_session', JSON.stringify(user));
+  currentUser = user;
+  errEl.style.display = 'none';
+  launchApp();
+}
+
+function handleLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value.trim();
+  const errEl = document.getElementById('login-error');
+  if (!email || !password) { showError(errEl, 'Please enter your email and password.'); return; }
+  const users = JSON.parse(localStorage.getItem('distillit_users') || '{}');
+  const user = users[email];
+  if (!user || user.password !== btoa(password)) { showError(errEl, 'Incorrect email or password.'); return; }
+  const session = { id: user.id, name: user.name, email: user.email };
+  localStorage.setItem('distillit_session', JSON.stringify(session));
+  currentUser = session;
+  errEl.style.display = 'none';
+  launchApp();
+}
+
+function handleLogout() {
+  localStorage.removeItem('distillit_session');
+  currentUser = null;
+  entries = [];
+  goHome();
+}
+
+function continueAsGuest() {
+  currentUser = null;
+  launchApp();
+}
+
+function showError(el, msg) {
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function launchApp() {
+  document.getElementById('welcome-screen').style.display = 'none';
+  document.getElementById('signup-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('reflection-screen').style.display = 'none';
+  document.getElementById('main-app').style.display = 'block';
+  document.getElementById('user-pill').textContent = currentUser ? currentUser.name : 'Guest';
+  buildPills();
+  loadEntries();
+  if (currentUser) {
+    const guestEntries = JSON.parse(localStorage.getItem('distillit_guest_entries') || '[]');
+    if (guestEntries.length) {
+      const key = 'distillit_' + currentUser.id + '_entries';
+      const existing = JSON.parse(localStorage.getItem(key) || '[]');
+      localStorage.setItem(key, JSON.stringify([...guestEntries, ...existing]));
+      localStorage.removeItem('distillit_guest_entries');
+      entries = JSON.parse(localStorage.getItem(key) || '[]');
+    }
+  }
+}
+
+function buildPills() {
+  const group = document.getElementById('affects-checks');
+  group.innerHTML = '';
+  AFFECTS.forEach(function(item) {
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'check-pill'; btn.textContent = item.label;
+    btn.setAttribute('data-value', item.label.toLowerCase().replace(/ /g, '-'));
+    btn.addEventListener('click', function() {
+      btn.classList.toggle('selected');
+      renderDefinitions();
+    });
+    group.appendChild(btn);
+  });
+}
+
+function renderDefinitions() {
+  const list = document.getElementById('affects-definition-list');
+  if (!list) return;
+  const selected = Array.from(document.querySelectorAll('#affects-checks .check-pill.selected'));
+  if (selected.length === 0) { list.innerHTML = ''; return; }
+  const affectMap = {};
+  AFFECTS.forEach(function(item) { affectMap[item.label] = item.def; });
+  list.innerHTML = selected.map(function(btn) {
+    const label = btn.textContent.trim();
+    return '<div class="affect-def-item"><span class="affect-def-label">' + label + '</span><span class="affect-def-text">' + (affectMap[label] || '') + '</span></div>';
+  }).join('');
+}
+
+function startFree() {
+  currentUser = null;
+  document.getElementById('welcome-screen').style.display = 'none';
+  document.getElementById('main-app').style.display = 'block';
+  document.getElementById('user-pill').textContent = 'Guest';
+  buildPills();
+  loadEntries();
+}
+
+function quickSignup() {
+  const email = document.getElementById('quick-email').value.trim();
+  const password = document.getElementById('quick-password').value.trim();
+  const errEl = document.getElementById('quick-error');
+  if (!email || !password) { errEl.textContent = 'Please enter your email and a password.'; errEl.style.display = 'block'; return; }
+  if (password.length < 6) { errEl.textContent = 'Password must be at least 6 characters.'; errEl.style.display = 'block'; return; }
+  const users = JSON.parse(localStorage.getItem('distillit_users') || '{}');
+  if (users[email]) { errEl.textContent = 'An account with this email already exists.'; errEl.style.display = 'block'; return; }
+  const user = { id: btoa(email), name: email.split('@')[0], email: email };
+  users[email] = { ...user, password: btoa(password) };
+  localStorage.setItem('distillit_users', JSON.stringify(users));
+  localStorage.setItem('distillit_session', JSON.stringify(user));
+  const guestEntries = JSON.parse(localStorage.getItem('distillit_guest_entries') || '[]');
+  if (guestEntries.length) {
+    localStorage.setItem('distillit_' + user.id + '_entries', JSON.stringify(guestEntries));
+    localStorage.removeItem('distillit_guest_entries');
+  }
+  currentUser = user;
+  document.getElementById('user-pill').textContent = user.name;
+  document.getElementById('post-reflection').style.display = 'none';
+  errEl.style.display = 'none';
+  showToast('Account created! Your entry has been saved.');
+}
+
+function skipAccount() {
+  document.getElementById('post-reflection').style.display = 'none';
+  showToast('Entry saved locally on this device.');
+}
+
+function shareEntry() {
+  if (navigator.share) {
+    navigator.share({ title: 'Your Inventory', text: 'I just worked through something difficult using this app. It might help you too.', url: window.location.href });
+  } else {
+    navigator.clipboard.writeText(window.location.href).then(function() { showToast('Link copied to clipboard!'); });
+  }
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  if (!t) { t = document.createElement('div'); t.id = 'toast'; t.style.cssText = 'position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 20px;border-radius:20px;font-size:14px;font-weight:500;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none;'; document.body.appendChild(t); }
+  t.textContent = msg; t.style.opacity = '1';
+  setTimeout(function() { t.style.opacity = '0'; }, 2500);
+}
+
+function init() {
+  const session = localStorage.getItem('distillit_session');
+  if (session) {
+    currentUser = JSON.parse(session);
+    launchApp();
+  } else {
+    document.getElementById('welcome-screen').style.display = 'flex';
+  }
+}
+
+function showSection(name, btn) {
+  document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+  document.querySelectorAll('.nav button').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('sec-' + name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'dashboard') renderDashboard();
+  if (name === 'patterns') renderPatterns();
+}
+
+function setType(type, el) { selectType(type); }
+
+function getSelectedAffects() {
+  return Array.from(document.querySelectorAll('#affects-checks .check-pill.selected')).map(function(b) { return b.textContent.trim(); });
+}
+
+async function saveEntry() {
+  const subject = document.getElementById('subject').value.trim();
+  const cause = document.getElementById('cause').value.trim();
+  const mypart = document.getElementById('mypart').value.trim();
+  if (!subject || !cause) { alert('Please fill in at least the subject and cause.'); return; }
+  const entry = { id: Date.now(), type: currentType, subject, cause, affects: getSelectedAffects(), mypart, date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), dateStamp: new Date().toDateString() };
+  entries.unshift(entry);
+  saveEntries();
+  document.getElementById('save-btn').disabled = true;
+  showReflectionScreen(entry);
+  clearForm();
+  await getReflectionFull(entry);
+  document.getElementById('save-btn').disabled = false;
+}
+
+function buildPrompt(entry) {
+  let p = 'Someone is working through a difficult emotion using structured self-reflection.\n\nEntry type: ' + entry.type + '\n';
+  if (entry.type === 'resentment') p += 'Who/what: ' + entry.subject + '\nWhat happened: ' + entry.cause + '\nAreas affected: ' + (entry.affects.join(', ') || 'not specified') + '\nTheir part: ' + (entry.mypart || '(left blank)');
+  else if (entry.type === 'fear') p += 'The fear: ' + entry.subject + '\nWhy this fear exists: ' + entry.cause + '\nHow it has driven behavior: ' + (entry.mypart || '(left blank)');
+  else p += 'Who: ' + entry.subject + '\nThe issue: ' + entry.cause + '\nAreas affected: ' + (entry.affects.join(', ') || 'not specified') + '\nTheir part: ' + (entry.mypart || '(left blank)');
+  return p;
+}
+
+async function getReflection(entry) {
+  try {
+    const res = await fetch(WORKER_URL, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514', max_tokens: 1000,
+        system: 'You are an experienced AA sponsor with over 20 years of sobriety and deep knowledge of the Big Book. You have guided dozens of people through their Step 4 moral inventory. You are warm, direct, spiritually grounded, and occasionally use language and references from the Big Book naturally. You are NOT a therapist — you do not diagnose or give clinical advice. Your job is to help the person go deeper into their inventory by: 1) Reflecting back what you hear with compassion and specificity — reference what they actually wrote, 2) Asking 1-2 pointed follow-up questions to help them see more clearly, especially about their own part, 3) Gently but honestly noting if the "my part" section seems incomplete, surface-level, or avoidant — do not let them off the hook, 4) Occasionally grounding your response in Big Book language or principles when it feels natural, not forced. Never be preachy, never lecture, never moralize. Be the sponsor you wish you had. Keep responses to 3-5 short paragraphs, then end with a single short follow-up question on its own line starting with FOLLOWUP: that invites the person to go one level deeper. Plain prose only — no bullet points, no headers.',
+        messages: [{ role: 'user', content: buildPrompt(entry) }]
+      })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    document.getElementById('ai-text').textContent = data.content.map(function(b) { return b.text || ''; }).join('\n');
+  } catch(e) {
+    document.getElementById('ai-text').textContent = 'Could not connect right now. Your entry has been saved — try again in a moment.';
+  }
+}
+
+function clearForm() {
+  document.getElementById('subject').value = '';
+  document.getElementById('cause').value = '';
+  document.getElementById('mypart').value = '';
+  document.querySelectorAll('#affects-checks .check-pill.selected').forEach(function(p) { p.classList.remove('selected'); });
+  var defList = document.getElementById('affects-definition-list');
+  if (defList) defList.innerHTML = '';
+  currentType = 'resentment';
+  document.querySelectorAll('.type-card').forEach(function(c) { c.classList.remove('selected'); });
+  document.getElementById('tc-resentment').classList.add('selected');
+  goToStep(1);
+}
+
+function esc(s) { return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function calcStreak() {
+  if (!entries.length) return 0;
+  const dates = [...new Set(entries.map(function(e) { return e.dateStamp; }))];
+  let streak = 0;
+  let check = new Date();
+  for (let i = 0; i < 365; i++) {
+    if (dates.includes(check.toDateString())) { streak++; check.setDate(check.getDate() - 1); }
+    else if (i === 0) { check.setDate(check.getDate() - 1); continue; }
+    else break;
+  }
+  return streak;
+}
+
+function setFilter(type, btn) {
+  activeFilter = type;
+  document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  renderDashboard();
+}
+
+function renderDashboard() {
+  const total = entries.length;
+  const res = entries.filter(function(e) { return e.type === 'resentment'; }).length;
+  const fear = entries.filter(function(e) { return e.type === 'fear'; }).length;
+  document.getElementById('d-total').textContent = total;
+  document.getElementById('d-res').textContent = res;
+  document.getElementById('d-fear').textContent = fear;
+
+  const streak = calcStreak();
+  const streakEl = document.getElementById('streak-display');
+  streakEl.innerHTML = streak > 0 ? '<div class="streak-badge">&#128293; ' + streak + ' day streak</div>' : '';
+
+  const query = (document.getElementById('search-input').value || '').toLowerCase();
+  let filtered = entries.filter(function(e) {
+    const matchType = activeFilter === 'all' || e.type === activeFilter;
+    const matchSearch = !query || e.subject.toLowerCase().includes(query) || e.cause.toLowerCase().includes(query) || (e.mypart || '').toLowerCase().includes(query);
+    return matchType && matchSearch;
+  });
+
+  const list = document.getElementById('dashboard-entries');
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty-state">No entries found.<br>Start your first entry above.</div>';
+    return;
+  }
+  list.innerHTML = filtered.map(function(e) {
+    const bc = e.type === 'resentment' ? 'badge-resentment' : e.type === 'fear' ? 'badge-fear' : 'badge-relationship';
+    return '<div class="entry-card"><span class="entry-type-badge ' + bc + '">' + e.type + '</span><div class="entry-subject">' + esc(e.subject) + '</div><div class="entry-body">' + esc(e.cause) + '</div>' + (e.mypart ? '<div class="entry-part"><strong>My part:</strong> ' + esc(e.mypart) + '</div>' : '') + '<div class="entry-meta-row"><span class="entry-affects">' + (e.affects || []).join(', ') + '</span><span class="entry-date">' + e.date + '</span></div></div>';
+  }).join('');
+}
+
+function renderPatterns() {
+  document.getElementById('p-total').textContent = entries.length;
+  document.getElementById('p-res').textContent = entries.filter(function(e) { return e.type === 'resentment'; }).length;
+  document.getElementById('p-fear').textContent = entries.filter(function(e) { return e.type === 'fear'; }).length;
+  const ac = {};
+  entries.forEach(function(e) { (e.affects || []).forEach(function(a) { ac[a] = (ac[a] || 0) + 1; }); });
+  const sa = Object.entries(ac).sort(function(a,b) { return b[1]-a[1]; });
+  document.getElementById('affects-pattern').innerHTML = sa.length ? sa.map(function(x) { return '<div class="pattern-row"><span>' + x[0] + '</span><span class="pattern-count">' + x[1] + '</span></div>'; }).join('') : '<div style="font-size:14px;color:var(--text3);padding:0.5rem 0">No data yet — add a few entries first.</div>';
+  const sc = {};
+  entries.forEach(function(e) { const s = e.subject.toLowerCase().trim(); sc[s] = (sc[s] || 0) + 1; });
+  const repeats = Object.entries(sc).filter(function(x) { return x[1] > 1; }).sort(function(a,b) { return b[1]-a[1]; });
+  document.getElementById('subjects-pattern').innerHTML = repeats.length ? repeats.map(function(x) { return '<div class="pattern-row"><span style="text-transform:capitalize">' + x[0] + '</span><span class="pattern-count">' + x[1] + 'x</span></div>'; }).join('') : '<div style="font-size:14px;color:var(--text3);padding:0.5rem 0">Patterns will appear once you have multiple entries about the same person or topic.</div>';
+}
+
+async function getPatternReflection() {
+  if (!entries.length) { alert('Add some entries first.'); return; }
+  document.getElementById('pattern-ai').style.display = 'block';
+  document.getElementById('pattern-ai-text').innerHTML = '<span class="ai-loading">Looking for patterns across your entries</span>';
+  const summary = entries.map(function(e) { return '[' + e.type + '] ' + e.subject + ': ' + e.cause + '. My part: ' + (e.mypart || 'not written'); }).join('\n');
+  try {
+    const res = await fetch(WORKER_URL, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514', max_tokens: 1000,
+        system: 'You are an experienced AA sponsor with over 20 years of sobriety reviewing someone\'s Step 4 moral inventory entries. Look across ALL entries and identify: recurring subjects or names, dominant emotional themes (e.g. control, abandonment, disrespect, fear of loss), the most common areas of self affected, and patterns in how they describe their own part — or avoid it. Be warm, honest, and grounded in the Big Book\'s framework. Do not let them avoid what is clearly there. Occasionally reference Big Book principles naturally. End with one gentle but pointed question for them to sit with. Plain prose, 4-6 paragraphs. No bullet points or headers.',
+        messages: [{ role: 'user', content: 'Here are my journal entries:\n\n' + summary }]
+      })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    document.getElementById('pattern-ai-text').textContent = data.content.map(function(b) { return b.text || ''; }).join('\n');
+  } catch(e) {
+    document.getElementById('pattern-ai-text').textContent = 'Could not connect right now. Please try again in a moment.';
+  }
+}
+
+async function fetchAffectsSuggestion() {
+  const subject = document.getElementById('subject').value.trim();
+  const cause = document.getElementById('cause').value.trim();
+  if (!subject || !cause) return;
+  document.getElementById('ai-suggest-box').style.display = 'none';
+  document.getElementById('ai-suggest-loading').style.display = 'block';
+  document.getElementById('affects-definition').style.display = 'none';
+  try {
+    const res = await fetch(WORKER_URL, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514', max_tokens: 300,
+        system: 'You help people identify which areas of self are affected by a resentment, fear, or relationship conflict. The eight areas are: Self-esteem, Security, Ambitions, Personal relations, Sex relations, Pride, Fear, Pocket-book. Given what the user has written, suggest 2-4 most likely affected areas and give a one-sentence reason for each. Be warm and specific to what they wrote. Format: one line per area, starting with the area name, then a dash, then the reason. Keep it brief.',
+        messages: [{ role: 'user', content: 'Type: ' + currentType + '\nSubject: ' + subject + '\nWhat happened: ' + cause }]
+      })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error();
+    const text = data.content.map(function(b) { return b.text || ''; }).join('');
+    document.getElementById('ai-suggest-loading').style.display = 'none';
+    document.getElementById('ai-suggest-box').style.display = 'block';
+    document.getElementById('ai-suggest-text').textContent = text;
+  } catch(e) {
+    document.getElementById('ai-suggest-loading').style.display = 'none';
+  }
+}
+
+init();
+</script>
+</body>
+</html>
