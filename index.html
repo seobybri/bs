@@ -326,6 +326,7 @@
     .ws-table th, .ws-table td { padding: 6px 6px; }
   }
 </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -953,6 +954,11 @@
       <div class="reflection-text" id="reflection-text" style="display:none;"></div>
     </div>
 
+    <div id="reflection-feedback" style="display:none; align-items:center; gap:8px; margin-top:0.75rem;">
+      <button onclick="submitFeedback('up')" id="feedback-up" style="background:var(--surface); border:0.5px solid var(--border2); border-radius:var(--radius-sm); padding:6px 16px; font-size:18px; cursor:pointer; line-height:1; transition:transform 0.15s, background 0.15s, border-color 0.15s;">&#128077;</button>
+      <button onclick="submitFeedback('down')" id="feedback-down" style="background:var(--surface); border:0.5px solid var(--border2); border-radius:var(--radius-sm); padding:6px 16px; font-size:18px; cursor:pointer; line-height:1; transition:transform 0.15s, background 0.15s, border-color 0.15s;">&#128078;</button>
+    </div>
+
     <div class="followup-section" id="followup-section" style="display:none;">
       <div class="followup-label" id="followup-question"></div>
       <textarea class="followup-input" id="followup-input" placeholder="Take your time. Be honest."></textarea>
@@ -999,30 +1005,16 @@
       <a onclick="goHome()">Back to home</a>
     </div>
 
-    <div id="reflection-feedback" style="display:none; margin-top:1.5rem; padding-top:1.5rem; border-top:0.5px solid var(--border);">
-      <div id="feedback-prompt" style="text-align:center;">
-        <p style="font-size:13px; color:var(--text3); margin:0 0 0.75rem;">Did this land?</p>
-        <div style="display:flex; justify-content:center; gap:12px;">
-          <button onclick="submitFeedback('up')" id="feedback-up" style="background:var(--surface); border:0.5px solid var(--border2); border-radius:var(--radius-sm); padding:8px 20px; font-size:18px; cursor:pointer; transition:all 0.15s;">&#128077;</button>
-          <button onclick="submitFeedback('down')" id="feedback-down" style="background:var(--surface); border:0.5px solid var(--border2); border-radius:var(--radius-sm); padding:8px 20px; font-size:18px; cursor:pointer; transition:all 0.15s;">&#128078;</button>
-        </div>
-      </div>
-      <div id="feedback-followup" style="display:none; margin-top:1rem;">
-        <input class="form-input" type="text" id="feedback-text" style="font-size:13px; padding:10px 14px;" />
-        <div style="display:flex; gap:8px; margin-top:8px;">
-          <button onclick="submitFeedbackText()" class="btn-primary btn-sm" style="flex:1;">Send</button>
-          <button onclick="dismissFeedback()" class="btn-secondary btn-sm" style="flex:1;">Skip</button>
-        </div>
-      </div>
-      <div id="feedback-thanks" style="display:none; text-align:center;">
-        <p style="font-size:13px; color:var(--text3); margin:0;">Thanks — that helps.</p>
-      </div>
-    </div>
+
   </div>
 </div>
 
 <script>
 const WORKER_URL = 'https://aged-unit-3ea7.seobybri.workers.dev';
+
+const SUPABASE_URL = 'https://fmodmdnjtdhosfbtixyo.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtb2RtZG5qdGRob3NmYnRpeHlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNjAxMDMsImV4cCI6MjA4OTkzNjEwM30.lsLjokeacavaTXB7et1qEMo_5yE6zndyUOkAcN7Ov8k';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const AFFECTS = [
   { label: 'Self-esteem', def: 'Your sense of self-worth and how you feel about yourself as a person.' },
   { label: 'Security', def: 'Your sense of safety — financial, emotional, physical, or relational.' },
@@ -1104,12 +1096,52 @@ function getStorageKey(key) {
   return currentUser ? 'distillit_' + currentUser.id + '_' + key : 'distillit_guest_' + key;
 }
 
-function loadEntries() {
-  entries = JSON.parse(localStorage.getItem(getStorageKey('entries')) || '[]');
+async function loadEntries() {
+  if (currentUser) {
+    var res = await sb.from('entries').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+    if (!res.error) {
+      entries = res.data.map(function(r) {
+        return {
+          id: r.id, type: r.type, subject: r.subject, cause: r.cause,
+          mypart: r.mypart, affects: r.affects || [], reflection: r.reflection,
+          followupQ: r.followup_q, feedbackVote: r.feedback_vote,
+          date: r.date, dateStamp: r.date, _dbId: r.id
+        };
+      });
+    }
+  } else {
+    entries = JSON.parse(localStorage.getItem('distillit_guest_entries') || '[]');
+  }
+  renderDashboard();
+  renderPatterns();
 }
 
-function saveEntries() {
-  localStorage.setItem(getStorageKey('entries'), JSON.stringify(entries));
+async function saveEntries() {
+  if (!currentUser) {
+    localStorage.setItem('distillit_guest_entries', JSON.stringify(entries));
+  }
+}
+
+async function saveEntryToDb(entry) {
+  if (!currentUser) return;
+  var row = {
+    user_id: currentUser.id,
+    type: entry.type,
+    subject: entry.subject || '',
+    cause: entry.cause || '',
+    mypart: entry.mypart || '',
+    affects: entry.affects || [],
+    reflection: entry.reflection || '',
+    followup_q: entry.followupQ || '',
+    feedback_vote: entry.feedbackVote || null,
+    date: entry.date || new Date().toLocaleDateString()
+  };
+  if (entry._dbId) {
+    await sb.from('entries').update(row).eq('id', entry._dbId);
+  } else {
+    var res = await sb.from('entries').insert(row).select().single();
+    if (!res.error && res.data) { entry._dbId = res.data.id; entry.id = res.data.id; }
+  }
 }
 
 function showAuth(type) {
@@ -1139,41 +1171,48 @@ function googleAuth() {
   launchApp();
 }
 
-function handleSignup() {
+async function handleSignup() {
   const email = document.getElementById('signup-email').value.trim();
   const password = document.getElementById('signup-password').value.trim();
   const name = document.getElementById('signup-name').value.trim();
   const errEl = document.getElementById('signup-error');
+  const btn = document.querySelector('#signup-screen .btn-primary');
   if (!email || !password || !name) { showError(errEl, 'Please fill in all fields.'); return; }
   if (password.length < 6) { showError(errEl, 'Password must be at least 6 characters.'); return; }
-  const users = JSON.parse(localStorage.getItem('distillit_users') || '{}');
-  if (users[email]) { showError(errEl, 'An account with this email already exists.'); return; }
-  const user = { id: btoa(email), name: name, email: email };
-  users[email] = { ...user, password: btoa(password) };
-  localStorage.setItem('distillit_users', JSON.stringify(users));
-  localStorage.setItem('distillit_session', JSON.stringify(user));
-  currentUser = user;
-  errEl.style.display = 'none';
-  launchApp();
+  btn.disabled = true; btn.textContent = 'Creating account...';
+  var res = await sb.auth.signUp({ email: email, password: password, options: { data: { name: name } } });
+  btn.disabled = false; btn.textContent = 'Create account';
+  if (res.error) { showError(errEl, res.error.message); return; }
+  if (res.data.session) {
+    currentUser = { id: res.data.user.id, name: name, email: email };
+    errEl.style.display = 'none';
+    launchApp();
+  } else {
+    showError(errEl, '');
+    errEl.style.color = 'var(--accent)';
+    errEl.textContent = 'Check your email to confirm your account, then sign in.';
+    errEl.style.display = 'block';
+  }
 }
 
-function handleLogin() {
+async function handleLogin() {
   const email = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value.trim();
   const errEl = document.getElementById('login-error');
+  const btn = document.querySelector('#login-screen .btn-primary');
   if (!email || !password) { showError(errEl, 'Please enter your email and password.'); return; }
-  const users = JSON.parse(localStorage.getItem('distillit_users') || '{}');
-  const user = users[email];
-  if (!user || user.password !== btoa(password)) { showError(errEl, 'Incorrect email or password.'); return; }
-  const session = { id: user.id, name: user.name, email: user.email };
-  localStorage.setItem('distillit_session', JSON.stringify(session));
-  currentUser = session;
+  btn.disabled = true; btn.textContent = 'Signing in...';
+  var res = await sb.auth.signInWithPassword({ email: email, password: password });
+  btn.disabled = false; btn.textContent = 'Sign in';
+  if (res.error) { showError(errEl, 'Incorrect email or password.'); return; }
+  var name = (res.data.user.user_metadata && res.data.user.user_metadata.name) ? res.data.user.user_metadata.name : email.split('@')[0];
+  currentUser = { id: res.data.user.id, name: name, email: email };
   errEl.style.display = 'none';
   launchApp();
 }
 
-function handleLogout() {
-  localStorage.removeItem('distillit_session');
+async function handleLogout() {
+  await sb.auth.signOut();
   currentUser = null;
   entries = [];
   goHome();
@@ -1249,27 +1288,20 @@ function startFree() {
   loadEntries();
 }
 
-function quickSignup() {
+async function quickSignup() {
   const email = document.getElementById('quick-email').value.trim();
   const password = document.getElementById('quick-password').value.trim();
   const errEl = document.getElementById('quick-error');
   if (!email || !password) { errEl.textContent = 'Please enter your email and a password.'; errEl.style.display = 'block'; return; }
   if (password.length < 6) { errEl.textContent = 'Password must be at least 6 characters.'; errEl.style.display = 'block'; return; }
-  const users = JSON.parse(localStorage.getItem('distillit_users') || '{}');
-  if (users[email]) { errEl.textContent = 'An account with this email already exists.'; errEl.style.display = 'block'; return; }
-  const user = { id: btoa(email), name: email.split('@')[0], email: email };
-  users[email] = { ...user, password: btoa(password) };
-  localStorage.setItem('distillit_users', JSON.stringify(users));
-  localStorage.setItem('distillit_session', JSON.stringify(user));
-  const guestEntries = JSON.parse(localStorage.getItem('distillit_guest_entries') || '[]');
-  if (guestEntries.length) {
-    localStorage.setItem('distillit_' + user.id + '_entries', JSON.stringify(guestEntries));
-    localStorage.removeItem('distillit_guest_entries');
-  }
-  currentUser = user;
-  document.getElementById('user-pill').textContent = user.name;
+  var res = await sb.auth.signUp({ email: email, password: password });
+  if (res.error) { errEl.textContent = res.error.message; errEl.style.display = 'block'; return; }
+  var name = email.split('@')[0];
+  currentUser = { id: res.data.user.id, name: name, email: email };
+  for (var i = 0; i < entries.length; i++) { await saveEntryToDb(entries[i]); }
+  document.getElementById('user-pill').textContent = name;
   errEl.style.display = 'none';
-  showToast('Account created! Your entry has been saved.');
+  showToast(res.data.session ? 'Account created! Your entry has been saved.' : 'Check your email to confirm your account.');
 }
 
 function skipAccount() {
@@ -1539,38 +1571,42 @@ function hidePartHints() {
 }
 
 
-function reflectionSignup() {
+async function reflectionSignup() {
   var email = document.getElementById('rs-email').value.trim();
   var password = document.getElementById('rs-password').value.trim();
   var errEl = document.getElementById('rs-error');
   if (!email || !password) { errEl.textContent = 'Please enter your email and a password.'; errEl.style.display = 'block'; return; }
   if (password.length < 6) { errEl.textContent = 'Password must be at least 6 characters.'; errEl.style.display = 'block'; return; }
-  var users = JSON.parse(localStorage.getItem('distillit_users') || '{}');
-  if (users[email]) { errEl.textContent = 'An account with this email already exists.'; errEl.style.display = 'block'; return; }
-  var user = { id: btoa(email), name: email.split('@')[0], email: email };
-  users[email] = Object.assign({}, user, { password: btoa(password) });
-  localStorage.setItem('distillit_users', JSON.stringify(users));
-  localStorage.setItem('distillit_session', JSON.stringify(user));
-  var guestEntries = JSON.parse(localStorage.getItem('distillit_guest_entries') || '[]');
-  if (guestEntries.length) {
-    localStorage.setItem('distillit_' + user.id + '_entries', JSON.stringify(guestEntries));
-    localStorage.removeItem('distillit_guest_entries');
-  }
-  currentUser = user;
+  var res = await sb.auth.signUp({ email: email, password: password });
+  if (res.error) { errEl.textContent = res.error.message; errEl.style.display = 'block'; return; }
+  var name = email.split('@')[0];
+  currentUser = { id: res.data.user.id, name: name, email: email };
+  for (var i = 0; i < entries.length; i++) { await saveEntryToDb(entries[i]); }
   document.getElementById('reflection-save-prompt').style.display = 'none';
-  document.getElementById('user-pill').textContent = user.name;
+  document.getElementById('user-pill').textContent = name;
   errEl.style.display = 'none';
-  showToast('Account created. Your entries are saved.');
+  if (res.data.session) {
+    showToast('Account created. Your entries are saved.');
+  } else {
+    showToast('Check your email to confirm your account.');
+  }
 }
 
-function init() {
-  const session = localStorage.getItem('distillit_session');
-  if (session) {
-    currentUser = JSON.parse(session);
+async function init() {
+  var res = await sb.auth.getSession();
+  if (res.data.session) {
+    var user = res.data.session.user;
+    var name = (user.user_metadata && user.user_metadata.name) ? user.user_metadata.name : user.email.split('@')[0];
+    currentUser = { id: user.id, name: name, email: user.email };
     launchApp();
   } else {
-    document.getElementById('welcome-screen').style.display = 'flex'; document.getElementById('homepage-btf').style.display = 'block';
+    document.getElementById('welcome-screen').style.display = 'flex';
+    document.getElementById('homepage-btf').style.display = 'block';
   }
+  // Keep session in sync
+  sb.auth.onAuthStateChange(function(event, session) {
+    if (event === 'SIGNED_OUT') { currentUser = null; entries = []; goHome(); }
+  });
 }
 
 function showSection(name, btn) {
@@ -1728,6 +1764,7 @@ async function saveEntry() {
   if (!subject || !cause) { alert('Please fill in at least the subject and cause.'); return; }
   const entry = { id: Date.now(), type: currentType, subject, cause, affects: getSelectedAffects(), mypart, date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), dateStamp: new Date().toDateString(), reflection: '', followup: '' };
   entries.unshift(entry);
+  await saveEntryToDb(entry);
   saveEntries();
   document.getElementById('save-btn').disabled = true;
   showReflectionScreen(entry);
@@ -1753,15 +1790,16 @@ function showReflectionScreen(entry) {
   document.getElementById('followup-response').style.display = 'none';
   document.getElementById('followup-input').value = '';
   document.getElementById('reflection-feedback').style.display = 'none';
-  document.getElementById('feedback-prompt').style.display = 'block';
-  document.getElementById('feedback-followup').style.display = 'none';
-  document.getElementById('feedback-thanks').style.display = 'none';
   document.getElementById('feedback-up').style.background = 'var(--surface)';
-  document.getElementById('feedback-down').style.background = 'var(--surface)';
   document.getElementById('feedback-up').style.borderColor = 'var(--border2)';
+  document.getElementById('feedback-up').style.opacity = '1';
+  document.getElementById('feedback-up').style.transform = 'scale(1)';
+  document.getElementById('feedback-up').disabled = false;
+  document.getElementById('feedback-down').style.background = 'var(--surface)';
   document.getElementById('feedback-down').style.borderColor = 'var(--border2)';
-  document.getElementById('feedback-text').value = '';
-  currentFeedbackEntry = null;
+  document.getElementById('feedback-down').style.opacity = '1';
+  document.getElementById('feedback-down').style.transform = 'scale(1)';
+  document.getElementById('feedback-down').disabled = false;
 }
 
 async function getReflectionFull(entry) {
@@ -1783,11 +1821,13 @@ async function getReflectionFull(entry) {
     document.getElementById('reflection-loading').style.display = 'none';
     document.getElementById('reflection-text').style.display = 'block';
     document.getElementById('reflection-text').textContent = reflectionText;
+    document.getElementById('reflection-feedback').style.display = 'flex';
     // Store reflection on the entry
     if (entries.length > 0) {
       entries[0].reflection = reflectionText;
       entries[0].followupQ = followupQ;
       saveEntries();
+      saveEntryToDb(entries[0]);
     }
     setTimeout(function() {
       document.getElementById('followup-section').style.display = 'block';
@@ -1798,7 +1838,6 @@ async function getReflectionFull(entry) {
       document.getElementById('reflection-actions').style.display = 'flex';
       document.getElementById('reflection-secondary').style.display = 'flex';
       document.getElementById('share-sponsor-wrap').style.display = 'block';
-      document.getElementById('reflection-feedback').style.display = 'block';
     }, 800);
   } catch(e) {
     document.getElementById('reflection-loading').style.display = 'none';
@@ -1923,39 +1962,30 @@ init();
 var currentFeedbackEntry = null;
 
 function submitFeedback(vote) {
-  // Highlight selected button
-  document.getElementById('feedback-up').style.background = vote === 'up' ? '#E8F5F3' : 'var(--surface)';
-  document.getElementById('feedback-down').style.background = vote === 'down' ? '#FCEBEB' : 'var(--surface)';
-  document.getElementById('feedback-up').style.borderColor = vote === 'up' ? 'var(--accent)' : 'var(--border2)';
-  document.getElementById('feedback-down').style.borderColor = vote === 'down' ? '#E24B4A' : 'var(--border2)';
-
-  // Store vote on current entry
+  var up = document.getElementById('feedback-up');
+  var down = document.getElementById('feedback-down');
+  // Reset both first
+  up.style.background = 'var(--surface)';
+  up.style.borderColor = 'var(--border2)';
+  up.style.opacity = '1';
+  down.style.background = 'var(--surface)';
+  down.style.borderColor = 'var(--border2)';
+  down.style.opacity = '1';
+  // Animate and highlight selected
+  var active = vote === 'up' ? up : down;
+  var inactive = vote === 'up' ? down : up;
+  active.style.transform = 'scale(1.4)';
+  active.style.background = vote === 'up' ? '#E8F5F3' : '#FCEBEB';
+  active.style.borderColor = vote === 'up' ? '#2A9D8F' : '#E24B4A';
+  setTimeout(function() {
+    active.style.transform = 'scale(1)';
+    inactive.style.opacity = '0.4';
+  }, 200);
   if (entries.length > 0) {
-    currentFeedbackEntry = entries[entries.length - 1];
-    currentFeedbackEntry.feedbackVote = vote;
+    entries[entries.length - 1].feedbackVote = vote;
     saveEntries();
+    saveEntryToDb(entries[entries.length - 1]);
   }
-
-  // Show contextual follow-up
-  var placeholder = vote === 'up' ? 'What hit home? (optional)' : 'What missed? (optional)';
-  document.getElementById('feedback-text').placeholder = placeholder;
-  document.getElementById('feedback-prompt').style.display = 'none';
-  document.getElementById('feedback-followup').style.display = 'block';
-}
-
-function submitFeedbackText() {
-  var text = document.getElementById('feedback-text').value.trim();
-  if (currentFeedbackEntry) {
-    currentFeedbackEntry.feedbackText = text;
-    saveEntries();
-  }
-  document.getElementById('feedback-followup').style.display = 'none';
-  document.getElementById('feedback-thanks').style.display = 'block';
-}
-
-function dismissFeedback() {
-  document.getElementById('feedback-followup').style.display = 'none';
-  document.getElementById('feedback-thanks').style.display = 'block';
 }
 
 
