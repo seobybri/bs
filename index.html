@@ -384,6 +384,18 @@
 
 <!-- WELCOME SCREEN -->
 <div class="welcome-outer" id="welcome-screen">
+
+  <!-- Top nav bar with sign in link -->
+  <div style="position:absolute; top:0; left:0; right:0; display:flex; justify-content:flex-end; padding:1.25rem 1.5rem;">
+    <button onclick="showAuth('login')" style="background:none; border:0.5px solid var(--border2); border-radius:var(--radius-sm); font-size:13px; color:var(--text2); padding:7px 16px; cursor:pointer; font-family:inherit; transition:all 0.15s;" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='none'">Sign in</button>
+  </div>
+
+  <!-- Returning user banner (shown only when logged in) -->
+  <div id="returning-user-banner" style="display:none; position:absolute; top:0; left:0; right:0; background:var(--surface); border-bottom:0.5px solid var(--border); padding:0.875rem 1.5rem; display:none; align-items:center; justify-content:space-between; gap:1rem;">
+    <span style="font-size:14px; color:var(--text2);">Welcome back, <strong id="returning-user-name" style="color:var(--text);"></strong></span>
+    <button onclick="launchApp(); setTimeout(function(){ showSection('dashboard', document.querySelectorAll('.nav button')[1]); }, 50);" class="btn-primary" style="width:auto; padding:8px 18px; font-size:13px;">Go to my inventory &#8594;</button>
+  </div>
+
   <div class="welcome-inner">
     <div class="welcome-left">
       <div class="welcome-logo">
@@ -1209,6 +1221,10 @@ async function handleLogin() {
   currentUser = { id: res.data.user.id, name: name, email: email };
   errEl.style.display = 'none';
   launchApp();
+  setTimeout(function() {
+    showSection('dashboard', document.querySelectorAll('.nav button')[1]);
+    showToast('Welcome back, ' + name + '.');
+  }, 100);
 }
 
 async function handleLogout() {
@@ -1598,7 +1614,15 @@ async function init() {
     var user = res.data.session.user;
     var name = (user.user_metadata && user.user_metadata.name) ? user.user_metadata.name : user.email.split('@')[0];
     currentUser = { id: user.id, name: name, email: user.email };
-    launchApp();
+    // Show homepage with returning user banner instead of jumping straight to app
+    document.getElementById('welcome-screen').style.display = 'flex';
+    document.getElementById('homepage-btf').style.display = 'block';
+    var banner = document.getElementById('returning-user-banner');
+    document.getElementById('returning-user-name').textContent = name;
+    banner.style.display = 'flex';
+    // Hide the sign-in button since they're already logged in
+    var signinBtn = document.querySelector('#welcome-screen > div:first-child button');
+    if (signinBtn) signinBtn.style.display = 'none';
   } else {
     document.getElementById('welcome-screen').style.display = 'flex';
     document.getElementById('homepage-btf').style.display = 'block';
