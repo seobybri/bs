@@ -1164,7 +1164,8 @@ function showAuth(type) {
 }
 
 function goHome() {
-  document.getElementById('welcome-screen').style.display = 'flex'; document.getElementById('homepage-btf').style.display = 'block';
+  document.getElementById('welcome-screen').style.display = 'flex';
+  document.getElementById('homepage-btf').style.display = 'block';
   document.getElementById('signup-screen').style.display = 'none';
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('reflection-screen').style.display = 'none';
@@ -1172,6 +1173,19 @@ function goHome() {
   document.getElementById('ws-reflection-screen').style.display = 'none';
   document.getElementById('main-app').style.display = 'none';
   closePrivacy();
+  // If still logged in, show returning user state — don't reset to guest
+  if (currentUser) {
+    var banner = document.getElementById('returning-user-banner');
+    document.getElementById('returning-user-name').textContent = currentUser.name;
+    if (banner) banner.style.display = 'flex';
+    var signinBtn = document.querySelector('#welcome-screen > div:first-child button');
+    if (signinBtn) signinBtn.style.display = 'none';
+  } else {
+    var banner = document.getElementById('returning-user-banner');
+    if (banner) banner.style.display = 'none';
+    var signinBtn = document.querySelector('#welcome-screen > div:first-child button');
+    if (signinBtn) signinBtn.style.display = '';
+  }
 }
 
 function googleAuth() {
