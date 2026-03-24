@@ -500,23 +500,51 @@
 <!-- ALTERNATIVE ENTRY ROUTING OVERLAY -->
 <div id="btf-routing-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:200; align-items:center; justify-content:center; padding:1.5rem;">
   <div style="background:var(--surface); border-radius:var(--radius); padding:2rem; width:100%; max-width:480px;">
-    <p style="font-size:20px; font-weight:700; color:var(--text); letter-spacing:-0.02em; margin:0 0 0.4rem;">What does this feel like most?</p>
-    <p style="font-size:14px; color:var(--text2); margin:0 0 1.5rem;">Pick the one that feels closest. You can always change it.</p>
-    <div style="display:flex; flex-direction:column; gap:10px;">
-      <button onclick="btfSelectType('resentment')" style="background:var(--surface); border:1.5px solid var(--border2); border-radius:var(--radius); padding:1rem 1.25rem; color:var(--text); cursor:pointer; width:100%; text-align:left; display:flex; align-items:center; gap:12px; font-family:inherit;">
-        <div style="width:38px;height:38px;border-radius:10px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">😤</div>
-        <div><div style="font-size:14px;font-weight:600;color:var(--text);">Anger or resentment</div><div style="font-size:12px;color:var(--text2);margin-top:2px;">Bitterness toward a person, place, or situation</div></div>
-      </button>
-      <button onclick="btfSelectType('fear')" style="background:var(--surface); border:1.5px solid var(--border2); border-radius:var(--radius); padding:1rem 1.25rem; color:var(--text); cursor:pointer; width:100%; text-align:left; display:flex; align-items:center; gap:12px; font-family:inherit;">
-        <div style="width:38px;height:38px;border-radius:10px;background:#EDE9FE;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">💡</div>
-        <div><div style="font-size:14px;font-weight:600;color:var(--text);">A worry or fear</div><div style="font-size:12px;color:var(--text2);margin-top:2px;">Something you're afraid of losing, facing, or experiencing</div></div>
-      </button>
-      <button onclick="btfSelectType('harms')" style="background:var(--surface); border:1.5px solid var(--border2); border-radius:var(--radius); padding:1rem 1.25rem; color:var(--text); cursor:pointer; width:100%; text-align:left; display:flex; align-items:center; gap:12px; font-family:inherit;">
-        <div style="width:38px;height:38px;border-radius:10px;background:#D1FAE5;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">✍️</div>
-        <div><div style="font-size:14px;font-weight:600;color:var(--text);">Something I did</div><div style="font-size:12px;color:var(--text2);margin-top:2px;">Where you were at fault and may owe an amend</div></div>
-      </button>
+
+    <!-- Panel 1: Type selection -->
+    <div id="btf-panel-type">
+      <p style="font-size:20px; font-weight:700; color:var(--text); letter-spacing:-0.02em; margin:0 0 0.4rem;">What does this feel like most?</p>
+      <p style="font-size:14px; color:var(--text2); margin:0 0 1.5rem;">Pick the one that feels closest. You can always change it.</p>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <button onclick="btfPickType('resentment')" style="background:var(--surface); border:1.5px solid var(--border2); border-radius:var(--radius); padding:1rem 1.25rem; color:var(--text); cursor:pointer; width:100%; text-align:left; display:flex; align-items:center; gap:12px; font-family:inherit;">
+          <div style="width:38px;height:38px;border-radius:10px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">😤</div>
+          <div><div style="font-size:14px;font-weight:600;color:var(--text);">Anger or resentment</div><div style="font-size:12px;color:var(--text2);margin-top:2px;">Bitterness toward a person, place, or situation</div></div>
+        </button>
+        <button onclick="btfPickType('fear')" style="background:var(--surface); border:1.5px solid var(--border2); border-radius:var(--radius); padding:1rem 1.25rem; color:var(--text); cursor:pointer; width:100%; text-align:left; display:flex; align-items:center; gap:12px; font-family:inherit;">
+          <div style="width:38px;height:38px;border-radius:10px;background:#EDE9FE;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">💡</div>
+          <div><div style="font-size:14px;font-weight:600;color:var(--text);">A worry or fear</div><div style="font-size:12px;color:var(--text2);margin-top:2px;">Something you're afraid of losing, facing, or experiencing</div></div>
+        </button>
+        <button onclick="btfPickType('harms')" style="background:var(--surface); border:1.5px solid var(--border2); border-radius:var(--radius); padding:1rem 1.25rem; color:var(--text); cursor:pointer; width:100%; text-align:left; display:flex; align-items:center; gap:12px; font-family:inherit;">
+          <div style="width:38px;height:38px;border-radius:10px;background:#D1FAE5;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">✍️</div>
+          <div><div style="font-size:14px;font-weight:600;color:var(--text);">Something I did</div><div style="font-size:12px;color:var(--text2);margin-top:2px;">Where you were at fault and may owe an amend</div></div>
+        </button>
+      </div>
+      <button onclick="document.getElementById('btf-routing-overlay').style.display='none';" style="background:none;border:none;font-size:13px;color:var(--text3);cursor:pointer;margin-top:1rem;font-family:inherit;width:100%;text-align:center;">&#8592; Back</button>
     </div>
-    <button onclick="document.getElementById('btf-routing-overlay').style.display='none';" style="background:none;border:none;font-size:13px;color:var(--text3);cursor:pointer;margin-top:1rem;font-family:inherit;width:100%;text-align:center;">&#8592; Back</button>
+
+    <!-- Panel 2: Mode selection -->
+    <div id="btf-panel-mode" style="display:none;">
+      <p style="font-size:20px; font-weight:700; color:var(--text); letter-spacing:-0.02em; margin:0 0 0.4rem;">How do you want to work through this?</p>
+      <p style="font-size:14px; color:var(--text2); margin:0 0 1.5rem;">Both get you to the same place — pick what feels right.</p>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <button onclick="btfSelectMode('guided')" style="background:var(--surface); border:1.5px solid var(--border2); border-radius:var(--radius); padding:1rem 1.25rem; color:var(--text); cursor:pointer; width:100%; text-align:left; display:flex; align-items:center; gap:12px; font-family:inherit;">
+          <div style="width:38px;height:38px;border-radius:10px;background:#E8F5F3;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🧭</div>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--text);">Walk me through it</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:2px;">Step by step — one question at a time</div>
+          </div>
+        </button>
+        <button onclick="btfSelectMode('worksheet')" style="background:var(--surface); border:1.5px solid var(--border2); border-radius:var(--radius); padding:1rem 1.25rem; color:var(--text); cursor:pointer; width:100%; text-align:left; display:flex; align-items:center; gap:12px; font-family:inherit;">
+          <div style="width:38px;height:38px;border-radius:10px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">📋</div>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--text);">I have a full list</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:2px;">Spreadsheet view — like the worksheet your sponsor would hand you</div>
+          </div>
+        </button>
+      </div>
+      <button onclick="document.getElementById('btf-panel-mode').style.display='none'; document.getElementById('btf-panel-type').style.display='block';" style="background:none;border:none;font-size:13px;color:var(--text3);cursor:pointer;margin-top:1rem;font-family:inherit;width:100%;text-align:center;">&#8592; Back</button>
+    </div>
+
   </div>
 </div>
 
@@ -969,6 +997,26 @@
       <a onclick="shareEntry()">Share this app</a>
       <a onclick="showAuth('login')">Sign in to existing account</a>
       <a onclick="goHome()">Back to home</a>
+    </div>
+
+    <div id="reflection-feedback" style="display:none; margin-top:1.5rem; padding-top:1.5rem; border-top:0.5px solid var(--border);">
+      <div id="feedback-prompt" style="text-align:center;">
+        <p style="font-size:13px; color:var(--text3); margin:0 0 0.75rem;">Did this land?</p>
+        <div style="display:flex; justify-content:center; gap:12px;">
+          <button onclick="submitFeedback('up')" id="feedback-up" style="background:var(--surface); border:0.5px solid var(--border2); border-radius:var(--radius-sm); padding:8px 20px; font-size:18px; cursor:pointer; transition:all 0.15s;">&#128077;</button>
+          <button onclick="submitFeedback('down')" id="feedback-down" style="background:var(--surface); border:0.5px solid var(--border2); border-radius:var(--radius-sm); padding:8px 20px; font-size:18px; cursor:pointer; transition:all 0.15s;">&#128078;</button>
+        </div>
+      </div>
+      <div id="feedback-followup" style="display:none; margin-top:1rem;">
+        <input class="form-input" type="text" id="feedback-text" style="font-size:13px; padding:10px 14px;" />
+        <div style="display:flex; gap:8px; margin-top:8px;">
+          <button onclick="submitFeedbackText()" class="btn-primary btn-sm" style="flex:1;">Send</button>
+          <button onclick="dismissFeedback()" class="btn-secondary btn-sm" style="flex:1;">Skip</button>
+        </div>
+      </div>
+      <div id="feedback-thanks" style="display:none; text-align:center;">
+        <p style="font-size:13px; color:var(--text3); margin:0;">Thanks — that helps.</p>
+      </div>
     </div>
   </div>
 </div>
@@ -1704,6 +1752,16 @@ function showReflectionScreen(entry) {
   document.getElementById('reflection-save-prompt').style.display = 'none';
   document.getElementById('followup-response').style.display = 'none';
   document.getElementById('followup-input').value = '';
+  document.getElementById('reflection-feedback').style.display = 'none';
+  document.getElementById('feedback-prompt').style.display = 'block';
+  document.getElementById('feedback-followup').style.display = 'none';
+  document.getElementById('feedback-thanks').style.display = 'none';
+  document.getElementById('feedback-up').style.background = 'var(--surface)';
+  document.getElementById('feedback-down').style.background = 'var(--surface)';
+  document.getElementById('feedback-up').style.borderColor = 'var(--border2)';
+  document.getElementById('feedback-down').style.borderColor = 'var(--border2)';
+  document.getElementById('feedback-text').value = '';
+  currentFeedbackEntry = null;
 }
 
 async function getReflectionFull(entry) {
@@ -1740,6 +1798,7 @@ async function getReflectionFull(entry) {
       document.getElementById('reflection-actions').style.display = 'flex';
       document.getElementById('reflection-secondary').style.display = 'flex';
       document.getElementById('share-sponsor-wrap').style.display = 'block';
+      document.getElementById('reflection-feedback').style.display = 'block';
     }, 800);
   } catch(e) {
     document.getElementById('reflection-loading').style.display = 'none';
@@ -1861,6 +1920,47 @@ function buildPrompt(entry) {
 }
 init();
 
+var currentFeedbackEntry = null;
+
+function submitFeedback(vote) {
+  // Highlight selected button
+  document.getElementById('feedback-up').style.background = vote === 'up' ? '#E8F5F3' : 'var(--surface)';
+  document.getElementById('feedback-down').style.background = vote === 'down' ? '#FCEBEB' : 'var(--surface)';
+  document.getElementById('feedback-up').style.borderColor = vote === 'up' ? 'var(--accent)' : 'var(--border2)';
+  document.getElementById('feedback-down').style.borderColor = vote === 'down' ? '#E24B4A' : 'var(--border2)';
+
+  // Store vote on current entry
+  if (entries.length > 0) {
+    currentFeedbackEntry = entries[entries.length - 1];
+    currentFeedbackEntry.feedbackVote = vote;
+    saveEntries();
+  }
+
+  // Show contextual follow-up
+  var placeholder = vote === 'up' ? 'What hit home? (optional)' : 'What missed? (optional)';
+  document.getElementById('feedback-text').placeholder = placeholder;
+  document.getElementById('feedback-prompt').style.display = 'none';
+  document.getElementById('feedback-followup').style.display = 'block';
+}
+
+function submitFeedbackText() {
+  var text = document.getElementById('feedback-text').value.trim();
+  if (currentFeedbackEntry) {
+    currentFeedbackEntry.feedbackText = text;
+    saveEntries();
+  }
+  document.getElementById('feedback-followup').style.display = 'none';
+  document.getElementById('feedback-thanks').style.display = 'block';
+}
+
+function dismissFeedback() {
+  document.getElementById('feedback-followup').style.display = 'none';
+  document.getElementById('feedback-thanks').style.display = 'block';
+}
+
+
+var btfSelectedType = '';
+
 function btfKeepGoing() {
   var val = document.getElementById('btf-open-field').value.trim();
   if (!val) {
@@ -1868,24 +1968,45 @@ function btfKeepGoing() {
     document.getElementById('btf-open-field').focus();
     return;
   }
+  // Reset panels
+  document.getElementById('btf-panel-type').style.display = 'block';
+  document.getElementById('btf-panel-mode').style.display = 'none';
   document.getElementById('btf-routing-overlay').style.display = 'flex';
 }
 
-function btfSelectType(type) {
+function btfPickType(type) {
+  btfSelectedType = type;
+  document.getElementById('btf-panel-type').style.display = 'none';
+  document.getElementById('btf-panel-mode').style.display = 'block';
+}
+
+function btfSelectMode(mode) {
   var text = document.getElementById('btf-open-field').value.trim();
   document.getElementById('btf-routing-overlay').style.display = 'none';
   document.getElementById('btf-open-field').value = '';
+
+  if (mode === 'worksheet') {
+    if (!currentUser) {
+      startFree();
+      setTimeout(function() { showWorksheet(); }, 100);
+    } else {
+      showWorksheet();
+    }
+    return;
+  }
+
+  // Guided mode
   if (!currentUser) {
     startFree();
     setTimeout(function() {
-      selectType(type);
+      selectType(btfSelectedType);
       goToStep(2);
       document.getElementById('cause').value = text;
     }, 100);
   } else {
     showSection('new', document.querySelector('.nav button'));
     setTimeout(function() {
-      selectType(type);
+      selectType(btfSelectedType);
       goToStep(2);
       document.getElementById('cause').value = text;
     }, 100);
