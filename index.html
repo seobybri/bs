@@ -393,7 +393,10 @@
   <!-- Returning user banner (shown only when logged in) -->
   <div id="returning-user-banner" style="display:none; position:absolute; top:0; left:0; right:0; background:var(--surface); border-bottom:0.5px solid var(--border); padding:0.875rem 1.5rem; display:none; align-items:center; justify-content:space-between; gap:1rem;">
     <span style="font-size:14px; color:var(--text2);">Welcome back, <strong id="returning-user-name" style="color:var(--text);"></strong></span>
-    <button onclick="launchApp(); setTimeout(function(){ showSection('dashboard', document.querySelectorAll('.nav button')[1]); }, 50);" class="btn-primary" style="width:auto; padding:8px 18px; font-size:13px;">Go to my inventory &#8594;</button>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <button onclick="handleLogout()" style="background:none; border:none; font-size:13px; color:var(--text3); cursor:pointer; font-family:inherit; padding:4px 8px;">Sign out</button>
+      <button onclick="launchApp(); setTimeout(function(){ showSection('dashboard', document.querySelectorAll('.nav button')[1]); }, 50);" class="btn-primary" style="width:auto; padding:8px 18px; font-size:13px;">Go to my inventory &#8594;</button>
+    </div>
   </div>
 
   <div class="welcome-inner">
