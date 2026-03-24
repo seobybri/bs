@@ -1231,7 +1231,15 @@ async function handleLogout() {
   await sb.auth.signOut();
   currentUser = null;
   entries = [];
+  resetHomepageToGuestState();
   goHome();
+}
+
+function resetHomepageToGuestState() {
+  var banner = document.getElementById('returning-user-banner');
+  if (banner) banner.style.display = 'none';
+  var signinBtn = document.querySelector('#welcome-screen > div:first-child button');
+  if (signinBtn) signinBtn.style.display = '';
 }
 
 function continueAsGuest() {
