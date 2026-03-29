@@ -248,6 +248,21 @@
   .sponsor-note p { font-size: 13px; color: var(--text2); line-height: 1.7; }
   .share-sponsor-btn { background: var(--surface); border: 0.5px solid var(--border2); border-radius: var(--radius-sm); padding: 10px 16px; font-size: 13px; color: var(--text2); cursor: pointer; font-family: inherit; width: 100%; text-align: left; display: flex; align-items: center; gap: 10px; transition: all 0.15s; margin-top: 0.75rem; }
   .share-sponsor-btn:hover { background: var(--surface2); color: var(--text); border-color: var(--accent); }
+  .share-entry-link { background: none; border: none; font-size: 12px; color: var(--accent); cursor: pointer; font-family: inherit; padding: 4px 0 0; text-decoration: underline; text-underline-offset: 2px; display: inline-block; }
+  .share-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 300; align-items: flex-end; justify-content: center; }
+  .share-modal-overlay.open { display: flex; }
+  .share-modal { background: var(--surface); border-radius: var(--radius) var(--radius) 0 0; width: 100%; max-width: 520px; padding: 1.75rem 1.5rem calc(2rem + env(safe-area-inset-bottom)); }
+  .share-modal-title { font-size: 17px; font-weight: 700; color: var(--text); letter-spacing: -0.02em; margin-bottom: 0.35rem; }
+  .share-modal-sub { font-size: 13px; color: var(--text2); margin-bottom: 1.5rem; line-height: 1.6; }
+  .share-toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 0.875rem 0; border-top: 0.5px solid var(--border); margin-bottom: 1.25rem; }
+  .share-toggle-label { font-size: 14px; color: var(--text); }
+  .share-toggle-sub { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .toggle-switch { position: relative; width: 44px; height: 26px; flex-shrink: 0; }
+  .toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+  .toggle-track { position: absolute; inset: 0; background: var(--border2); border-radius: 13px; cursor: pointer; transition: background 0.2s; }
+  .toggle-track::before { content: ""; position: absolute; width: 20px; height: 20px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: transform 0.2s; }
+  .toggle-switch input:checked + .toggle-track { background: var(--accent); }
+  .toggle-switch input:checked + .toggle-track::before { transform: translateX(18px); }
 
   /* STEP 4 PROGRESS TRACKS */
   .track-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.5rem; }
@@ -790,11 +805,12 @@
           <div class="stat-card"><div class="stat-num" id="d-harms">0</div><div class="stat-lbl">harms done</div></div>
         </div>
         <input class="search-bar" id="search-input" placeholder="Search entries..." oninput="renderDashboard()" />
-        <div class="filter-row">
-          <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
-          <button class="filter-btn" onclick="setFilter('resentment', this)">Resentments</button>
-          <button class="filter-btn" onclick="setFilter('fear', this)">Fears</button>
-          <button class="filter-btn" onclick="setFilter('harms', this)">Harms Done</button>
+        <div class="filter-row" style="flex-wrap:wrap;">
+          <button class="filter-btn active" onclick="setFilter(&apos;all&apos;, this)">All</button>
+          <button class="filter-btn" onclick="setFilter(&apos;resentment&apos;, this)">Resentments</button>
+          <button class="filter-btn" onclick="setFilter(&apos;fear&apos;, this)">Fears</button>
+          <button class="filter-btn" onclick="setFilter(&apos;harms&apos;, this)">Harms Done</button>
+          <button class="filter-btn" onclick="openShareModal(&apos;all&apos;, null)" style="color:var(--accent); border-color:var(--accent);">&#8595; Share all</button>
         </div>
       </div>
       <div id="dashboard-entries"></div>
@@ -1008,7 +1024,7 @@
     </div>
 
     <div id="share-sponsor-wrap" style="display:none; margin-top:0.5rem;">
-      <button class="share-sponsor-btn" onclick="shareWithSponsor()">
+      <button class="share-sponsor-btn" onclick="openShareModal(&apos;current&apos;, null)">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="flex-shrink:0;"><path d="M13 5l-5 5-5-5"/><path d="M8 10V2"/><path d="M2 13h12"/></svg>
         Share this entry with your sponsor
       </button>
@@ -1373,24 +1389,94 @@ function closePrivacy() {
   document.getElementById('privacy-modal').classList.remove('open');
 }
 
-function shareWithSponsor() {
-  var entry = entries[0];
-  if (!entry) return;
-  var text = 'My Step 4 entry — ' + entry.date + '\n\n';
-  text += 'Type: ' + entry.type + '\n';
-  text += 'Subject: ' + entry.subject + '\n';
-  text += 'What happened: ' + entry.cause + '\n';
-  if (entry.affects && entry.affects.length) text += 'Affects: ' + entry.affects.join(', ') + '\n';
-  if (entry.mypart) text += 'My part: ' + entry.mypart + '\n';
-  var reflectionText = document.getElementById('reflection-text').textContent;
-  if (reflectionText) text += '\nBill\'s reflection:\n' + reflectionText;
+var _shareContext = null;
+
+function openShareModal(mode, entryId) {
+  _shareContext = { mode: mode, entryId: entryId };
+  var overlay = document.getElementById('share-modal-overlay');
+  var title = document.getElementById('share-modal-title');
+  var sub = document.getElementById('share-modal-sub');
+  if (mode === 'all') {
+    title.textContent = 'Share your full inventory';
+    sub.textContent = 'All ' + entries.length + ' ' + (entries.length === 1 ? 'entry' : 'entries') + ' will be formatted as plain text for your sponsor.';
+  } else {
+    title.textContent = 'Share with your sponsor';
+    sub.textContent = 'Your sponsor will receive a plain-text summary they can read before or during your Step 5.';
+  }
+  document.getElementById('share-include-reflection').checked = false;
+  overlay.classList.add('open');
+}
+
+function closeShareModal() {
+  var overlay = document.getElementById('share-modal-overlay');
+  if (overlay) overlay.classList.remove('open');
+  _shareContext = null;
+}
+
+function formatEntryText(e, includeReflection) {
+  var typeLabel = e.type === 'resentment' ? 'Resentment' : e.type === 'fear' ? 'Fear' : 'Harms Done';
+  var text = '-----------------\n';
+  text += typeLabel.toUpperCase() + ' - ' + e.date + '\n';
+  text += '-----------------\n';
+  if (e.type === 'resentment') text += 'Who or what: ' + (e.subject || '') + '\n';
+  else if (e.type === 'fear') text += 'The fear: ' + (e.subject || '') + '\n';
+  else text += 'Who was harmed: ' + (e.subject || '') + '\n';
+  if (e.cause) text += 'What happened: ' + e.cause + '\n';
+  if (e.affects && e.affects.length) text += 'Areas affected: ' + e.affects.join(', ') + '\n';
+  if (e.mypart) text += 'My part: ' + e.mypart + '\n';
+  if (includeReflection && e.reflection) {
+    text += '\nBill\'s reflection:\n' + e.reflection + '\n';
+  }
+  return text;
+}
+
+function executeShare() {
+  if (!_shareContext) return;
+  var includeReflection = document.getElementById('share-include-reflection').checked;
+  var text = '';
+  var title = '';
+
+  if (_shareContext.mode === 'all') {
+    title = 'My Step 4 Inventory';
+    text = 'MY STEP 4 INVENTORY\n';
+    text += new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) + '\n';
+    text += entries.length + ' ' + (entries.length === 1 ? 'entry' : 'entries') + '\n\n';
+    entries.forEach(function(e) { text += formatEntryText(e, includeReflection) + '\n'; });
+  } else if (_shareContext.mode === 'current') {
+    var entry = entries[0];
+    if (!entry) { closeShareModal(); return; }
+    title = 'My Step 4 Entry';
+    text = formatEntryText(entry, false);
+    if (includeReflection) {
+      var liveText = document.getElementById('reflection-text') ? document.getElementById('reflection-text').textContent : '';
+      if (entry.reflection) text += '\nBill\'s reflection:\n' + entry.reflection + '\n';
+      else if (liveText) text += '\nBill\'s reflection:\n' + liveText + '\n';
+    }
+  } else if (_shareContext.mode === 'entry') {
+    var found = null;
+    for (var i = 0; i < entries.length; i++) {
+      if (String(entries[i].id) === String(_shareContext.entryId)) { found = entries[i]; break; }
+    }
+    if (!found) { closeShareModal(); return; }
+    title = 'My Step 4 Entry';
+    text = formatEntryText(found, includeReflection);
+  }
+
+  closeShareModal();
+
   if (navigator.share) {
-    navigator.share({ title: 'My Step 4 Entry', text: text });
+    navigator.share({ title: title, text: text }).catch(function() {});
   } else {
     navigator.clipboard.writeText(text).then(function() {
-      showToast('Entry copied — paste it to share with your sponsor.');
+      showToast('Copied — paste it to share with your sponsor.');
+    }).catch(function() {
+      showToast('Could not copy. Try again.');
     });
   }
+}
+
+function shareWithSponsor() {
+  openShareModal('current', null);
 }
 
 
@@ -1767,6 +1853,7 @@ function renderDashboard() {
       '<div class="entry-meta-row"><span class="entry-affects">' + (e.affects || []).join(', ') + '</span><span class="entry-date">' + e.date + '</span></div>' +
       (hasReflection ? '<div class="entry-expand-hint">Tap to see Bill&#39;s reflection</div>' : '') +
       (hasReflection ? '<div class="entry-reflection" id="' + cardId + '"><div class="entry-reflection-label">Bill&#39;s reflection</div><div class="entry-reflection-text">' + esc(e.reflection) + '</div></div>' : '') +
+      '<div style="margin-top:10px; padding-top:8px; border-top:0.5px solid var(--border);"><button class="share-entry-link" onclick="event.stopPropagation(); openShareModal(&apos;entry&apos;, &apos;' + e.id + '&apos;)">Share with sponsor &#8594;</button></div>' +
       '</div>';
   }).join('');
 }
@@ -2093,5 +2180,25 @@ function btfSelectMode(mode) {
 }
 
 </script>
+<!-- SHARE WITH SPONSOR MODAL -->
+<div class="share-modal-overlay" id="share-modal-overlay" onclick="if(event.target===this)closeShareModal()">
+  <div class="share-modal">
+    <div class="share-modal-title" id="share-modal-title">Share with your sponsor</div>
+    <div class="share-modal-sub" id="share-modal-sub">Your sponsor will receive a plain-text summary they can read before or during your Step 5.</div>
+    <div class="share-toggle-row">
+      <div>
+        <div class="share-toggle-label">Include Bill&#8217;s reflections</div>
+        <div class="share-toggle-sub">Off by default &#8212; your sponsor may prefer to hear your own words first</div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="share-include-reflection" />
+        <span class="toggle-track"></span>
+      </label>
+    </div>
+    <button class="btn-primary" onclick="executeShare()">Share &#8594;</button>
+    <button onclick="closeShareModal()" style="background:none; border:none; width:100%; font-size:13px; color:var(--text3); cursor:pointer; font-family:inherit; margin-top:0.75rem; padding:0.5rem;">Cancel</button>
+  </div>
+</div>
+
 </body>
 </html>
