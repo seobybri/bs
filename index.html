@@ -41,6 +41,8 @@
   .trust-badge { display: flex; align-items: center; gap: 9px; font-size: 13px; color: var(--text2); background: var(--surface); border: 0.5px solid var(--border); border-radius: 8px; padding: 9px 13px; }
   .trust-icon { width: 15px; height: 15px; flex-shrink: 0; stroke: var(--accent); }
   .welcome-note { font-size: 11px; color: var(--text3); line-height: 1.7; }
+  .btf-textarea { width:100%; padding:16px; font-size:16px; border:1.5px solid var(--border2); border-radius:var(--radius); background:var(--surface2); color:var(--text); font-family:inherit; resize:none; min-height:140px; line-height:1.6; box-sizing:border-box; transition:border-color 0.2s; }
+  .btf-textarea:focus { outline:none; border-color: var(--accent); }
   .signin-top-btn { background: none; border: 0.5px solid var(--border2); border-radius: var(--radius-sm); font-size: 13px; color: var(--text2); padding: 7px 16px; cursor: pointer; font-family: inherit; transition: background 0.15s; }
   .signin-top-btn:hover { background: var(--surface2); }
   .welcome-right { display: flex; flex-direction: column; align-items: stretch; }
@@ -527,7 +529,7 @@
     <div style="padding:3rem 0 1rem;">
       <p style="font-size:22px; font-weight:700; color:var(--text); letter-spacing:-0.03em; margin:0 0 0.4rem;">What's on your mind?</p>
       <p style="font-size:15px; color:var(--text2); margin:0 0 1.25rem;">No wrong answers. Just write what's there.</p>
-      <textarea id="btf-open-field" style="width:100%; padding:16px; font-size:15px; border:1.5px solid var(--border2); border-radius:var(--radius); background:var(--surface2); color:var(--text); font-family:inherit; resize:none; min-height:140px; line-height:1.6; box-sizing:border-box; transition:border-color 0.2s;" placeholder="A resentment, a fear, something you did — just write it out." onfocus="this.style.borderColor='#2A9D8F'" onblur="this.style.borderColor='rgba(0,0,0,0.2)'"></textarea>
+      <textarea id="btf-open-field" class="btf-textarea" placeholder="A resentment, a fear, something you did — just write it out."></textarea>
       <button class="btn-primary" onclick="btfKeepGoing()" style="margin-top:0.75rem;">Keep going &#8594;</button>
     </div>
 
@@ -556,7 +558,7 @@
           <div><div style="font-size:14px;font-weight:600;color:var(--text);">Something I did</div><div style="font-size:12px;color:var(--text2);margin-top:2px;">Where you were at fault and may owe an amend</div></div>
         </button>
       </div>
-      <button onclick="document.getElementById('btf-routing-overlay').style.display='none';" style="background:none;border:none;font-size:13px;color:var(--text3);cursor:pointer;margin-top:1rem;font-family:inherit;width:100%;text-align:center;">&#8592; Back</button>
+      <button onclick="btfCloseOverlay()" style="background:none;border:none;font-size:13px;color:var(--text3);cursor:pointer;margin-top:1rem;font-family:inherit;width:100%;text-align:center;">&#8592; Back</button>
     </div>
 
     <!-- Panel 2: Mode selection -->
@@ -579,7 +581,7 @@
           </div>
         </button>
       </div>
-      <button onclick="document.getElementById('btf-panel-mode').style.display='none'; document.getElementById('btf-panel-type').style.display='block';" style="background:none;border:none;font-size:13px;color:var(--text3);cursor:pointer;margin-top:1rem;font-family:inherit;width:100%;text-align:center;">&#8592; Back</button>
+      <button onclick="btfBackToType()" style="background:none;border:none;font-size:13px;color:var(--text3);cursor:pointer;margin-top:1rem;font-family:inherit;width:100%;text-align:center;">&#8592; Back</button>
     </div>
 
   </div>
@@ -2177,6 +2179,15 @@ function submitFeedback(vote) {
 
 
 var btfSelectedType = '';
+
+function btfCloseOverlay() {
+  document.getElementById('btf-routing-overlay').style.display = 'none';
+}
+
+function btfBackToType() {
+  document.getElementById('btf-panel-mode').style.display = 'none';
+  document.getElementById('btf-panel-type').style.display = 'block';
+}
 
 function btfKeepGoing() {
   var val = document.getElementById('btf-open-field').value.trim();
