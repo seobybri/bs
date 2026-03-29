@@ -346,7 +346,6 @@
     .ws-table th, .ws-table td { padding: 6px 6px; }
   }
 </style>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -1069,12 +1068,19 @@
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const WORKER_URL = 'https://aged-unit-3ea7.seobybri.workers.dev';
 
 const SUPABASE_URL = 'https://fmodmdnjtdhosfbtixyo.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtb2RtZG5qdGRob3NmYnRpeHlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNjAxMDMsImV4cCI6MjA4OTkzNjEwM30.lsLjokeacavaTXB7et1qEMo_5yE6zndyUOkAcN7Ov8k';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+var sb;
+try {
+  sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+} catch(e) {
+  console.error('Supabase failed to initialize:', e);
+  sb = null;
+}
 const AFFECTS = [
   { label: 'Self-esteem', def: 'Your sense of self-worth and how you feel about yourself as a person.' },
   { label: 'Security', def: 'Your sense of safety — financial, emotional, physical, or relational.' },
@@ -1744,28 +1750,37 @@ async function reflectionSignup() {
 }
 
 async function init() {
-  var res = await sb.auth.getSession();
-  if (res.data.session) {
-    var user = res.data.session.user;
-    var name = (user.user_metadata && user.user_metadata.name) ? user.user_metadata.name : user.email.split('@')[0];
-    currentUser = { id: user.id, name: name, email: user.email };
-    // Show homepage with returning user banner instead of jumping straight to app
+  if (!sb) {
+    // Supabase failed to load — show homepage in guest mode
     document.getElementById('welcome-screen').style.display = 'flex';
     document.getElementById('homepage-btf').style.display = 'block';
-    var banner = document.getElementById('returning-user-banner');
-    document.getElementById('returning-user-name').textContent = name;
-    banner.style.display = 'flex';
-    // Hide the sign-in button since they're already logged in
-    var signinBtn = document.querySelector('#welcome-screen > div:first-child button');
-    if (signinBtn) signinBtn.style.display = 'none';
-  } else {
+    return;
+  }
+  try {
+    var res = await sb.auth.getSession();
+    if (res.data.session) {
+      var user = res.data.session.user;
+      var name = (user.user_metadata && user.user_metadata.name) ? user.user_metadata.name : user.email.split('@')[0];
+      currentUser = { id: user.id, name: name, email: user.email };
+      document.getElementById('welcome-screen').style.display = 'flex';
+      document.getElementById('homepage-btf').style.display = 'block';
+      var banner = document.getElementById('returning-user-banner');
+      document.getElementById('returning-user-name').textContent = name;
+      banner.style.display = 'flex';
+      var signinBtn = document.querySelector('#welcome-screen > div:first-child button');
+      if (signinBtn) signinBtn.style.display = 'none';
+    } else {
+      document.getElementById('welcome-screen').style.display = 'flex';
+      document.getElementById('homepage-btf').style.display = 'block';
+    }
+    sb.auth.onAuthStateChange(function(event, session) {
+      if (event === 'SIGNED_OUT') { currentUser = null; entries = []; goHome(); }
+    });
+  } catch(e) {
+    console.error('Auth init error:', e);
     document.getElementById('welcome-screen').style.display = 'flex';
     document.getElementById('homepage-btf').style.display = 'block';
   }
-  // Keep session in sync
-  sb.auth.onAuthStateChange(function(event, session) {
-    if (event === 'SIGNED_OUT') { currentUser = null; entries = []; goHome(); }
-  });
 }
 
 function showSection(name, btn) {
