@@ -41,6 +41,8 @@
   .trust-badge { display: flex; align-items: center; gap: 9px; font-size: 13px; color: var(--text2); background: var(--surface); border: 0.5px solid var(--border); border-radius: 8px; padding: 9px 13px; }
   .trust-icon { width: 15px; height: 15px; flex-shrink: 0; stroke: var(--accent); }
   .welcome-note { font-size: 11px; color: var(--text3); line-height: 1.7; }
+  .signin-top-btn { background: none; border: 0.5px solid var(--border2); border-radius: var(--radius-sm); font-size: 13px; color: var(--text2); padding: 7px 16px; cursor: pointer; font-family: inherit; transition: background 0.15s; }
+  .signin-top-btn:hover { background: var(--surface2); }
   .welcome-right { display: flex; flex-direction: column; align-items: stretch; }
   .testimonial { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1.75rem; }
   .testimonial-photo-wrap { display: flex; justify-content: center; margin-bottom: 1.25rem; }
@@ -406,7 +408,7 @@
 
   <!-- Top nav bar with sign in link -->
   <div style="position:absolute; top:0; left:0; right:0; display:flex; justify-content:flex-end; padding:1.25rem 1.5rem;">
-    <button onclick="showAuth('login')" style="background:none; border:0.5px solid var(--border2); border-radius:var(--radius-sm); font-size:13px; color:var(--text2); padding:7px 16px; cursor:pointer; font-family:inherit; transition:all 0.15s;" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='none'">Sign in</button>
+    <button onclick="showAuth('login')" class="signin-top-btn">Sign in</button>
   </div>
 
   <!-- Returning user banner (shown only when logged in) -->
@@ -1449,9 +1451,9 @@ function closeShareModal() {
 
 function formatEntry(e, includeReflection) {
   var typeLabel = e.type === 'resentment' ? 'Resentment' : e.type === 'fear' ? 'Fear' : 'Harms Done';
-  var text = '─────────────────\n';
+  var text = '-----------------\n';
   text += typeLabel.toUpperCase() + ' — ' + e.date + '\n';
-  text += '─────────────────\n';
+  text += '-----------------\n';
   if (e.type === 'resentment') text += 'Who or what: ' + e.subject + '\n';
   else if (e.type === 'fear') text += 'The fear: ' + e.subject + '\n';
   else text += 'Who was harmed: ' + e.subject + '\n';
@@ -1510,7 +1512,7 @@ function shareWithSponsor() {
 }
 
 
-// ─── WORKSHEET ───────────────────────────────────────────────────
+// --- WORKSHEET ---
 
 var wsRows = { resentment: [], fear: [], harms: [] };
 var wsRowId = 0;
