@@ -1,0 +1,2279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Distill It — Gain Clarity. Find Peace.</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f9f9f7; --surface: #ffffff; --surface2: #f2f2f0;
+    --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.2);
+    --text: #111111; --text2: #555555; --text3: #999999;
+    --accent: #2A9D8F; --accent-text: #ffffff;
+    --radius: 12px; --radius-sm: 8px;
+  }
+  @media (prefers-color-scheme: dark) {
+    .welcome-logo svg text { fill: #f0ede8; }
+    :root {
+      --bg: #111111; --surface: #1a1a1a; --surface2: #222222;
+      --border: rgba(255,255,255,0.08); --border2: rgba(255,255,255,0.16);
+      --text: #f0ede8; --text2: #999999; --text3: #555555;
+      --accent: #2A9D8F; --accent-text: #ffffff;
+    }
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* WELCOME */
+  .welcome-outer { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2.5rem 1.5rem; position: relative; }
+  .welcome-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; max-width: 880px; width: 100%; align-items: center; }
+  @media (max-width: 660px) {
+    .welcome-inner { grid-template-columns: 1fr; gap: 2rem; }
+    .welcome-right { order: 1; }
+    .welcome-outer { padding-top: 4rem; }
+    .btf-card-grid { grid-template-columns: 1fr !important; }
+  }
+  .welcome-logo { margin-bottom: 1.75rem; }
+  .welcome-left h1 { font-size: 40px; font-weight: 700; letter-spacing: -0.03em; color: var(--text); line-height: 1.1; margin-bottom: 1.1rem; }
+  .welcome-desc { font-size: 15px; color: var(--text2); line-height: 1.8; margin-bottom: 1.75rem; }
+  .welcome-actions { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.25rem; }
+  .trust-badges { display: flex; flex-direction: column; gap: 7px; margin-bottom: 1.25rem; }
+  .trust-badge { display: flex; align-items: center; gap: 9px; font-size: 13px; color: var(--text2); background: var(--surface); border: 0.5px solid var(--border); border-radius: 8px; padding: 9px 13px; }
+  .trust-icon { width: 15px; height: 15px; flex-shrink: 0; stroke: var(--accent); }
+  .welcome-note { font-size: 11px; color: var(--text3); line-height: 1.7; }
+  .signin-top-btn { background: none; border: 0.5px solid var(--border2); border-radius: var(--radius-sm); font-size: 13px; color: var(--text2); padding: 7px 16px; cursor: pointer; font-family: inherit; transition: background 0.15s; }
+  .signin-top-btn:hover { background: var(--surface2); }
+  .btf-textarea { width:100%; padding:16px; font-size:16px; border:1.5px solid var(--border2); border-radius:var(--radius); background:var(--surface2); color:var(--text); font-family:inherit; resize:none; min-height:140px; line-height:1.6; box-sizing:border-box; transition:border-color 0.2s; }
+  .btf-textarea:focus { outline:none; border-color: var(--accent); }
+  .welcome-right { display: flex; flex-direction: column; align-items: stretch; }
+  .testimonial { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1.75rem; }
+  .testimonial-photo-wrap { display: flex; justify-content: center; margin-bottom: 1.25rem; }
+  .testimonial-photo { width: 88px; height: 88px; border-radius: 50%; overflow: hidden; border: 3px solid var(--bg); outline: 1px solid var(--border); }
+  .testimonial-stars { text-align: center; font-size: 14px; letter-spacing: 3px; color: var(--accent); margin-bottom: 1rem; }
+  .testimonial-quote { font-size: 15px; color: var(--text); line-height: 1.8; font-style: italic; margin-bottom: 1.25rem; text-align: center; }
+  .testimonial-author { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .testimonial-name { font-size: 14px; font-weight: 600; color: var(--text); }
+  .testimonial-role { font-size: 12px; color: var(--text3); }
+
+  /* AUTH SCREENS */
+  .auth-screen { min-height: 100vh; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 2rem 1.5rem; }
+  .auth-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 2rem; width: 100%; max-width: 400px; }
+  .auth-logo { display: flex; justify-content: center; margin-bottom: 1.75rem; }
+  .auth-card h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.4rem; text-align: center; }
+  .auth-card .auth-sub { font-size: 14px; color: var(--text2); text-align: center; margin-bottom: 1.75rem; }
+  .auth-divider { display: flex; align-items: center; gap: 12px; margin: 1.25rem 0; }
+  .auth-divider span { font-size: 12px; color: var(--text3); white-space: nowrap; }
+  .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 0.5px; background: var(--border2); }
+  .auth-switch { text-align: center; font-size: 13px; color: var(--text2); margin-top: 1.25rem; }
+  .auth-switch a { color: var(--accent); cursor: pointer; text-decoration: none; font-weight: 500; }
+  .auth-error { font-size: 13px; color: #E24B4A; background: #FCEBEB; border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 1rem; display: none; }
+  .back-link { font-size: 13px; color: var(--text3); cursor: pointer; text-align: center; display: block; margin-top: 1rem; }
+  .back-link:hover { color: var(--text2); }
+
+  /* GOOGLE BTN */
+  /* REFLECTION SCREEN */
+  .reflection-screen { display: none; min-height: 100vh; background: var(--bg); }
+  .reflection-header { padding: 1.25rem 1.25rem 0.75rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 0.5px solid var(--border); background: var(--surface); }
+  .reflection-header-logo { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); cursor: pointer; }
+  .reflection-header-right { font-size: 13px; color: var(--text3); }
+  .reflection-body { max-width: 640px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+  .reflection-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.6rem; }
+  .reflection-headline { font-size: 26px; font-weight: 700; letter-spacing: -0.03em; color: var(--text); line-height: 1.2; margin-bottom: 0.5rem; }
+  .reflection-subline { font-size: 14px; color: var(--text2); margin-bottom: 2rem; line-height: 1.6; }
+  .reflection-card { background: var(--surface); border: 0.5px solid var(--border); border-left: 3px solid var(--accent); border-radius: 0 var(--radius) var(--radius) 0; padding: 1.75rem; margin-bottom: 1.5rem; }
+  .reflection-loading-wrap { display: flex; align-items: center; gap: 12px; padding: 0.5rem 0; }
+  .reflection-loading-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); opacity: 0.3; animation: pulse 1.4s infinite; }
+  .reflection-loading-dot:nth-child(2) { animation-delay: 0.2s; }
+  .reflection-loading-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes pulse { 0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1); } }
+  .reflection-text { font-size: 16px; color: var(--text); line-height: 1.85; white-space: pre-wrap; animation: fadeIn 0.6s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .feedback-btn { background:var(--surface); border:0.5px solid var(--border2); border-radius:var(--radius-sm); padding:10px 20px; font-size:18px; cursor:pointer; line-height:1; transition:transform 0.15s, background 0.15s, border-color 0.15s, opacity 0.15s; }
+  .followup-section { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1.5rem; }
+  .followup-label { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 0.75rem; line-height: 1.5; }
+  .followup-input { width: 100%; padding: 10px 14px; font-size: 14px; border: 0.5px solid var(--border2); border-radius: var(--radius-sm); background: var(--surface2); color: var(--text); font-family: inherit; resize: vertical; min-height: 80px; line-height: 1.5; box-sizing: border-box; }
+  .followup-input:focus { outline: none; border-color: var(--accent); }
+  .followup-response { margin-top: 1rem; font-size: 15px; color: var(--text); line-height: 1.8; white-space: pre-wrap; padding-top: 1rem; border-top: 0.5px solid var(--border); animation: fadeIn 0.5s ease; }
+  .reflection-divider { height: 0.5px; background: var(--border); margin: 1.75rem 0; }
+  .reflection-actions { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.5rem; }
+  .reflection-action-row { display: flex; gap: 10px; }
+  .save-prompt-inline { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; }
+  .save-prompt-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 0.3rem; }
+  .save-prompt-sub { font-size: 13px; color: var(--text2); margin-bottom: 1rem; line-height: 1.5; }
+  .save-prompt-fields { display: flex; flex-direction: column; gap: 8px; }
+  .reflection-secondary { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; }
+  .reflection-secondary a { font-size: 13px; color: var(--text3); cursor: pointer; text-decoration: none; }
+  .reflection-secondary a:hover { color: var(--text2); }
+
+  @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+  .btn-google { background: var(--surface); color: var(--text); border: 0.5px solid var(--border2); padding: 13px 20px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 500; cursor: pointer; width: 100%; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 10px; transition: background 0.15s; }
+  .btn-google:hover { background: var(--surface2); }
+
+  /* BUTTONS */
+  .btn-primary { background: var(--accent); color: var(--accent-text); border: none; padding: 15px 20px; border-radius: var(--radius-sm); font-size: 15px; font-weight: 600; cursor: pointer; width: 100%; font-family: inherit; transition: opacity 0.15s; }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-primary:disabled { opacity: 0.35; cursor: default; }
+  .btn-secondary { background: transparent; color: var(--text2); border: 0.5px solid var(--border2); padding: 14px 20px; border-radius: var(--radius-sm); font-size: 15px; cursor: pointer; width: 100%; font-family: inherit; transition: all 0.15s; }
+  .btn-secondary:hover { background: var(--surface2); color: var(--text); }
+  .btn-sm { padding: 8px 16px; font-size: 13px; width: auto; }
+
+  /* FORM */
+  .form-group { margin-bottom: 1rem; }
+  .form-label { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; display: block; }
+  .form-input { width: 100%; padding: 12px 14px; font-size: 16px; border: 0.5px solid var(--border2); border-radius: var(--radius-sm); background: var(--surface2); color: var(--text); font-family: inherit; appearance: none; -webkit-appearance: none; }
+  .form-input:focus { outline: none; border-color: var(--accent); }
+  textarea.form-input { resize: vertical; min-height: 80px; line-height: 1.5; }
+
+  /* MAIN APP */
+  .app { display: none; }
+  .header { background: var(--surface); border-bottom: 0.5px solid var(--border); padding: 1rem 1.25rem 0; position: sticky; top: 0; z-index: 10; }
+  .header-top { display: flex; align-items: center; gap: 10px; margin-bottom: 0.75rem; }
+  .app-title { font-size: 17px; font-weight: 700; color: var(--text); letter-spacing: -0.02em; cursor: pointer; }
+  .app-sub { font-size: 13px; color: var(--text3); }
+  .user-menu { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+  .user-pill { font-size: 12px; color: var(--text2); background: var(--surface2); padding: 5px 12px; border-radius: 20px; border: 0.5px solid var(--border); }
+  .logout-btn { font-size: 12px; color: var(--text3); background: none; border: none; cursor: pointer; font-family: inherit; padding: 5px 8px; }
+  .logout-btn:hover { color: var(--text); }
+  .nav { display: flex; gap: 0; }
+  .nav button { flex: 1; background: none; border: none; padding: 10px 0; font-size: 14px; color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; font-family: inherit; }
+  .nav button.active { color: var(--text); font-weight: 600; border-bottom-color: var(--accent); }
+  .content { max-width: 680px; margin: 0 auto; padding: 1.25rem 1rem 4rem; }
+  .section { display: none; }
+  .section.active { display: block; }
+  .page-sub { font-size: 14px; color: var(--text2); margin-bottom: 1.25rem; line-height: 1.6; }
+
+  /* STEPPER */
+  .progress-wrap { margin-bottom: 1.75rem; }
+  .progress-steps { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .progress-step { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .step-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; transition: all 0.2s; border: 2px solid var(--border2); background: var(--surface); color: var(--text3); }
+  .step-dot.done { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .step-dot.active { border-color: var(--accent); color: var(--accent); background: var(--surface); }
+  .step-label { font-size: 11px; color: var(--text3); white-space: nowrap; }
+  .step-label.active { color: var(--accent); font-weight: 600; }
+  .step-label.done { color: var(--text2); }
+  .progress-bar-track { height: 3px; background: var(--border2); border-radius: 2px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.35s ease; }
+  .stepper-panel { display: none; }
+  .stepper-panel.active { display: block; }
+  .step-heading { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); margin-bottom: 0.5rem; }
+  .step-sub { font-size: 14px; color: var(--text2); margin-bottom: 1.5rem; line-height: 1.6; }
+  .type-cards { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.5rem; }
+  .type-card { display: flex; align-items: center; gap: 14px; padding: 1.1rem 1.25rem; background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); cursor: pointer; transition: all 0.15s; }
+  .type-card:hover { border-color: var(--accent); }
+  .type-card.selected { border-color: var(--accent); background: #f0faf8; }
+  @media (prefers-color-scheme: dark) { .type-card.selected { background: #0d2e29; } }
+  .type-card-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 20px; }
+  .type-card-icon.res { background: #FEF3C7; }
+  .type-card-icon.fear { background: #EDE9FE; }
+  .type-card-icon.rel { background: #D1FAE5; }
+  @media (prefers-color-scheme: dark) { .type-card-icon.res { background: #3D2E0A; } .type-card-icon.fear { background: #2D1B69; } .type-card-icon.rel { background: #064E3B; } }
+  .type-card-text { flex: 1; }
+  .type-card-name { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .type-card-desc { font-size: 13px; color: var(--text2); }
+  .type-card-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .type-card.selected .type-card-check { background: var(--accent); border-color: var(--accent); }
+  .type-card.selected .type-card-check::after { content: ''; width: 6px; height: 6px; background: #fff; border-radius: 50%; display: block; }
+  .step-actions { display: flex; gap: 10px; margin-top: 1.5rem; }
+  .btn-back { background: transparent; color: var(--text2); border: 0.5px solid var(--border2); padding: 13px 20px; border-radius: var(--radius-sm); font-size: 15px; cursor: pointer; font-family: inherit; flex: 1; transition: all 0.15s; }
+  .btn-back:hover { background: var(--surface2); }
+  .affects-definition { background: var(--surface2); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 1rem; font-size: 13px; color: var(--text2); line-height: 1.6; border-left: 3px solid var(--accent); }
+  .affect-def-item { display: flex; gap: 10px; padding: 8px 0; border-bottom: 0.5px solid var(--border); align-items: baseline; }
+  .affect-def-item:last-child { border-bottom: none; }
+  .affect-def-label { font-size: 13px; font-weight: 600; color: var(--accent); white-space: nowrap; min-width: 120px; }
+  .affect-def-text { font-size: 13px; color: var(--text2); line-height: 1.5; }
+  #affects-definition-list { background: var(--surface2); border-radius: var(--radius-sm); padding: 0 14px; margin-bottom: 1rem; overflow: hidden; }
+  #affects-definition-list:empty { display: none; }
+  .review-row { padding: 12px 0; border-bottom: 0.5px solid var(--border); }
+  .review-row:last-child { border-bottom: none; }
+  .review-label { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 4px; }
+  .review-value { font-size: 14px; color: var(--text); line-height: 1.6; }
+  .card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; }
+  .checkbox-group { display: flex; flex-wrap: wrap; gap: 8px; }
+  .check-pill { display: inline-block; padding: 6px 14px; border: 0.5px solid var(--border2); border-radius: 20px; cursor: pointer; font-size: 13px; color: var(--text2); background: var(--surface2); user-select: none; font-family: inherit; line-height: 1.4; transition: all 0.12s; }
+  .check-pill:hover { border-color: var(--accent); color: var(--text); }
+  .check-pill.selected { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+  .save-confirm { font-size: 13px; color: var(--text3); text-align: center; margin-top: 8px; display: none; }
+  .ai-box { border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem; background: var(--surface2); margin-top: 1rem; }
+  .ai-label { font-size: 11px; font-weight: 700; color: var(--text3); letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 10px; }
+  .ai-text { font-size: 15px; color: var(--text); line-height: 1.75; white-space: pre-wrap; }
+  @keyframes dots { 0%, 20% { content: '.'; } 40% { content: '..'; } 60%, 100% { content: '...'; } }
+  .ai-loading { font-size: 14px; color: var(--text2); font-style: italic; }
+  .ai-loading::after { content: ''; animation: dots 1.4s infinite; }
+
+  /* DASHBOARD */
+  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1.25rem; }
+  .stat-card { background: var(--surface2); border-radius: var(--radius-sm); padding: 1rem; text-align: center; }
+  .stat-num { font-size: 30px; font-weight: 700; color: var(--text); letter-spacing: -0.03em; }
+  .stat-lbl { font-size: 12px; color: var(--text2); margin-top: 2px; }
+  .search-bar { width: 100%; padding: 10px 14px; font-size: 14px; border: 0.5px solid var(--border2); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); font-family: inherit; margin-bottom: 1rem; appearance: none; }
+  .search-bar:focus { outline: none; border-color: var(--accent); }
+  .filter-row { display: flex; gap: 8px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .filter-btn { padding: 6px 14px; border: 0.5px solid var(--border2); border-radius: 20px; font-size: 13px; color: var(--text2); background: var(--surface); cursor: pointer; font-family: inherit; transition: all 0.12s; }
+  .filter-btn.active { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+  .entry-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 0.75rem; }
+  .entry-type-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px; margin-bottom: 8px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .badge-resentment { background: #FEF3C7; color: #92400E; }
+  .badge-fear { background: #EDE9FE; color: #4C1D95; }
+  .badge-harms { background: #D1FAE5; color: #065F46; }
+  @media (prefers-color-scheme: dark) {
+    .badge-resentment { background: #3D2E0A; color: #FCD34D; }
+    .badge-fear { background: #2D1B69; color: #C4B5FD; }
+    .badge-harms { background: #064E3B; color: #6EE7B7; }
+  }
+  .entry-subject { font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .entry-body { font-size: 14px; color: var(--text2); line-height: 1.5; }
+  .entry-part { margin-top: 10px; padding-top: 10px; border-top: 0.5px solid var(--border); font-size: 14px; color: var(--text2); line-height: 1.5; }
+  .entry-part strong { color: var(--text); font-weight: 600; }
+  .entry-meta-row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+  .entry-affects { font-size: 12px; color: var(--text3); }
+  .entry-date { font-size: 12px; color: var(--text3); }
+  .section-heading { font-size: 13px; font-weight: 600; color: var(--text2); margin-bottom: 10px; }
+  .pattern-row { padding: 10px 0; border-bottom: 0.5px solid var(--border); font-size: 14px; color: var(--text); display: flex; justify-content: space-between; align-items: center; }
+  .pattern-row:last-child { border-bottom: none; }
+  .pattern-count { font-size: 13px; color: var(--text2); }
+  .empty-state { text-align: center; padding: 2.5rem 1rem; color: var(--text2); font-size: 14px; line-height: 1.7; }
+  .streak-badge { display: inline-flex; align-items: center; gap: 6px; background: #FEF3C7; color: #92400E; font-size: 13px; font-weight: 600; padding: 6px 14px; border-radius: 20px; margin-bottom: 1.25rem; }
+  @media (prefers-color-scheme: dark) { .streak-badge { background: #3D2E0A; color: #FCD34D; } }
+
+  /* PRIVACY MODAL */
+  .privacy-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; padding: 1.5rem; }
+  .privacy-overlay.open { display: flex; }
+  .privacy-modal { background: var(--surface); border-radius: var(--radius); max-width: 520px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 2rem; position: relative; }
+  .privacy-modal h2 { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); margin-bottom: 0.4rem; }
+  .privacy-modal .privacy-tagline { font-size: 14px; color: var(--accent); font-weight: 500; margin-bottom: 1.5rem; }
+  .privacy-block { margin-bottom: 1.25rem; padding-bottom: 1.25rem; border-bottom: 0.5px solid var(--border); }
+  .privacy-block:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .privacy-block-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 0.4rem; display: flex; align-items: center; gap: 8px; }
+  .privacy-block-icon { width: 18px; height: 18px; flex-shrink: 0; stroke: var(--accent); }
+  .privacy-block p { font-size: 13px; color: var(--text2); line-height: 1.7; }
+  .privacy-close { position: absolute; top: 1.25rem; right: 1.25rem; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text3); line-height: 1; padding: 4px; }
+  .privacy-close:hover { color: var(--text); }
+  .privacy-link { font-size: 12px; color: var(--accent); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; background: none; border: none; font-family: inherit; padding: 0; }
+  .sponsor-note { background: var(--surface2); border: 0.5px solid var(--border); border-left: 3px solid var(--accent); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 1rem 1.25rem; margin-top: 1.25rem; }
+  .sponsor-note-title { font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.4rem; }
+  .sponsor-note p { font-size: 13px; color: var(--text2); line-height: 1.7; }
+  .share-sponsor-btn { background: var(--surface); border: 0.5px solid var(--border2); border-radius: var(--radius-sm); padding: 10px 16px; font-size: 13px; color: var(--text2); cursor: pointer; font-family: inherit; width: 100%; text-align: left; display: flex; align-items: center; gap: 10px; transition: all 0.15s; margin-top: 0.75rem; }
+  .share-sponsor-btn:hover { background: var(--surface2); color: var(--text); border-color: var(--accent); }
+
+  /* STEP 4 PROGRESS TRACKS */
+  .track-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.5rem; }
+  .track-row { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; }
+  .track-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .track-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .track-count { font-size: 12px; color: var(--text3); }
+  .track-bar-bg { height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+  .track-bar-fill { height: 100%; border-radius: 3px; background: var(--accent); transition: width 0.5s ease; }
+  .track-bar-fill.thin { background: #E24B4A; }
+  .track-bar-fill.medium { background: #EF9F27; }
+  .track-bar-fill.good { background: var(--accent); }
+  .track-depth { font-size: 11px; color: var(--text3); margin-top: 4px; }
+
+  /* EXPANDED ENTRY */
+  .entry-card { cursor: pointer; }
+  .entry-reflection { display: none; margin-top: 12px; padding-top: 12px; border-top: 0.5px solid var(--border); }
+  .entry-reflection.open { display: block; }
+  .entry-reflection-label { font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 8px; }
+  .entry-reflection-text { font-size: 14px; color: var(--text); line-height: 1.75; white-space: pre-wrap; }
+  .entry-expand-hint { font-size: 11px; color: var(--text3); margin-top: 8px; }
+
+  /* MOBILE REFLECTION IMPROVEMENTS */
+  @media (max-width: 600px) {
+    .reflection-body { padding: 1.5rem 1rem 5rem; }
+    .reflection-headline { font-size: 22px; }
+    .reflection-card { padding: 1.25rem; }
+    .reflection-text { font-size: 15px; line-height: 1.8; }
+    .followup-section { padding: 1rem; }
+    .followup-input { font-size: 16px; min-height: 100px; }
+    .followup-response { font-size: 14px; line-height: 1.8; }
+    .reflection-actions { flex-direction: column; }
+    .reflection-secondary { flex-direction: column; align-items: center; gap: 0.75rem; }
+    .save-prompt-fields input { font-size: 16px; }
+    .reflection-header { padding: 0.75rem 1rem 0.75rem; }
+  }
+  @media (max-width: 600px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .track-row { padding: 10px 12px; }
+    .welcome-inner { padding: 1.5rem 1rem 3rem; }
+    .stepper-panel { padding-bottom: 1rem; }
+  }
+
+  /* WORKSHEET */
+  .worksheet-screen { display: none; min-height: 100vh; background: var(--bg); flex-direction: column; }
+  .worksheet-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; border-bottom: 0.5px solid var(--border); background: var(--surface); position: sticky; top: 0; z-index: 10; }
+  .worksheet-back { background: none; border: none; font-size: 14px; color: var(--accent); cursor: pointer; font-family: inherit; padding: 0; }
+  .worksheet-title { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); }
+  .worksheet-header-right { width: 80px; }
+  .worksheet-body { max-width: 900px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; width: 100%; }
+  .worksheet-intro { font-size: 14px; color: var(--text2); line-height: 1.7; margin-bottom: 1.5rem; }
+  .worksheet-tabs { display: flex; border-bottom: 0.5px solid var(--border); margin-bottom: 1.5rem; gap: 0; }
+  .ws-tab { background: none; border: none; border-bottom: 2px solid transparent; padding: 10px 20px; font-size: 14px; color: var(--text2); cursor: pointer; font-family: inherit; transition: all 0.15s; margin-bottom: -1px; }
+  .ws-tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+  .ws-panel { display: none; }
+  .ws-panel.active { display: block; }
+  .ws-panel-desc { font-size: 13px; color: var(--text3); font-style: italic; margin-bottom: 1rem; line-height: 1.6; }
+  .ws-table-wrap { overflow-x: auto; margin-bottom: 0.75rem; -webkit-overflow-scrolling: touch; }
+  .ws-table { width: 100%; border-collapse: collapse; min-width: 600px; }
+  .ws-table th { font-size: 12px; font-weight: 600; color: var(--text3); text-align: left; padding: 8px 10px; border-bottom: 0.5px solid var(--border); background: var(--surface2); text-transform: uppercase; letter-spacing: 0.05em; }
+  .ws-table td { padding: 6px 6px; border-bottom: 0.5px solid var(--border); vertical-align: top; }
+  .ws-table td textarea { width: 100%; font-size: 13px; color: var(--text); background: transparent; border: none; resize: none; font-family: inherit; line-height: 1.6; min-height: 60px; padding: 4px; outline: none; box-sizing: border-box; }
+  .ws-table td textarea:focus { background: var(--surface2); border-radius: 4px; }
+  .ws-table td textarea::placeholder { color: var(--text3); }
+  .ws-row-del { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 16px; padding: 4px 8px; line-height: 1; }
+  .ws-row-del:hover { color: #E24B4A; }
+  .ws-add-row { background: none; border: 0.5px dashed var(--border2); border-radius: var(--radius-sm); padding: 8px 16px; font-size: 13px; color: var(--text2); cursor: pointer; font-family: inherit; width: 100%; margin-top: 0.25rem; transition: all 0.15s; }
+  .ws-add-row:hover { border-color: var(--accent); color: var(--accent); }
+  .ws-submit-wrap { margin-top: 2rem; text-align: center; }
+  .ws-reflection-block { background: var(--surface); border: 0.5px solid var(--border); border-left: 3px solid var(--accent); border-radius: 0 var(--radius) var(--radius) 0; padding: 1.5rem; margin-bottom: 1.5rem; }
+  .ws-ref-label { font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem; }
+  .ws-ref-text { font-size: 15px; color: var(--text); line-height: 1.85; white-space: pre-wrap; animation: fadeIn 0.5s ease; }
+  @media (max-width: 600px) {
+    .ws-tab { padding: 8px 14px; font-size: 13px; }
+    .worksheet-body { padding: 1rem 0.75rem 4rem; }
+    .ws-table th, .ws-table td { padding: 6px 6px; }
+  }
+</style>
+</head>
+<body>
+
+
+<!-- PRIVACY MODAL -->
+<div class="privacy-overlay" id="privacy-modal">
+  <div class="privacy-modal">
+    <button class="privacy-close" onclick="closePrivacy()">&#x2715;</button>
+    <h2>Your privacy, plainly explained</h2>
+    <p class="privacy-tagline">This is designed to be the most private place you have ever written honestly about yourself.</p>
+
+    <div class="privacy-block">
+      <div class="privacy-block-title">
+        <svg class="privacy-block-icon" viewBox="0 0 16 16" fill="none" stroke-width="1.5"><path d="M8 1.5L2 4v4c0 3.5 2.5 6 6 7 3.5-1 6-3.5 6-7V4L8 1.5z"/></svg>
+        Your entries stay on your device
+      </div>
+      <p>Everything you write is stored only on this device — not on our servers, not in any database, not anywhere we can access. Nobody at Your Inventory can read what you write. Ever. If you clear your browser data or lose your device, your entries are gone — because they were only ever yours.</p>
+    </div>
+
+    <div class="privacy-block">
+      <div class="privacy-block-title">
+        <svg class="privacy-block-icon" viewBox="0 0 16 16" fill="none" stroke-width="1.5"><circle cx="8" cy="8" r="6.5"/><path d="M8 5v3.5l2 2"/></svg>
+        What happens when Bill reflects on your entry
+      </div>
+      <p>When you submit an entry for a reflection, the text travels securely to Claude AI and a response comes back. That exchange is processed in real time and is not stored, not used to train AI models, and not accessible to us or anyone else. It works like a private conversation that disappears when it ends.</p>
+    </div>
+
+    <div class="privacy-block">
+      <div class="privacy-block-title">
+        <svg class="privacy-block-icon" viewBox="0 0 16 16" fill="none" stroke-width="1.5"><rect x="2" y="6" width="12" height="8" rx="1.5"/><path d="M5 6V4.5a3 3 0 016 0V6"/></svg>
+        If you create an account
+      </div>
+      <p>When you create an account your entries are encrypted and stored securely. We cannot read them. Your sponsor cannot see them. Nobody can access your entries unless you explicitly choose to share them yourself.</p>
+    </div>
+
+    <div class="privacy-block">
+      <div class="privacy-block-title">
+        <svg class="privacy-block-icon" viewBox="0 0 16 16" fill="none" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        Sharing with your sponsor
+      </div>
+      <p>Sharing is always your choice. There is no automatic sharing of any kind. If you choose to share an entry with your sponsor, you generate a summary yourself and send it however you choose. We never share anything on your behalf.</p>
+    </div>
+
+    <div class="privacy-block">
+      <div class="privacy-block-title">
+        <svg class="privacy-block-icon" viewBox="0 0 16 16" fill="none" stroke-width="1.5"><circle cx="8" cy="8" r="6.5"/><path d="M8 7v4M8 5v.5"/></svg>
+        We do not sell your data
+      </div>
+      <p>We do not sell, share, or monetize your personal data or your entries in any form. The business model is a subscription — you pay for the product, the product works for you.</p>
+    </div>
+
+    <button class="btn-primary" onclick="closePrivacy()" style="margin-top:1.5rem;">Got it</button>
+  </div>
+</div>
+
+<!-- WELCOME SCREEN -->
+<div class="welcome-outer" id="welcome-screen">
+
+  <div style="position:absolute; top:0; left:0; right:0; display:flex; justify-content:flex-end; padding:1.25rem 1.5rem;">
+    <button id="signin-top-btn" onclick="showAuth(&apos;login&apos;)" class="signin-top-btn">Sign in</button>
+  </div>
+
+  <div id="returning-user-banner" style="display:none; position:absolute; top:0; left:0; right:0; background:var(--surface); border-bottom:0.5px solid var(--border); padding:0.875rem 1.5rem; align-items:center; justify-content:space-between; gap:1rem;">
+    <span style="font-size:14px; color:var(--text2);">Welcome back, <strong id="returning-user-name" style="color:var(--text);"></strong></span>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <button onclick="handleLogout()" style="background:none; border:none; font-size:13px; color:var(--text3); cursor:pointer; font-family:inherit; padding:4px 8px;">Sign out</button>
+      <button onclick="launchApp(); setTimeout(function(){ showSection(&apos;dashboard&apos;, document.querySelectorAll(&apos;.nav button&apos;)[1]); }, 50);" class="btn-primary" style="width:auto; padding:8px 18px; font-size:13px; white-space:nowrap;">Go to my inventory &#8594;</button>
+    </div>
+  </div>
+
+  <div class="welcome-inner">
+    <div class="welcome-left">
+      <div class="welcome-logo">
+        <svg width="130" height="36" viewBox="0 0 130 36" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7 26C7 15 12 7 18 4C24 7 29 15 29 26C29 31 24.3 35 18 35C11.7 35 7 31 7 26Z" fill="#2A9D8F"/>
+          <path d="M14 23C14 17 16 12 18 10C20 12 22 17 22 23C22 26.5 20.2 29.5 18 29.5C15.8 29.5 14 26.5 14 23Z" fill="#E8F5F3"/>
+          <text x="38" y="22" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="17" font-weight="700" letter-spacing="-0.4" fill="#111111">Distill It</text>
+        </svg>
+      </div>
+      <h1>Gain clarity.<br>Find peace.</h1>
+      <p class="welcome-desc">Work through anger, resentment, and fear with structured reflection and AI — so you can understand what's really going on.</p>
+      <div class="welcome-actions">
+        <button class="btn-primary" onclick="startFree()" style="font-size:17px; padding:17px 20px; letter-spacing:-0.02em;">Try it for free today</button>
+      </div>
+      <button class="privacy-link" onclick="showPrivacy()" style="margin-bottom:1.25rem;">How does privacy work? Read our plain-language explanation &#8594;</button>
+      <div class="trust-badges">
+        <div class="trust-badge">
+          <svg class="trust-icon" viewBox="0 0 16 16" fill="none" stroke-width="1.5"><path d="M8 1.5L2 4v4c0 3.5 2.5 6 6 7 3.5-1 6-3.5 6-7V4L8 1.5z"/></svg>
+          Your entries never leave your device.
+        </div>
+        <div class="trust-badge">
+          <svg class="trust-icon" viewBox="0 0 16 16" fill="none" stroke-width="1.5"><circle cx="8" cy="8" r="6.5"/><path d="M8 5v3.5l2 2"/></svg>
+          AI reflections happen in real-time and are never stored.
+        </div>
+        <div class="trust-badge">
+          <svg class="trust-icon" viewBox="0 0 16 16" fill="none" stroke-width="1.5"><rect x="2" y="6" width="12" height="8" rx="1.5"/><path d="M5 6V4.5a3 3 0 016 0V6"/></svg>
+          No credit card required. 100% free.
+        </div>
+      </div>
+
+      <p class="welcome-note" style="margin-top:1rem;">Not a substitute for therapy, sponsorship, or professional support.</p>
+    </div>
+    <div class="welcome-right">
+      <div class="testimonial">
+        <div class="testimonial-photo-wrap">
+          <div class="testimonial-photo">
+            <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCABYAFgDASIAAhEBAxEB/8QAHAAAAQUBAQEAAAAAAAAAAAAAAwAEBQYHAgEI/8QAMxAAAQMDAgUCAwgCAwAAAAAAAQACAwQFERIhBjFBUWETIhQjkTJScYGhsbLBM2KSotH/xAAaAQACAwEBAAAAAAAAAAAAAAADBAACBQEG/8QAIxEAAwACAgICAgMAAAAAAAAAAAECAxEEIRIxBUETUTJCof/aAAwDAQACEQMRAD8AYMGycRhBZyTiNIo9zQZowFzPURU8LpZXBrG7klePkDQSq3e5JbnWU1qhdgyu1PPYK0rbFs1/jh2Nq7iOsr5DFQtdHDuNQGXOCaRC7Tse9lRUDSdzqPPstDs3AUDI2O9UhxG5A/ZWen4Kt8fuewuOSRvgd/zVlln+qMfJdt7ujG471eLc8fFNdNF11t3x4KsVHXQ3GmbPCdjsQebT2V9unDlE+ifTugaYyMctwsooqSaycRzUEh+U/Ibnr1BU8lafWmhnjZ7i1Le5f+E3IgOR5EAoRuIPaji9UB7VMf8AIJLmgOm6Uh7Tx/yCSLjekZHyMeVoKwo7DhpKbMKIXYaUM1GtgqqfAOFBW2UP4s1Yy4AY8BP6yQhrlE2iCea+ObE5rZZoj6bjvg55/wBokLpsz+fX8ZX7N3tjD8O3bbopMkNaXOeGtAySeizOkpInFtMbRW1kzXhklVPVvZpPV3Pl+A8K10k7xTy0UwJ0FuNR1HB6E9UJUoWjKrG7bYSqvtDOyT4ZlVVtbsX09O57c/jyKzvi6Fj5Ldd6ZztHriN4LSOfcHcHotAntl2mcDTXQxQhv+P0mkZ798eEzvdFGY6Nko16amJxOMZIcF3eqTLQ/HpFGl2JByCEAqW4ijZDeZ44xhox+yiCVw9JjrylV+zulOK6nPaVn8gkuIjioiPZ7T+qSvAly53SCtOy6e72oQOF64+1UHyPrj8sprbLgIfhJ8e+jqQH45+m7P8AadVYzGVWJ5Jaaoc6J5bqGDjqOyPjSpaMf5CnLTPo+3yRSUbZQW+5ucqvQXJzrjVxG3VT5H/ZcRhufJ6DygcKXKKvsbC1+PYMO56enLwn9rdVMmc2vnkJBIDqeJrWuH55KWS70xSV7aJigqpY6QGePDgd2tOrA+m6iuJqtkEMMzw4sjlY9wbzIynLaRhr21Tg/THn0w6Zzsnuen6KvcX1bXx/DRnU77bvAC73vRImXkW/srtxrjcK6aqLdPqHIb2HIBMicrwHZeEqHoUlK0j1pxI09nD90lwThJWQOp2GdtI8f7H914TslNtUSjs9w/UrnOy4ET6ATjLSq/XwZJOFYpBkKJr3xxsOojPQdSi4m99CHNmXDdHfDdwrrdTzzUuXsid82Lu09VqnDl8t92og4PGsbOY7m09is14GANym1AGOWPDs98/+ZU5PwnTx3TXHPNSscc643Ywu5fHz0/ZjY1TlNei+3q/0Vrt5JcPUPtjjHNx6DCgKa3TVNvq6uo908zNOT064HjKf0PCFqoCyokdJWVOMtkmeXY8hTEzAyl0AdEGq/ReOnsx+juDKrLCDHKM5YfHPCdE4UdxQxtJfqgw+xzQxx07YcWjKHBdHmNvqxhxxzacH6JisDaVR9j3H+SnuMz7X2SZOUkKOZkzNTDnx1CSC1rpmiqVLcvoe1m1dUDtK8f8AYpvJNHCzU9waEa5n07pWA9J5P5FVx0jqmQyOJO+w7BFxYvyMU5PNXHxrS22PJ7g5/tiGkfePP6KLqACccydyTzKc4CbzubHI0nYEEZT045hdGBm5GTM92w9guQtN2jdJn0HHDvHlbHHFHV0zCMPBAcxw6jwsLmDXjLXD6q38H8Yz2hrIKiMz0jXbszh7CerSenhLcjB59z7LYM3h0/Rp1vpW0w9Ngfp7E5x4Ti51MdBbaitnaTFCwuIA3djoE6o7taK+3G401RGYGDVI47GPHMOHQrJ+K+Kp7/XOjgc+O2ty2OPONQ+87yf0QMXHdPTCZM32VS4VMtxuEk8v25Xl78dz0/petG4B6rxkMhJdqYMnyURkGHanOLiOXQBaaWvQk+xYcDkEgjqNkkUpKNJ+yyql6ZK8US+ldLi0czVSNH/MqBhdhp8bJJIOBakb51N5En9JHRcCNuS4JyAkkjiRznfkhyQskcS7IJ7FJJcIPaL146epZFU6WGMa43y4DwDkDHN3LkhGMyO+c8v8cgPySSURBwwBrcDYLrlsEkl0gOTrg74SSSUIf//Z" width="88" height="88" style="display:block;width:88px;height:88px;border-radius:50%;object-fit:cover;" />
+          </div>
+        </div>
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-quote">"I'd been avoiding this kind of reflection for years. Distill It made it feel manageable — even on my worst days. I finally understand what's been driving my anger."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-name">Brian S.</div>
+          <div class="testimonial-role">Using Distill It for 3 months</div>
+        </div>
+      </div>
+
+      <div class="sponsor-note" style="margin-top:2rem;">
+        <div class="sponsor-note-title">A note on sponsors</div>
+        <p>This app works best alongside a real sponsor — not instead of one. Bill helps you write more, reflect more clearly, and show up to your sponsor conversations better prepared. Your human relationships are irreplaceable.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BELOW-THE-FOLD HOMEPAGE SECTION -->
+<div id="homepage-btf" style="background:var(--bg); padding:0 1.5rem 4rem; display:none;">
+  <div style="max-width:880px; margin:0 auto;">
+    <div style="height:0.5px; background:var(--border); margin-bottom:4rem;"></div>
+    <div class="btf-card-grid" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.5rem; margin-bottom:1.5rem;">
+      <div style="background:var(--surface); border:0.5px solid var(--border); border-radius:var(--radius); padding:1.5rem; display:flex; flex-direction:column;">
+        <div style="font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:0.75rem;">Take it slowly</div>
+        <p style="font-size:15px; font-weight:700; color:var(--text); line-height:1.3; margin:0 0 0.6rem; letter-spacing:-0.02em;">You don&#8217;t have to figure<br>everything out today.</p>
+        <p style="font-size:13px; color:var(--text2); line-height:1.7; margin:0; flex:1;">Step 4 can feel overwhelming. You don&#8217;t need to do it all at once. Start with one thought &#8212; that&#8217;s enough to begin.</p>
+      </div>
+      <div style="background:var(--surface); border:0.5px solid var(--border); border-radius:var(--radius); padding:1.5rem; display:flex; flex-direction:column;">
+        <div style="font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:0.75rem;">Your pace</div>
+        <p style="font-size:15px; font-weight:700; color:var(--text); line-height:1.3; margin:0 0 0.6rem; letter-spacing:-0.02em;">This is a quiet space<br>to be honest.</p>
+        <p style="font-size:13px; color:var(--text2); line-height:1.7; margin:0; flex:1;">Write when you&#8217;re ready. Take breaks. Come back. If Bill&#8217;s reflections help, use them. If you just need to write, that&#8217;s enough too.</p>
+      </div>
+      <div style="background:var(--surface); border:0.5px solid var(--border); border-radius:var(--radius); padding:1.5rem; display:flex; flex-direction:column;">
+        <div style="font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:0.75rem;">Privacy</div>
+        <p style="font-size:15px; font-weight:700; color:var(--text); line-height:1.3; margin:0 0 0.6rem; letter-spacing:-0.02em;">Your space<br>stays yours.</p>
+        <p style="font-size:13px; color:var(--text2); line-height:1.7; margin:0; flex:1;">No one reads what you write. Nothing is stored or shared. You can delete everything anytime.</p>
+        <span onclick="showPrivacy()" style="font-size:13px; color:var(--accent); cursor:pointer; text-decoration:underline; text-underline-offset:2px; margin-top:0.75rem; display:inline-block;">See how privacy works &#8594;</span>
+      </div>
+    </div>
+    <div style="background:var(--surface); border:0.5px solid var(--border); border-radius:var(--radius); padding:1.75rem 2rem; margin-bottom:1.5rem;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem; align-items:center;">
+        <div>
+          <div style="font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:0.75rem;">If you get stuck</div>
+          <p style="font-size:15px; font-weight:700; color:var(--text); line-height:1.3; margin:0 0 0.6rem; letter-spacing:-0.02em;">You&#8217;ll see simple prompts to get you moving.</p>
+          <p style="font-size:13px; color:var(--text2); line-height:1.7; margin:0;">You can ignore them. Or use them when you&#8217;re ready. Either way, the work is yours.</p>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div style="background:var(--surface2); border:0.5px solid var(--border); border-left:3px solid var(--accent); border-radius:0 var(--radius-sm) var(--radius-sm) 0; padding:10px 14px; font-size:14px; color:var(--text2); font-style:italic;">&#8220;What am I holding onto?&#8221;</div>
+          <div style="background:var(--surface2); border:0.5px solid var(--border); border-left:3px solid var(--accent); border-radius:0 var(--radius-sm) var(--radius-sm) 0; padding:10px 14px; font-size:14px; color:var(--text2); font-style:italic;">&#8220;Where do I feel resentment?&#8221;</div>
+          <div style="background:var(--surface2); border:0.5px solid var(--border); border-left:3px solid var(--accent); border-radius:0 var(--radius-sm) var(--radius-sm) 0; padding:10px 14px; font-size:14px; color:var(--text2); font-style:italic;">&#8220;What part of this is mine?&#8221;</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--surface); border:0.5px solid var(--border); border-radius:var(--radius); padding:1.5rem 2rem; text-align:center;">
+      <p style="font-size:15px; font-weight:700; color:var(--text); margin:0 0 0.4rem; letter-spacing:-0.02em;">This isn&#8217;t a replacement for a sponsor.</p>
+      <p style="font-size:14px; color:var(--text2); line-height:1.7; margin:0;">It&#8217;s just a place to begin. Use it alongside the program, in whatever way works for you.</p>
+    </div>
+    <div style="padding:3rem 0 1rem;">
+      <p style="font-size:22px; font-weight:700; color:var(--text); letter-spacing:-0.03em; margin:0 0 0.4rem;">What&#8217;s on your mind?</p>
+      <p style="font-size:15px; color:var(--text2); margin:0 0 1.25rem;">No wrong answers. Just write what&#8217;s there.</p>
+      <textarea id="btf-open-field" class="btf-textarea" placeholder="A resentment, a fear, something you did &#8212; just write it out."></textarea>
+      <button class="btn-primary" onclick="btfKeepGoing()" style="margin-top:0.75rem;">Keep going &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<!-- BTF ROUTING OVERLAY -->
+<div id="btf-routing-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:200; align-items:flex-end; justify-content:center;">
+  <div style="background:var(--surface); border-radius:var(--radius) var(--radius) 0 0; padding:1.75rem 1.5rem 2.5rem; width:100%; max-width:520px;">
+    <div id="btf-panel-type">
+      <p style="font-size:20px; font-weight:700; color:var(--text); letter-spacing:-0.02em; margin:0 0 0.4rem;">What does this feel like most?</p>
+      <p style="font-size:14px; color:var(--text2); margin:0 0 1.5rem;">Pick the one that feels closest. You can always change it.</p>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <button onclick="btfPickType(&apos;resentment&apos;)" style="background:var(--surface); border:1.5px solid var(--border2); border-radius:var(--radius); padding:1rem 1.25rem; color:var(--text); cursor:pointer; width:100%; text-align:left; display:flex; align-items:center; gap:12px; font-family:inherit;">
+          <div style="width:38px;height:38px;border-radius:10px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">&#128293;</div>
+          <div><div style="font-size:14px;font-weight:600;color:var(--text);">Anger or resentment</div><div style="font-size:12px;color:var(--text2);margin-top:2px;">Bitterness toward a person, place, or situation</div></div>
+        </button>
+        <button onclick="btfPickType(&apos;fear&apos;)" style="background:var(--surface); border:1.5px solid var(--border2); border-radius:var(--radius); padding:1rem 1.25rem; color:var(--text); cursor:pointer; width:100%; text-align:left; display:flex; align-items:center; gap:12px; font-family:inherit;">
+          <div style="width:38px;height:38px;border-radius:10px;background:#EDE9FE;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">&#128161;</div>
+          <div><div style="font-size:14px;font-weight:600;color:var(--text);">A worry or fear</div><div style="font-size:12px;color:var(--text2);margin-top:2px;">Something you&#8217;re afraid of losing, facing, or experiencing</div></div>
+        </button>
+        <button onclick="btfPickType(&apos;harms&apos;)" style="background:var(--surface); border:1.5px solid var(--border2); border-radius:var(--radius); padding:1rem 1.25rem; color:var(--text); cursor:pointer; width:100%; text-align:left; display:flex; align-items:center; gap:12px; font-family:inherit;">
+          <div style="width:38px;height:38px;border-radius:10px;background:#D1FAE5;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">&#9997;&#65039;</div>
+          <div><div style="font-size:14px;font-weight:600;color:var(--text);">Something I did</div><div style="font-size:12px;color:var(--text2);margin-top:2px;">Where you were at fault and may owe an amend</div></div>
+        </button>
+      </div>
+      <button onclick="btfCloseOverlay()" style="background:none;border:none;font-size:13px;color:var(--text3);cursor:pointer;margin-top:1rem;font-family:inherit;width:100%;text-align:center;">&#8592; Back</button>
+    </div>
+    <div id="btf-panel-mode" style="display:none;">
+      <p style="font-size:20px; font-weight:700; color:var(--text); letter-spacing:-0.02em; margin:0 0 0.4rem;">How do you want to work through this?</p>
+      <p style="font-size:14px; color:var(--text2); margin:0 0 1.5rem;">Both get you to the same place &#8212; pick what feels right.</p>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <button onclick="btfSelectMode(&apos;guided&apos;)" style="background:var(--surface); border:1.5px solid var(--border2); border-radius:var(--radius); padding:1rem 1.25rem; color:var(--text); cursor:pointer; width:100%; text-align:left; display:flex; align-items:center; gap:12px; font-family:inherit;">
+          <div style="width:38px;height:38px;border-radius:10px;background:#E8F5F3;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">&#129517;</div>
+          <div><div style="font-size:14px;font-weight:600;color:var(--text);">Walk me through it</div><div style="font-size:12px;color:var(--text2);margin-top:2px;">Step by step &#8212; one question at a time</div></div>
+        </button>
+        <button onclick="btfSelectMode(&apos;worksheet&apos;)" style="background:var(--surface); border:1.5px solid var(--border2); border-radius:var(--radius); padding:1rem 1.25rem; color:var(--text); cursor:pointer; width:100%; text-align:left; display:flex; align-items:center; gap:12px; font-family:inherit;">
+          <div style="width:38px;height:38px;border-radius:10px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">&#128203;</div>
+          <div><div style="font-size:14px;font-weight:600;color:var(--text);">I have a full list</div><div style="font-size:12px;color:var(--text2);margin-top:2px;">Spreadsheet view &#8212; like the worksheet your sponsor would hand you</div></div>
+        </button>
+      </div>
+      <button onclick="btfBackToType()" style="background:none;border:none;font-size:13px;color:var(--text3);cursor:pointer;margin-top:1rem;font-family:inherit;width:100%;text-align:center;">&#8592; Back</button>
+    </div>
+  </div>
+</div>
+
+<!-- SIGN UP SCREEN -->
+<div class="auth-screen" id="signup-screen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <svg width="130" height="36" viewBox="0 0 130 36" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7 26C7 15 12 7 18 4C24 7 29 15 29 26C29 31 24.3 35 18 35C11.7 35 7 31 7 26Z" fill="#2A9D8F"/>
+        <path d="M14 23C14 17 16 12 18 10C20 12 22 17 22 23C22 26.5 20.2 29.5 18 29.5C15.8 29.5 14 26.5 14 23Z" fill="#E8F5F3"/>
+        <text x="38" y="22" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="17" font-weight="700" letter-spacing="-0.4" fill="#111111">Distill It</text>
+      </svg>
+    </div>
+    <h2>Create your account</h2>
+    <p class="auth-sub">Start your inventory. Free forever.</p>
+    <div class="auth-error" id="signup-error"></div>
+    <button class="btn-google" onclick="googleAuth()">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/><path d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+      Continue with Google
+    </button>
+    <div class="auth-divider"><span>or</span></div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" type="email" id="signup-email" placeholder="you@example.com" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input class="form-input" type="password" id="signup-password" placeholder="At least 6 characters" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Name</label>
+      <input class="form-input" type="text" id="signup-name" placeholder="First name" />
+    </div>
+    <button class="btn-primary" onclick="handleSignup()" style="margin-top:0.25rem;">Create account</button>
+    <div class="auth-switch">Already have an account? <a onclick="showAuth(&apos;login&apos;)">Sign in</a></div>
+    <span class="back-link" onclick="goHome()">← Back to home</span>
+  </div>
+</div>
+
+<!-- LOGIN SCREEN -->
+<div class="auth-screen" id="login-screen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <svg width="130" height="36" viewBox="0 0 130 36" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7 26C7 15 12 7 18 4C24 7 29 15 29 26C29 31 24.3 35 18 35C11.7 35 7 31 7 26Z" fill="#2A9D8F"/>
+        <path d="M14 23C14 17 16 12 18 10C20 12 22 17 22 23C22 26.5 20.2 29.5 18 29.5C15.8 29.5 14 26.5 14 23Z" fill="#E8F5F3"/>
+        <text x="38" y="22" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="17" font-weight="700" letter-spacing="-0.4" fill="#111111">Distill It</text>
+      </svg>
+    </div>
+    <h2>Welcome back</h2>
+    <p class="auth-sub">Continue your inventory.</p>
+    <div class="auth-error" id="login-error"></div>
+    <button class="btn-google" onclick="googleAuth()">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/><path d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+      Continue with Google
+    </button>
+    <div class="auth-divider"><span>or</span></div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" type="email" id="login-email" placeholder="you@example.com" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input class="form-input" type="password" id="login-password" placeholder="Your password" />
+    </div>
+    <button class="btn-primary" onclick="handleLogin()" style="margin-top:0.25rem;">Sign in</button>
+    <div class="auth-switch">Don't have an account? <a onclick="showAuth(&apos;signup&apos;)">Sign up</a></div>
+    <span class="back-link" onclick="goHome()">← Back to home</span>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div class="app" id="main-app">
+  <div class="header">
+    <div class="header-top">
+      <span class="app-title" onclick="goHome()">Distill It</span>
+      <span class="app-sub">Find clarity. Find peace.</span>
+      <div class="user-menu">
+        <span class="user-pill" id="user-pill"></span>
+        <button class="logout-btn" onclick="handleLogout()">Sign out</button>
+      </div>
+    </div>
+    <nav class="nav">
+      <button class="active" onclick="showSection(&apos;new&apos;, this)">New entry</button>
+      <button onclick="showSection(&apos;dashboard&apos;, this)">Dashboard</button>
+      <button onclick="showSection(&apos;patterns&apos;, this)">Patterns</button>
+    </nav>
+  </div>
+
+  <div class="content">
+
+    <!-- NEW ENTRY STEPPER -->
+    <div id="sec-new" class="section active">
+
+      <div class="progress-wrap">
+        <div class="progress-steps">
+          <div class="progress-step"><div class="step-dot active" id="dot-1">1</div><div class="step-label active" id="lbl-1">Type</div></div>
+          <div class="progress-step"><div class="step-dot" id="dot-2">2</div><div class="step-label" id="lbl-2">What happened</div></div>
+          <div class="progress-step"><div class="step-dot" id="dot-3">3</div><div class="step-label" id="lbl-3">Affects</div></div>
+          <div class="progress-step"><div class="step-dot" id="dot-4">4</div><div class="step-label" id="lbl-4">Your part</div></div>
+          <div class="progress-step"><div class="step-dot" id="dot-5">5</div><div class="step-label" id="lbl-5">Review</div></div>
+        </div>
+        <div class="progress-bar-track"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
+      </div>
+
+      <!-- STEP 1: Type -->
+      <div class="stepper-panel active" id="step-1">
+        <div class="step-heading">What&#8217;s on your mind today?</div>
+        <div class="step-sub">Pick the one that feels closest. You can always change it.</div>
+        <div class="type-cards">
+          <div class="type-card selected" id="tc-resentment" onclick="selectType(&apos;resentment&apos;)">
+            <div class="type-card-icon res">&#128293;</div>
+            <div class="type-card-text">
+              <div class="type-card-name">Someone or something I&#8217;m angry about</div>
+              <div class="type-card-desc" style="color:var(--text3); font-size:12px; margin-top:3px;">Resentment — anger or bitterness toward a person, place, or situation</div>
+            </div>
+            <div class="type-card-check"></div>
+          </div>
+          <div class="type-card" id="tc-fear" onclick="selectType(&apos;fear&apos;)">
+            <div class="type-card-icon fear">&#128161;</div>
+            <div class="type-card-text">
+              <div class="type-card-name">Something I&#8217;m worried or scared about</div>
+              <div class="type-card-desc" style="color:var(--text3); font-size:12px; margin-top:3px;">Fear — something you&#8217;re afraid of losing, facing, or experiencing</div>
+            </div>
+            <div class="type-card-check"></div>
+          </div>
+          <div class="type-card" id="tc-harms" onclick="selectType(&apos;harms&apos;)">
+            <div class="type-card-icon rel">&#9997;&#65039;</div>
+            <div class="type-card-text">
+              <div class="type-card-name">Something I did that I feel bad about</div>
+              <div class="type-card-desc" style="color:var(--text3); font-size:12px; margin-top:3px;">Harms Done — where you were at fault and may owe an amend</div>
+            </div>
+            <div class="type-card-check"></div>
+          </div>
+        </div>
+        <div class="step-actions">
+          <button class="btn-primary" onclick="goToStep(2)">Next</button>
+        </div>
+        <div style="text-align:center; margin-top:1.25rem;">
+          <button onclick="showWorksheet()" style="background:none; border:none; font-size:13px; color:var(--text3); cursor:pointer; font-family:inherit; text-decoration:underline; text-underline-offset:2px;">Have a full list? Use the worksheet instead &#8594;</button>
+        </div>
+      </div>
+
+      <!-- STEP 2: Subject & Cause -->
+      <div class="stepper-panel" id="step-2">
+        <div class="step-heading" id="s2-heading">Who or what do you resent?</div>
+        <div class="step-sub" id="s2-sub">Name the person, institution, or situation.</div>
+        <div class="form-group">
+          <input class="form-input" id="subject" placeholder="e.g. My boss, money, myself..." style="font-size:16px; padding:14px;" />
+        </div>
+        <div class="form-group" style="margin-top:1.25rem;">
+          <label class="form-label" id="cause-label">What happened?</label>
+          <textarea class="form-input" id="cause" placeholder="Describe what happened or what they did..." style="min-height:120px; font-size:16px;"></textarea>
+        </div>
+        <div class="step-actions">
+          <button class="btn-back" onclick="goToStep(1)">Back</button>
+          <button class="btn-primary" onclick="goToStep(3)" style="flex:2;">Next</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: Affects -->
+      <div class="stepper-panel" id="step-3">
+        <div class="step-heading">What does this affect in you?</div>
+        <div class="step-sub">These are areas of your life this situation has touched. Tap any area to see what it means — then select all that apply. Not sure? Pick what feels true and keep going.</div>
+        <div class="checkbox-group" id="affects-checks" style="gap:10px; margin-bottom:0.75rem;"></div>
+        <div id="affects-definition-list"></div>
+        <div class="step-actions">
+          <button class="btn-back" onclick="goToStep(2)">Back</button>
+          <button class="btn-primary" onclick="goToStep(4)" style="flex:2;">Next</button>
+        </div>
+      </div>
+
+      <!-- STEP 4: My Part -->
+      <div class="stepper-panel" id="step-4">
+        <div class="step-heading">What was your part?</div>
+        <div class="step-sub" id="s4-sub">This is the hardest question — and the most important. Where were you selfish, dishonest, self-seeking, or frightened? Even a few honest words is enough to start.</div>
+        <div class="form-group">
+          <textarea class="form-input" id="mypart" placeholder="Be as honest as you can..." style="min-height:140px; font-size:16px;" oninput="hidePartHints()"></textarea>
+        </div>
+        <div id="part-hints" style="margin-top:0.75rem; padding:0.75rem 1rem; background:var(--surface2); border-radius:var(--radius-sm); border:0.5px solid var(--border);">
+          <div style="font-size:12px; font-weight:600; color:var(--text3); margin-bottom:0.5rem; text-transform:uppercase; letter-spacing:0.05em;">Some questions to consider</div>
+          <div style="font-size:13px; color:var(--text2); line-height:1.8;">
+            Was I being selfish — focused only on what I wanted?<br>
+            Was I being dishonest — with myself or with others?<br>
+            Was I acting out of fear — trying to protect myself?<br>
+            Did I try to control something that wasn&#8217;t mine to control?<br>
+            Was I resentful before this situation even started?
+          </div>
+        </div>
+        <div class="step-actions">
+          <button class="btn-back" onclick="goToStep(3)">Back</button>
+          <button class="btn-primary" onclick="goToStep(5)" style="flex:2;">Review entry</button>
+        </div>
+      </div>
+
+      <!-- STEP 5: Review -->
+      <div class="stepper-panel" id="step-5">
+        <div class="step-heading">Review your entry</div>
+        <div class="step-sub">Take a moment to read what you've written before saving.</div>
+        <div class="card">
+          <div class="review-row"><div class="review-label">Type</div><div class="review-value" id="rev-type"></div></div>
+          <div class="review-row"><div class="review-label">Subject</div><div class="review-value" id="rev-subject"></div></div>
+          <div class="review-row"><div class="review-label">What happened</div><div class="review-value" id="rev-cause"></div></div>
+          <div class="review-row" id="rev-affects-row"><div class="review-label">Affects</div><div class="review-value" id="rev-affects"></div></div>
+          <div class="review-row"><div class="review-label">My part</div><div class="review-value" id="rev-mypart"></div></div>
+        </div>
+        <div class="step-actions">
+          <button class="btn-back" onclick="goToStep(4)">Back</button>
+          <button class="btn-primary" id="save-btn" onclick="saveEntry()" style="flex:2;">Save &amp; get reflection</button>
+        </div>
+        <p class="save-confirm" id="save-confirm" style="margin-top:0.75rem;">Entry saved.</p>
+      </div>
+
+
+
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="sec-dashboard" class="section">
+      <div id="streak-display"></div>
+      <div class="track-grid" id="track-grid"></div>
+      <div id="dashboard-has-entries" style="display:none;">
+        <div class="stats-grid" style="grid-template-columns: repeat(4,1fr); margin-bottom:1.25rem;">
+          <div class="stat-card"><div class="stat-num" id="d-total">0</div><div class="stat-lbl">total</div></div>
+          <div class="stat-card"><div class="stat-num" id="d-res">0</div><div class="stat-lbl">resentments</div></div>
+          <div class="stat-card"><div class="stat-num" id="d-fear">0</div><div class="stat-lbl">fears</div></div>
+          <div class="stat-card"><div class="stat-num" id="d-harms">0</div><div class="stat-lbl">harms done</div></div>
+        </div>
+        <input class="search-bar" id="search-input" placeholder="Search entries..." oninput="renderDashboard()" />
+        <div class="filter-row">
+          <button class="filter-btn active" onclick="setFilter(&apos;all&apos;, this)">All</button>
+          <button class="filter-btn" onclick="setFilter(&apos;resentment&apos;, this)">Resentments</button>
+          <button class="filter-btn" onclick="setFilter(&apos;fear&apos;, this)">Fears</button>
+          <button class="filter-btn" onclick="setFilter(&apos;harms&apos;, this)">Harms Done</button>
+        </div>
+      </div>
+      <div id="dashboard-entries"></div>
+    </div>
+
+    <!-- PATTERNS -->
+    <div id="sec-patterns" class="section">
+      <p class="page-sub">Patterns emerge over time. Keep going.</p>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-num" id="p-total">0</div><div class="stat-lbl">entries</div></div>
+        <div class="stat-card"><div class="stat-num" id="p-res">0</div><div class="stat-lbl">resentments</div></div>
+        <div class="stat-card"><div class="stat-num" id="p-fear">0</div><div class="stat-lbl">fears</div></div>
+      </div>
+      <div class="card">
+        <p class="section-heading">Most affected areas of self</p>
+        <div id="affects-pattern"></div>
+      </div>
+      <div class="card">
+        <p class="section-heading">Recurring subjects</p>
+        <div id="subjects-pattern"></div>
+      </div>
+      <button class="btn-primary" onclick="getPatternReflection()">Ask for pattern reflection</button>
+      <div class="ai-box" id="pattern-ai" style="display:none; margin-top:1rem;">
+        <div class="ai-label">Pattern reflection</div>
+        <div id="pattern-ai-text" class="ai-text"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- WORKSHEET SCREEN -->
+<div class="worksheet-screen" id="worksheet-screen" style="display:none;">
+  <div class="worksheet-header">
+    <button class="worksheet-back" onclick="hideWorksheet()">&#8592; Back</button>
+    <div class="worksheet-title">Step 4 Worksheet</div>
+    <div class="worksheet-header-right"></div>
+  </div>
+  <div class="worksheet-body">
+    <p class="worksheet-intro">This is the digital version of the worksheet your sponsor might hand you. Fill in as many rows as you like — then submit everything and Bill will reflect on the full picture.</p>
+
+    <!-- TABS -->
+    <div class="worksheet-tabs">
+      <button class="ws-tab active" onclick="showWsTab(&apos;resentments&apos;, this)">Resentments</button>
+      <button class="ws-tab" onclick="showWsTab(&apos;fears&apos;, this)">Fears</button>
+      <button class="ws-tab" onclick="showWsTab(&apos;harms&apos;, this)">Harms Done</button>
+    </div>
+
+    <!-- RESENTMENTS TAB -->
+    <div class="ws-panel active" id="ws-resentments">
+      <p class="ws-panel-desc">&#8220;We listed people, institutions, or principles with whom we were angry.&#8221; — Big Book p.64</p>
+      <div class="ws-table-wrap">
+        <table class="ws-table" id="ws-res-table">
+          <thead>
+            <tr>
+              <th style="width:20%">Who/What I resent</th>
+              <th style="width:25%">Why — what happened</th>
+              <th style="width:25%">What it affects in me</th>
+              <th style="width:25%">My part</th>
+              <th style="width:5%"></th>
+            </tr>
+          </thead>
+          <tbody id="ws-res-rows"></tbody>
+        </table>
+      </div>
+      <button class="ws-add-row" onclick="addWsRow(&apos;resentment&apos;)">+ Add row</button>
+    </div>
+
+    <!-- FEARS TAB -->
+    <div class="ws-panel" id="ws-fears">
+      <p class="ws-panel-desc">&#8220;We listed our fears... We asked ourselves why we had them.&#8221; — Big Book p.67</p>
+      <div class="ws-table-wrap">
+        <table class="ws-table" id="ws-fear-table">
+          <thead>
+            <tr>
+              <th style="width:25%">The fear</th>
+              <th style="width:25%">Why I have it</th>
+              <th style="width:25%">How it has driven my behavior</th>
+              <th style="width:20%">What it affects</th>
+              <th style="width:5%"></th>
+            </tr>
+          </thead>
+          <tbody id="ws-fear-rows"></tbody>
+        </table>
+      </div>
+      <button class="ws-add-row" onclick="addWsRow(&apos;fear&apos;)">+ Add row</button>
+    </div>
+
+    <!-- HARMS TAB -->
+    <div class="ws-panel" id="ws-harms">
+      <p class="ws-panel-desc">&#8220;We listed people we had hurt and became willing to make amends.&#8221; — Big Book p.68</p>
+      <div class="ws-table-wrap">
+        <table class="ws-table" id="ws-harm-table">
+          <thead>
+            <tr>
+              <th style="width:20%">Who was harmed</th>
+              <th style="width:25%">What I did</th>
+              <th style="width:25%">My character defect</th>
+              <th style="width:25%">Amends needed?</th>
+              <th style="width:5%"></th>
+            </tr>
+          </thead>
+          <tbody id="ws-harm-rows"></tbody>
+        </table>
+      </div>
+      <button class="ws-add-row" onclick="addWsRow(&apos;harms&apos;)">+ Add row</button>
+    </div>
+
+    <!-- SUBMIT -->
+    <div class="ws-submit-wrap">
+      <div id="ws-submit-error" style="font-size:13px;color:#E24B4A;margin-bottom:0.75rem;display:none;"></div>
+      <button class="btn-primary" onclick="submitWorksheet()" id="ws-submit-btn">Get Bill&#8217;s reflection on everything</button>
+      <p style="font-size:12px;color:var(--text3);margin-top:0.75rem;text-align:center;">All entries will also be saved to your dashboard</p>
+    </div>
+  </div>
+</div>
+
+<!-- WORKSHEET REFLECTION SCREEN -->
+<div class="worksheet-screen" id="ws-reflection-screen" style="display:none;">
+  <div class="worksheet-header">
+    <button class="worksheet-back" onclick="hideWsReflection()">&#8592; Back to worksheet</button>
+    <div class="worksheet-title">Bill&#8217;s reflections</div>
+    <div class="worksheet-header-right"></div>
+  </div>
+  <div class="worksheet-body">
+    <p style="font-size:14px;color:var(--text2);margin-bottom:2rem;line-height:1.7;">Bill has read everything you wrote. Here&#8217;s what he sees — section by section, then the full picture.</p>
+    <div id="ws-ref-resentments" class="ws-reflection-block" style="display:none;">
+      <div class="ws-ref-label">On your resentments</div>
+      <div class="ws-ref-loading" id="ws-ref-res-loading"><span class="ai-loading">Reading your resentments</span></div>
+      <div class="ws-ref-text" id="ws-ref-res-text" style="display:none;"></div>
+    </div>
+    <div id="ws-ref-fears" class="ws-reflection-block" style="display:none;">
+      <div class="ws-ref-label">On your fears</div>
+      <div class="ws-ref-loading" id="ws-ref-fear-loading"><span class="ai-loading">Reading your fears</span></div>
+      <div class="ws-ref-text" id="ws-ref-fear-text" style="display:none;"></div>
+    </div>
+    <div id="ws-ref-harms" class="ws-reflection-block" style="display:none;">
+      <div class="ws-ref-label">On your harms done</div>
+      <div class="ws-ref-loading" id="ws-ref-harm-loading"><span class="ai-loading">Reading your harms</span></div>
+      <div class="ws-ref-text" id="ws-ref-harm-text" style="display:none;"></div>
+    </div>
+    <div id="ws-ref-overall" class="ws-reflection-block" style="display:none;">
+      <div class="ws-ref-label" style="color:var(--accent);font-size:15px;">The full picture</div>
+      <div class="ws-ref-loading" id="ws-ref-overall-loading"><span class="ai-loading">Putting it all together</span></div>
+      <div class="ws-ref-text" id="ws-ref-overall-text" style="display:none;"></div>
+    </div>
+    <div class="ws-submit-wrap" id="ws-done-wrap" style="display:none;">
+      <button class="btn-primary" onclick="hideWsReflection()">Back to worksheet</button>
+      <button class="btn-secondary" onclick="goToDashboardFromWs()" style="margin-top:0.75rem;">View in dashboard</button>
+    </div>
+  </div>
+</div>
+
+<!-- REFLECTION SCREEN -->
+<div class="reflection-screen" id="reflection-screen">
+  <div class="reflection-header">
+    <span class="reflection-header-logo" onclick="goHome()">Your Inventory</span>
+    <span class="reflection-header-right" id="reflection-entry-type"></span>
+  </div>
+  <div class="reflection-body">
+    <div class="reflection-eyebrow">Bill's reflection</div>
+    <div class="reflection-headline">That took courage.</div>
+    <div class="reflection-subline">Honesty is the foundation of this work. Here's what came up for your entry.</div>
+
+    <div class="reflection-card" id="reflection-card">
+      <div class="reflection-loading-wrap" id="reflection-loading">
+        <div class="reflection-loading-dot"></div>
+        <div class="reflection-loading-dot"></div>
+        <div class="reflection-loading-dot"></div>
+      </div>
+      <div class="reflection-text" id="reflection-text" style="display:none;"></div>
+    </div>
+
+    <div id="reflection-feedback" style="display:none; align-items:center; gap:8px; margin-top:0.75rem;">
+      <button id="feedback-up" onclick="submitFeedback(&apos;up&apos;)" class="feedback-btn">&#128077;</button>
+      <button id="feedback-down" onclick="submitFeedback(&apos;down&apos;)" class="feedback-btn">&#128078;</button>
+    </div>
+
+    <div class="followup-section" id="followup-section" style="display:none;">
+      <div class="followup-label" id="followup-question"></div>
+      <textarea class="followup-input" id="followup-input" placeholder="Take your time. Be honest."></textarea>
+      <div style="margin-top:0.75rem; display:flex; gap:8px;">
+        <button class="btn-primary" onclick="submitFollowup()" id="followup-btn" style="flex:1;">Send</button>
+      </div>
+      <div class="followup-response" id="followup-response" style="display:none;"></div>
+    </div>
+
+    <div class="reflection-divider" id="reflection-divider" style="display:none;"></div>
+
+    <div id="reflection-save-prompt" style="display:none;">
+      <div class="save-prompt-inline">
+        <div class="save-prompt-title">Save your work</div>
+        <div class="save-prompt-sub">Create a free account to keep your entries and track patterns over time. Nothing is lost — your entry is already stored on this device.</div>
+        <div class="save-prompt-fields">
+          <input class="form-input" type="email" id="rs-email" placeholder="Email address" />
+          <input class="form-input" type="password" id="rs-password" placeholder="Create a password (6+ characters)" />
+          <button class="btn-primary" onclick="reflectionSignup()">Create free account</button>
+          <button class="btn-google" onclick="googleAuth()">
+            <svg width="16" height="16" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/><path d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+            Continue with Google
+          </button>
+          <div id="rs-error" style="font-size:13px;color:#E24B4A;display:none;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reflection-actions" id="reflection-actions" style="display:none;">
+      <button class="btn-primary" onclick="startAnotherEntry()">Start another entry</button>
+      <button class="btn-secondary" onclick="goToDashboard()">View my inventory</button>
+    </div>
+
+    <div id="share-sponsor-wrap" style="display:none; margin-top:0.5rem;">
+      <button class="share-sponsor-btn" onclick="shareWithSponsor()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="flex-shrink:0;"><path d="M13 5l-5 5-5-5"/><path d="M8 10V2"/><path d="M2 13h12"/></svg>
+        Share this entry with your sponsor
+      </button>
+    </div>
+
+    <div class="reflection-secondary" id="reflection-secondary" style="display:none;">
+      <a onclick="shareEntry()">Share this app</a>
+      <a onclick="showAuth(&apos;login&apos;)">Sign in to existing account</a>
+      <a onclick="goHome()">Back to home</a>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const WORKER_URL = 'https://aged-unit-3ea7.seobybri.workers.dev';
+const SUPABASE_URL = 'https://fmodmdnjtdhosfbtixyo.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtb2RtZG5qdGRob3NmYnRpeHlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNjAxMDMsImV4cCI6MjA4OTkzNjEwM30.lsLjokeacavaTXB7et1qEMo_5yE6zndyUOkAcN7Ov8k';
+var sb;
+try { sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } catch(e) { sb = null; }
+const AFFECTS = [
+  { label: 'Self-esteem', def: 'Your sense of self-worth and how you feel about yourself as a person.' },
+  { label: 'Security', def: 'Your sense of safety — financial, emotional, physical, or relational.' },
+  { label: 'Ambitions', def: 'Your goals, plans, or hopes for the future that feel threatened or blocked.' },
+  { label: 'Personal relations', def: 'Your relationships with family, friends, or colleagues.' },
+  { label: 'Sex relations', def: 'Intimacy, romantic relationships, or how you relate to others physically or emotionally.' },
+  { label: 'Pride', def: 'Your ego, reputation, or how you believe others see you.' },
+  { label: 'Fear', def: 'An underlying fear that this situation has triggered or amplified.' },
+  { label: 'Pocket-book', def: 'Your finances, livelihood, material security, or sense of fairness around money.' }
+];
+const TYPE_LABELS = {
+  resentment: { description: 'Someone or something you feel anger or bitterness toward.', subject: 'Who or what do you resent?', cause: 'What happened? (The cause)', mypart: 'What was your part in this?' },
+  fear: { description: 'Something you are afraid of losing, facing, or experiencing.', subject: 'What are you afraid of?', cause: 'Why do you have this fear?', mypart: 'How has this fear driven your behavior?' },
+  harms: { description: 'The Big Book asks us to list people we have harmed and examine our conduct honestly.', subject: 'Who did you harm?', cause: 'What did you do? Be specific.', mypart: 'What was your character defect — what should you have done differently?' }
+};
+
+let currentType = 'resentment';
+let currentStep = 1;
+let entries = [];
+let currentUser = null;
+let activeFilter = 'all';
+
+function selectType(type) {
+  currentType = type;
+  document.querySelectorAll('.type-card').forEach(function(c) { c.classList.remove('selected'); });
+  document.getElementById('tc-' + type).classList.add('selected');
+  const cfg = TYPE_LABELS[type];
+  document.getElementById('s2-heading').textContent = cfg.subject;
+  document.getElementById('s2-sub').textContent = type === 'fear' ? 'Name what you are afraid of.' : 'Name the person, institution, or situation.';
+  document.getElementById('cause-label').textContent = cfg.cause;
+  document.getElementById('s4-sub').textContent = type === 'fear' ? 'How has this fear driven your behavior?' : 'This is the hardest question — and the most important. Where were you selfish, dishonest, self-seeking, or frightened?';
+}
+
+function goToStep(n) {
+  if (n === 2) {
+    const subject = document.getElementById('subject').value.trim();
+  }
+  if (n === 3 || n > 2) {
+    const subject = document.getElementById('subject').value.trim();
+    const cause = document.getElementById('cause').value.trim();
+    if (n > 2 && (!subject || !cause)) { alert('Please fill in both fields before continuing.'); return; }
+  }
+  if (n === 5) {
+    // populate review
+    const subject = document.getElementById('subject').value.trim();
+    const cause = document.getElementById('cause').value.trim();
+    const mypart = document.getElementById('mypart').value.trim();
+    const affects = getSelectedAffects();
+    document.getElementById('rev-type').textContent = currentType.charAt(0).toUpperCase() + currentType.slice(1);
+    document.getElementById('rev-subject').textContent = subject || '—';
+    document.getElementById('rev-cause').textContent = cause || '—';
+    document.getElementById('rev-mypart').textContent = mypart || '(left blank)';
+    const affRow = document.getElementById('rev-affects-row');
+    affRow.style.display = currentType === 'fear' ? 'none' : 'block';
+    document.getElementById('rev-affects').textContent = affects.length ? affects.join(', ') : 'None selected';
+    }
+  currentStep = n;
+  document.querySelectorAll('.stepper-panel').forEach(function(p) { p.classList.remove('active'); });
+  document.getElementById('step-' + n).classList.add('active');
+  updateProgress(n);
+}
+
+function updateProgress(step) {
+  const labels = ['Type', 'What happened', 'Affects', 'Your part', 'Review'];
+  for (var i = 1; i <= 5; i++) {
+    var dot = document.getElementById('dot-' + i);
+    var lbl = document.getElementById('lbl-' + i);
+    dot.className = 'step-dot';
+    lbl.className = 'step-label';
+    if (i < step) { dot.classList.add('done'); dot.innerHTML = '&#10003;'; lbl.classList.add('done'); }
+    else if (i === step) { dot.classList.add('active'); dot.textContent = i; lbl.classList.add('active'); }
+    else { dot.textContent = i; }
+  }
+  var pct = ((step - 1) / 4) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+function getStorageKey(key) {
+  return currentUser ? 'distillit_' + currentUser.id + '_' + key : 'distillit_guest_' + key;
+}
+
+async function loadEntries() {
+  if (currentUser && sb) {
+    var res = await sb.from('entries').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+    if (!res.error) {
+      entries = res.data.map(function(r) {
+        return { id: r.id, type: r.type, subject: r.subject, cause: r.cause,
+          mypart: r.mypart, affects: r.affects || [], reflection: r.reflection,
+          followupQ: r.followup_q, feedbackVote: r.feedback_vote,
+          date: r.date, dateStamp: r.date, _dbId: r.id };
+      });
+    }
+  } else {
+    entries = JSON.parse(localStorage.getItem('distillit_guest_entries') || '[]');
+  }
+  renderDashboard();
+  renderPatterns();
+}
+
+async function saveEntries() {
+  if (!currentUser) {
+    localStorage.setItem('distillit_guest_entries', JSON.stringify(entries));
+  }
+}
+
+async function saveEntryToDb(entry) {
+  if (!currentUser || !sb) return;
+  var row = { user_id: currentUser.id, type: entry.type, subject: entry.subject || '',
+    cause: entry.cause || '', mypart: entry.mypart || '', affects: entry.affects || [],
+    reflection: entry.reflection || '', followup_q: entry.followupQ || '',
+    feedback_vote: entry.feedbackVote || null, date: entry.date || new Date().toLocaleDateString() };
+  if (entry._dbId) {
+    await sb.from('entries').update(row).eq('id', entry._dbId);
+  } else {
+    var res = await sb.from('entries').insert(row).select().single();
+    if (!res.error && res.data) { entry._dbId = res.data.id; entry.id = res.data.id; }
+  }
+}
+
+function showAuth(type) {
+  document.getElementById('welcome-screen').style.display = 'none';
+  document.getElementById('signup-screen').style.display = type === 'signup' ? 'flex' : 'none';
+  document.getElementById('login-screen').style.display = type === 'login' ? 'flex' : 'none';
+  document.getElementById('main-app').style.display = 'none';
+}
+
+function goHome() {
+  document.getElementById('welcome-screen').style.display = 'flex';
+  document.getElementById('signup-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('reflection-screen').style.display = 'none';
+  document.getElementById('worksheet-screen').style.display = 'none';
+  document.getElementById('ws-reflection-screen').style.display = 'none';
+  document.getElementById('main-app').style.display = 'none';
+  closePrivacy();
+}
+
+function googleAuth() {
+  const name = 'Google User';
+  const email = 'user@gmail.com';
+  const user = { id: btoa(email), name: name, email: email };
+  localStorage.setItem('distillit_session', JSON.stringify(user));
+  currentUser = user;
+  launchApp();
+}
+
+async function handleSignup() {
+  const email = document.getElementById('signup-email').value.trim();
+  const password = document.getElementById('signup-password').value.trim();
+  const name = document.getElementById('signup-name').value.trim();
+  const errEl = document.getElementById('signup-error');
+  const btn = document.querySelector('#signup-screen .btn-primary');
+  if (!email || !password || !name) { showError(errEl, 'Please fill in all fields.'); return; }
+  if (password.length < 6) { showError(errEl, 'Password must be at least 6 characters.'); return; }
+  btn.disabled = true; btn.textContent = 'Creating account...';
+  var res = await sb.auth.signUp({ email: email, password: password, options: { data: { name: name } } });
+  btn.disabled = false; btn.textContent = 'Create account';
+  if (res.error) { showError(errEl, res.error.message); return; }
+  if (res.data.session) {
+    currentUser = { id: res.data.user.id, name: name, email: email };
+    errEl.style.display = 'none';
+    launchApp();
+  } else {
+    errEl.style.color = 'var(--accent)';
+    errEl.textContent = 'Check your email to confirm your account, then sign in.';
+    errEl.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'Create account';
+  }
+}
+
+async function handleLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value.trim();
+  const errEl = document.getElementById('login-error');
+  const btn = document.querySelector('#login-screen .btn-primary');
+  if (!email || !password) { showError(errEl, 'Please enter your email and password.'); return; }
+  btn.disabled = true; btn.textContent = 'Signing in...';
+  var res = await sb.auth.signInWithPassword({ email: email, password: password });
+  btn.disabled = false; btn.textContent = 'Sign in';
+  if (res.error) { showError(errEl, 'Incorrect email or password.'); return; }
+  var name = (res.data.user.user_metadata && res.data.user.user_metadata.name) ? res.data.user.user_metadata.name : email.split('@')[0];
+  currentUser = { id: res.data.user.id, name: name, email: email };
+  errEl.style.display = 'none';
+  launchApp();
+  setTimeout(function() {
+    showSection('dashboard', document.querySelectorAll('.nav button')[1]);
+    showToast('Welcome back, ' + name + '.');
+  }, 100);
+}
+
+async function handleLogout() {
+  if (sb) await sb.auth.signOut();
+  currentUser = null;
+  entries = [];
+  resetHomepageToGuestState();
+  goHome();
+}
+
+function resetHomepageToGuestState() {
+  var banner = document.getElementById('returning-user-banner');
+  if (banner) banner.style.display = 'none';
+  var signinBtn = document.getElementById('signin-top-btn');
+  if (signinBtn) signinBtn.style.display = '';
+}
+
+function continueAsGuest() {
+  currentUser = null;
+  launchApp();
+}
+
+function showError(el, msg) {
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function launchApp() {
+  document.getElementById('welcome-screen').style.display = 'none';
+  document.getElementById('signup-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('reflection-screen').style.display = 'none';
+  document.getElementById('worksheet-screen').style.display = 'none';
+  document.getElementById('ws-reflection-screen').style.display = 'none';
+  document.getElementById('main-app').style.display = 'block';
+  document.getElementById('user-pill').textContent = currentUser ? currentUser.name : 'Guest';
+  buildPills();
+  loadEntries();
+  if (currentUser) {
+    const guestEntries = JSON.parse(localStorage.getItem('distillit_guest_entries') || '[]');
+    if (guestEntries.length) {
+      const key = 'distillit_' + currentUser.id + '_entries';
+      const existing = JSON.parse(localStorage.getItem(key) || '[]');
+      localStorage.setItem(key, JSON.stringify([...guestEntries, ...existing]));
+      localStorage.removeItem('distillit_guest_entries');
+      entries = JSON.parse(localStorage.getItem(key) || '[]');
+    }
+  }
+}
+
+function buildPills() {
+  const group = document.getElementById('affects-checks');
+  group.innerHTML = '';
+  AFFECTS.forEach(function(item) {
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'check-pill'; btn.textContent = item.label;
+    btn.setAttribute('data-value', item.label.toLowerCase().replace(/ /g, '-'));
+    btn.addEventListener('click', function() {
+      btn.classList.toggle('selected');
+      renderDefinitions();
+    });
+    group.appendChild(btn);
+  });
+}
+
+function renderDefinitions() {
+  const list = document.getElementById('affects-definition-list');
+  if (!list) return;
+  const selected = Array.from(document.querySelectorAll('#affects-checks .check-pill.selected'));
+  if (selected.length === 0) { list.innerHTML = ''; return; }
+  const affectMap = {};
+  AFFECTS.forEach(function(item) { affectMap[item.label] = item.def; });
+  list.innerHTML = selected.map(function(btn) {
+    const label = btn.textContent.trim();
+    return '<div class="affect-def-item"><span class="affect-def-label">' + label + '</span><span class="affect-def-text">' + (affectMap[label] || '') + '</span></div>';
+  }).join('');
+}
+
+function startFree() {
+  currentUser = null;
+  document.getElementById('welcome-screen').style.display = 'none';
+  document.getElementById('main-app').style.display = 'block';
+  document.getElementById('user-pill').textContent = 'Guest';
+  buildPills();
+  loadEntries();
+}
+
+function quickSignup() {
+  const email = document.getElementById('quick-email').value.trim();
+  const password = document.getElementById('quick-password').value.trim();
+  const errEl = document.getElementById('quick-error');
+  if (!email || !password) { errEl.textContent = 'Please enter your email and a password.'; errEl.style.display = 'block'; return; }
+  if (password.length < 6) { errEl.textContent = 'Password must be at least 6 characters.'; errEl.style.display = 'block'; return; }
+  const users = JSON.parse(localStorage.getItem('distillit_users') || '{}');
+  if (users[email]) { errEl.textContent = 'An account with this email already exists.'; errEl.style.display = 'block'; return; }
+  const user = { id: btoa(email), name: email.split('@')[0], email: email };
+  users[email] = { ...user, password: btoa(password) };
+  localStorage.setItem('distillit_users', JSON.stringify(users));
+  localStorage.setItem('distillit_session', JSON.stringify(user));
+  const guestEntries = JSON.parse(localStorage.getItem('distillit_guest_entries') || '[]');
+  if (guestEntries.length) {
+    localStorage.setItem('distillit_' + user.id + '_entries', JSON.stringify(guestEntries));
+    localStorage.removeItem('distillit_guest_entries');
+  }
+  currentUser = user;
+  document.getElementById('user-pill').textContent = user.name;
+  errEl.style.display = 'none';
+  showToast('Account created! Your entry has been saved.');
+}
+
+function skipAccount() {
+  showToast('Entry saved locally on this device.');
+}
+
+function shareEntry() {
+  if (navigator.share) {
+    navigator.share({ title: 'Your Inventory', text: 'I just worked through something difficult using this app. It might help you too.', url: window.location.href });
+  } else {
+    navigator.clipboard.writeText(window.location.href).then(function() { showToast('Link copied to clipboard!'); });
+  }
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  if (!t) { t = document.createElement('div'); t.id = 'toast'; t.style.cssText = 'position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 20px;border-radius:20px;font-size:14px;font-weight:500;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none;'; document.body.appendChild(t); }
+  t.textContent = msg; t.style.opacity = '1';
+  setTimeout(function() { t.style.opacity = '0'; }, 2500);
+}
+
+
+function showPrivacy() {
+  document.getElementById('privacy-modal').classList.add('open');
+}
+
+function closePrivacy() {
+  document.getElementById('privacy-modal').classList.remove('open');
+}
+
+function shareWithSponsor() {
+  var entry = entries[0];
+  if (!entry) return;
+  var text = 'My Step 4 entry — ' + entry.date + '\n\n';
+  text += 'Type: ' + entry.type + '\n';
+  text += 'Subject: ' + entry.subject + '\n';
+  text += 'What happened: ' + entry.cause + '\n';
+  if (entry.affects && entry.affects.length) text += 'Affects: ' + entry.affects.join(', ') + '\n';
+  if (entry.mypart) text += 'My part: ' + entry.mypart + '\n';
+  var reflectionText = document.getElementById('reflection-text').textContent;
+  if (reflectionText) text += '\nBill\'s reflection:\n' + reflectionText;
+  if (navigator.share) {
+    navigator.share({ title: 'My Step 4 Entry', text: text });
+  } else {
+    navigator.clipboard.writeText(text).then(function() {
+      showToast('Entry copied — paste it to share with your sponsor.');
+    });
+  }
+}
+
+
+// --- WORKSHEET ---------------------------------------------------
+
+var wsRows = { resentment: [], fear: [], harms: [] };
+var wsRowId = 0;
+
+function showWorksheet() {
+  document.getElementById('main-app').style.display = 'none';
+  document.getElementById('worksheet-screen').style.display = 'flex';
+  document.getElementById('worksheet-screen').style.flexDirection = 'column';
+  window.scrollTo(0, 0);
+  // Add one empty row to each section if empty
+  if (document.getElementById('ws-res-rows').children.length === 0) addWsRow('resentment');
+  if (document.getElementById('ws-fear-rows').children.length === 0) addWsRow('fear');
+  if (document.getElementById('ws-harm-rows').children.length === 0) addWsRow('harms');
+}
+
+function hideWorksheet() {
+  document.getElementById('worksheet-screen').style.display = 'none';
+  document.getElementById('main-app').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+
+function hideWsReflection() {
+  document.getElementById('ws-reflection-screen').style.display = 'none';
+  document.getElementById('worksheet-screen').style.display = 'flex';
+  document.getElementById('worksheet-screen').style.flexDirection = 'column';
+  window.scrollTo(0, 0);
+}
+
+function goToDashboardFromWs() {
+  document.getElementById('ws-reflection-screen').style.display = 'none';
+  document.getElementById('worksheet-screen').style.display = 'none';
+  document.getElementById('main-app').style.display = 'block';
+  var dashBtn = document.querySelectorAll('.nav button')[1];
+  if (dashBtn) showSection('dashboard', dashBtn);
+  window.scrollTo(0, 0);
+}
+
+function showWsTab(tab, btn) {
+  document.querySelectorAll('.ws-tab').forEach(function(b) { b.classList.remove('active'); });
+  document.querySelectorAll('.ws-panel').forEach(function(p) { p.classList.remove('active'); });
+  btn.classList.add('active');
+  document.getElementById('ws-' + tab).classList.add('active');
+}
+
+function addWsRow(type) {
+  var id = ++wsRowId;
+  var tbodyId = type === 'resentment' ? 'ws-res-rows' : type === 'fear' ? 'ws-fear-rows' : 'ws-harm-rows';
+  var tbody = document.getElementById(tbodyId);
+  var tr = document.createElement('tr');
+  tr.id = 'ws-row-' + id;
+  tr.dataset.type = type;
+
+  if (type === 'resentment') {
+    tr.innerHTML =
+      '<td><textarea placeholder="e.g. My father, money, my employer..."></textarea></td>' +
+      '<td><textarea placeholder="What did they do? What happened?"></textarea></td>' +
+      '<td><textarea placeholder="e.g. Self-esteem, Security, Pride..."></textarea></td>' +
+      '<td><textarea placeholder="Where were you selfish, dishonest, or frightened?"></textarea></td>' +
+      '<td><button class="ws-row-del" onclick="delWsRow(&apos; + id + &apos;)">&#215;</button></td>';
+  } else if (type === 'fear') {
+    tr.innerHTML =
+      '<td><textarea placeholder="e.g. Losing my job, being alone..."></textarea></td>' +
+      '<td><textarea placeholder="Why do you have this fear?"></textarea></td>' +
+      '<td><textarea placeholder="How has this fear affected your behavior?"></textarea></td>' +
+      '<td><textarea placeholder="e.g. Security, Self-esteem..."></textarea></td>' +
+      '<td><button class="ws-row-del" onclick="delWsRow(&apos; + id + &apos;)">&#215;</button></td>';
+  } else {
+    tr.innerHTML =
+      '<td><textarea placeholder="Name of person or group you harmed"></textarea></td>' +
+      '<td><textarea placeholder="What specifically did you do?"></textarea></td>' +
+      '<td><textarea placeholder="e.g. Selfish, dishonest, inconsiderate..."></textarea></td>' +
+      '<td><textarea placeholder="What amends might be needed?"></textarea></td>' +
+      '<td><button class="ws-row-del" onclick="delWsRow(&apos; + id + &apos;)">&#215;</button></td>';
+  }
+  tbody.appendChild(tr);
+}
+
+function delWsRow(id) {
+  var row = document.getElementById('ws-row-' + id);
+  if (row) row.remove();
+}
+
+function getWsRows(tbodyId) {
+  var rows = [];
+  var tbody = document.getElementById(tbodyId);
+  if (!tbody) return rows;
+  Array.from(tbody.querySelectorAll('tr')).forEach(function(tr) {
+    var cells = tr.querySelectorAll('textarea');
+    var vals = Array.from(cells).map(function(t) { return t.value.trim(); });
+    if (vals.some(function(v) { return v.length > 0; })) rows.push(vals);
+  });
+  return rows;
+}
+
+async function submitWorksheet() {
+  var resRows = getWsRows('ws-res-rows');
+  var fearRows = getWsRows('ws-fear-rows');
+  var harmRows = getWsRows('ws-harm-rows');
+  var total = resRows.length + fearRows.length + harmRows.length;
+
+  if (total === 0) {
+    var errEl = document.getElementById('ws-submit-error');
+    errEl.textContent = 'Please fill in at least one row before submitting.';
+    errEl.style.display = 'block';
+    return;
+  }
+  document.getElementById('ws-submit-error').style.display = 'none';
+  document.getElementById('ws-submit-btn').disabled = true;
+  document.getElementById('ws-submit-btn').textContent = 'Saving and sending to Bill...';
+
+  // Save all rows as individual entries in dashboard
+  var now = new Date();
+  var dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  var dateStamp = now.toDateString();
+
+  resRows.forEach(function(r) {
+    if (r[0]) entries.unshift({ id: Date.now() + Math.random(), type: 'resentment', subject: r[0] || '', cause: r[1] || '', affects: r[2] ? r[2].split(',').map(function(s){return s.trim();}).filter(Boolean) : [], mypart: r[3] || '', date: dateStr, dateStamp: dateStamp, reflection: '', source: 'worksheet' });
+  });
+  fearRows.forEach(function(r) {
+    if (r[0]) entries.unshift({ id: Date.now() + Math.random(), type: 'fear', subject: r[0] || '', cause: r[1] || '', affects: r[3] ? r[3].split(',').map(function(s){return s.trim();}).filter(Boolean) : [], mypart: r[2] || '', date: dateStr, dateStamp: dateStamp, reflection: '', source: 'worksheet' });
+  });
+  harmRows.forEach(function(r) {
+    if (r[0]) entries.unshift({ id: Date.now() + Math.random(), type: 'harms', subject: r[0] || '', cause: r[1] || '', affects: [], mypart: r[2] || '', date: dateStr, dateStamp: dateStamp, reflection: '', source: 'worksheet' });
+  });
+  saveEntries();
+
+  // Show reflection screen
+  document.getElementById('worksheet-screen').style.display = 'none';
+  document.getElementById('ws-reflection-screen').style.display = 'flex';
+  document.getElementById('ws-reflection-screen').style.flexDirection = 'column';
+  window.scrollTo(0, 0);
+
+  // Show/hide section blocks based on what was submitted
+  document.getElementById('ws-ref-resentments').style.display = resRows.length ? 'block' : 'none';
+  document.getElementById('ws-ref-fears').style.display = fearRows.length ? 'block' : 'none';
+  document.getElementById('ws-ref-harms').style.display = harmRows.length ? 'block' : 'none';
+  document.getElementById('ws-ref-overall').style.display = 'block';
+  document.getElementById('ws-done-wrap').style.display = 'none';
+
+  var BILL_WS = 'You are Bill. You are the kind of person who has been through the fire — your own addiction, your own wrongs, your own hard-won clarity — and come out the other side with something real to offer. You have deep roots in AA and the Big Book, and you have absorbed everything useful from modern psychology, neuroscience, and addiction science. You are not defined by any of it. You are defined by what you have lived. Your one goal is to help the person move toward serenity — to help them see clearly, take honest stock, and begin to release whatever has a grip on them. Find the most true thing in what they wrote and deliver it clearly enough that they feel it. That moment of recognition is the beginning of relief. You never use terms of address like friend, buddy, or pal. You talk like someone who has actually lived, not someone who has read about living. Plain prose only. No bullet points. No headers.';
+
+  // Sequential reflections
+  if (resRows.length) {
+    var resText = resRows.map(function(r,i) { return (i+1)+'. Resent: '+r[0]+' | Why: '+r[1]+' | Affects: '+r[2]+' | My part: '+r[3]; }).join('\n');
+    await wsGetReflection(
+      BILL_WS + ' The person is sharing their resentments inventory. Read all entries and reflect on what you see across them as a whole — patterns, recurring themes, what their part reveals about their character defects. Be specific to what they wrote. 3-5 paragraphs.',
+      'Here are my resentment entries:\n' + resText,
+      'ws-ref-res-loading', 'ws-ref-res-text'
+    );
+  }
+  if (fearRows.length) {
+    var fearText = fearRows.map(function(r,i) { return (i+1)+'. Fear: '+r[0]+' | Why: '+r[1]+' | Behavior: '+r[2]+' | Affects: '+r[3]; }).join('\n');
+    await wsGetReflection(
+      BILL_WS + ' The person is sharing their fears inventory. Read all entries and reflect on what you see — what these fears have in common, what they reveal about where self-reliance has failed, and what self-knowledge might free them. 3-5 paragraphs.',
+      'Here are my fear entries:\n' + fearText,
+      'ws-ref-fear-loading', 'ws-ref-fear-text'
+    );
+  }
+  if (harmRows.length) {
+    var harmText = harmRows.map(function(r,i) { return (i+1)+'. Harmed: '+r[0]+' | What I did: '+r[1]+' | Character defect: '+r[2]+' | Amends: '+r[3]; }).join('\n');
+    await wsGetReflection(
+      BILL_WS + ' The person is sharing their harms done inventory. Read all entries and reflect on what you see — the patterns in how they have hurt others, what character defects keep showing up, and what willingness to make amends might mean for their freedom. 3-5 paragraphs.',
+      'Here are my harms done entries:\n' + harmText,
+      'ws-ref-harm-loading', 'ws-ref-harm-text'
+    );
+  }
+
+  // Overall reflection
+  var allText = '';
+  if (resRows.length) allText += 'RESENTMENTS:\n' + resRows.map(function(r){ return '- '+r[0]+': '+r[1]; }).join('\n') + '\n\n';
+  if (fearRows.length) allText += 'FEARS:\n' + fearRows.map(function(r){ return '- '+r[0]; }).join('\n') + '\n\n';
+  if (harmRows.length) allText += 'HARMS DONE:\n' + harmRows.map(function(r){ return '- Harmed '+r[0]+': '+r[1]; }).join('\n');
+  await wsGetReflection(
+    BILL_WS + ' The person has just submitted their full Step 4 inventory — resentments, fears, and harms done. This is your chance to read across everything and give them the integrated reflection that a sponsor gives at a Step 5 meeting. What is the single most important thing you see? What pattern connects everything? What does their inventory as a whole reveal about the character defects driving their behavior? What is the one thing that, if they truly saw it, would begin to set them free? This is the big one. Give it the weight it deserves. 4-6 paragraphs.',
+    'Here is my complete Step 4 inventory:\n\n' + allText,
+    'ws-ref-overall-loading', 'ws-ref-overall-text'
+  );
+
+  document.getElementById('ws-done-wrap').style.display = 'block';
+  document.getElementById('ws-submit-btn').disabled = false;
+  document.getElementById('ws-submit-btn').textContent = 'Get Bill\'s reflection on everything';
+}
+
+async function wsGetReflection(system, userMsg, loadingId, textId) {
+  try {
+    var res = await fetch(WORKER_URL, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514', max_tokens: 1200,
+        system: system,
+        messages: [{ role: 'user', content: userMsg }]
+      })
+    });
+    var data = await res.json();
+    if (data.error) throw new Error();
+    var text = data.content.map(function(b){ return b.text||''; }).join('\n');
+    document.getElementById(loadingId).style.display = 'none';
+    var textEl = document.getElementById(textId);
+    textEl.textContent = text;
+    textEl.style.display = 'block';
+    setTimeout(function(){ textEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 100);
+  } catch(e) {
+    document.getElementById(loadingId).style.display = 'none';
+    var textEl = document.getElementById(textId);
+    textEl.textContent = 'Could not connect right now. Please try again.';
+    textEl.style.display = 'block';
+  }
+}
+
+function hidePartHints() {
+  var hints = document.getElementById('part-hints');
+  if (hints && document.getElementById('mypart').value.length > 0) {
+    hints.style.display = 'none';
+  }
+}
+
+
+async function reflectionSignup() {
+  var email = document.getElementById('rs-email').value.trim();
+  var password = document.getElementById('rs-password').value.trim();
+  var errEl = document.getElementById('rs-error');
+  if (!email || !password) { errEl.textContent = 'Please enter your email and a password.'; errEl.style.display = 'block'; return; }
+  if (password.length < 6) { errEl.textContent = 'Password must be at least 6 characters.'; errEl.style.display = 'block'; return; }
+  var res = await sb.auth.signUp({ email: email, password: password });
+  if (res.error) { errEl.textContent = res.error.message; errEl.style.display = 'block'; return; }
+  var name = email.split('@')[0];
+  currentUser = { id: res.data.user.id, name: name, email: email };
+  for (var i = 0; i < entries.length; i++) { await saveEntryToDb(entries[i]); }
+  document.getElementById('reflection-save-prompt').style.display = 'none';
+  document.getElementById('user-pill').textContent = name;
+  errEl.style.display = 'none';
+  showToast(res.data.session ? 'Account created. Your entries are saved.' : 'Check your email to confirm your account.');
+}
+
+function init() {
+  const session = localStorage.getItem('distillit_session');
+  if (session) {
+    currentUser = JSON.parse(session);
+    launchApp();
+  } else {
+    document.getElementById('welcome-screen').style.display = 'flex';
+  }
+}
+
+function showSection(name, btn) {
+  document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+  document.querySelectorAll('.nav button').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('sec-' + name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'dashboard') renderDashboard();
+  if (name === 'patterns') renderPatterns();
+}
+
+
+function calcStreak() {
+  if (!entries.length) return 0;
+  var dates = [];
+  entries.forEach(function(e) { if (dates.indexOf(e.dateStamp) === -1) dates.push(e.dateStamp); });
+  var streak = 0;
+  var check = new Date();
+  for (var i = 0; i < 365; i++) {
+    if (dates.indexOf(check.toDateString()) !== -1) { streak++; check.setDate(check.getDate() - 1); }
+    else if (i === 0) { check.setDate(check.getDate() - 1); continue; }
+    else break;
+  }
+  return streak;
+}
+
+
+function setFilter(type, btn) {
+  activeFilter = type;
+  document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  renderDashboard();
+}
+
+function renderDashboard() {
+  var total = entries.length;
+  var res = entries.filter(function(e) { return e.type === 'resentment'; }).length;
+  var fear = entries.filter(function(e) { return e.type === 'fear'; }).length;
+  var harms = entries.filter(function(e) { return e.type === 'harms'; }).length;
+
+  // Show/hide stats+filters block
+  var hasEntries = document.getElementById('dashboard-has-entries');
+  if (hasEntries) hasEntries.style.display = total > 0 ? 'block' : 'none';
+
+  if (total > 0) {
+    document.getElementById('d-total').textContent = total;
+    document.getElementById('d-res').textContent = res;
+    document.getElementById('d-fear').textContent = fear;
+    document.getElementById('d-harms').textContent = harms;
+  }
+
+  var streak = calcStreak();
+  var streakEl = document.getElementById('streak-display');
+  streakEl.innerHTML = streak > 0 ? '<div class="streak-badge">&#128293; ' + streak + ' day streak</div>' : '';
+
+  function trackDepth(n) {
+    if (n === 0) return { label: 'Not started', level: 'thin', pct: 0 };
+    if (n < 3) return { label: 'Just getting started', level: 'thin', pct: Math.min(n * 10, 25) };
+    if (n < 8) return { label: 'Building depth', level: 'medium', pct: Math.min(n * 8, 65) };
+    return { label: 'Thorough work', level: 'good', pct: Math.min(70 + n * 2, 100) };
+  }
+  var tracks = [
+    { label: 'Resentments', count: res, info: 'List everyone and everything you resent' },
+    { label: 'Fears', count: fear, info: 'What are you afraid of losing, facing, or experiencing?' },
+    { label: 'Harms Done', count: harms, info: 'Who have you harmed and what amends may be needed?' }
+  ];
+  var tg = document.getElementById('track-grid');
+  if (tg) {
+    tg.innerHTML = tracks.map(function(t) {
+      var d = trackDepth(t.count);
+      return '<div class="track-row">' +
+        '<div class="track-header"><span class="track-name">' + t.label + '</span><span class="track-count">' + t.count + (t.count === 1 ? ' entry' : ' entries') + '</span></div>' +
+        '<div class="track-bar-bg"><div class="track-bar-fill ' + d.level + '" style="width:' + d.pct + '%"></div></div>' +
+        '<div class="track-depth">' + d.label + ' — ' + t.info + '</div>' +
+        '</div>';
+    }).join('');
+  }
+
+
+  var query = (document.getElementById('search-input').value || '').toLowerCase();
+  var filtered = entries.filter(function(e) {
+    var matchType = activeFilter === 'all' || e.type === activeFilter;
+    var matchSearch = !query || e.subject.toLowerCase().includes(query) || e.cause.toLowerCase().includes(query) || (e.mypart || '').toLowerCase().includes(query);
+    return matchType && matchSearch;
+  });
+
+  var list = document.getElementById('dashboard-entries');
+  if (total === 0) {
+    list.innerHTML = '<div style="text-align:center; padding:3rem 1.5rem;">' +
+      '<div style="font-size:32px; margin-bottom:1rem;">&#128221;</div>' +
+      '<div style="font-size:17px; font-weight:700; letter-spacing:-0.02em; color:var(--text); margin-bottom:0.5rem;">Your inventory starts here</div>' +
+      '<div style="font-size:14px; color:var(--text2); line-height:1.7; margin-bottom:1.5rem;">Complete your first entry and Bill will reflect on what you wrote.<br>Every entry you make will appear here.</div>' +
+      '</div>';
+    return;
+  }
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty-state" style="padding:1.5rem 0; color:var(--text3); font-size:14px;">No entries match that search.</div>';
+    return;
+  }
+  list.innerHTML = filtered.map(function(e, idx) {
+    var bc = e.type === 'resentment' ? 'badge-resentment' : e.type === 'fear' ? 'badge-fear' : 'badge-harms';
+    var hasReflection = e.reflection && e.reflection.length > 0;
+    var cardId = 'entry-card-' + e.id;
+    return '<div class="entry-card" onclick="toggleEntry(\&apos;&apos; + cardId + &apos;\&apos;)">' +
+      '<span class="entry-type-badge ' + bc + '">' + e.type + '</span>' +
+      '<div class="entry-subject">' + esc(e.subject) + '</div>' +
+      '<div class="entry-body">' + esc(e.cause) + '</div>' +
+      (e.mypart ? '<div class="entry-part"><strong>My part:</strong> ' + esc(e.mypart) + '</div>' : '') +
+      '<div class="entry-meta-row"><span class="entry-affects">' + (e.affects || []).join(', ') + '</span><span class="entry-date">' + e.date + '</span></div>' +
+      (hasReflection ? '<div class="entry-expand-hint">Tap to see Bill&#39;s reflection</div>' : '') +
+      (hasReflection ? '<div class="entry-reflection" id="' + cardId + '"><div class="entry-reflection-label">Bill&#39;s reflection</div><div class="entry-reflection-text">' + esc(e.reflection) + '</div></div>' : '') +
+      '</div>';
+  }).join('');
+}
+
+function renderPatterns() {
+  var total = entries.length;
+  var res = entries.filter(function(e) { return e.type === 'resentment'; }).length;
+  var fear = entries.filter(function(e) { return e.type === 'fear'; }).length;
+  document.getElementById('p-total').textContent = total;
+  document.getElementById('p-res').textContent = res;
+  document.getElementById('p-fear').textContent = fear;
+  var ac = {};
+  entries.forEach(function(e) { (e.affects || []).forEach(function(a) { ac[a] = (ac[a] || 0) + 1; }); });
+  var sa = Object.entries(ac).sort(function(a,b) { return b[1]-a[1]; });
+  document.getElementById('affects-pattern').innerHTML = sa.length
+    ? sa.map(function(x) { return '<div class="pattern-row"><span>' + x[0] + '</span><span class="pattern-count">' + x[1] + '</span></div>'; }).join('')
+    : '<div style="font-size:14px;color:var(--text3);padding:0.5rem 0">No data yet — add a few entries first.</div>';
+  var sc = {};
+  entries.forEach(function(e) { var s = e.subject.toLowerCase().trim(); sc[s] = (sc[s] || 0) + 1; });
+  var repeats = Object.entries(sc).filter(function(x) { return x[1] > 1; }).sort(function(a,b) { return b[1]-a[1]; });
+  document.getElementById('subjects-pattern').innerHTML = repeats.length
+    ? repeats.map(function(x) { return '<div class="pattern-row"><span style="text-transform:capitalize">' + x[0] + '</span><span class="pattern-count">' + x[1] + 'x</span></div>'; }).join('')
+    : '<div style="font-size:14px;color:var(--text3);padding:0.5rem 0">Patterns appear once you have multiple entries about the same person or topic.</div>';
+}
+
+function esc(s) { return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function toggleEntry(cardId) {
+  var el = document.getElementById(cardId);
+  if (!el) return;
+  el.classList.toggle('open');
+}
+
+function setType(type, el) { selectType(type); }
+
+function getSelectedAffects() {
+  return Array.from(document.querySelectorAll('#affects-checks .check-pill.selected')).map(function(b) { return b.textContent.trim(); });
+}
+
+async function saveEntry() {
+  const subject = document.getElementById('subject').value.trim();
+  const cause = document.getElementById('cause').value.trim();
+  const mypart = document.getElementById('mypart').value.trim();
+  if (!subject || !cause) { alert('Please fill in at least the subject and cause.'); return; }
+  const entry = { id: Date.now(), type: currentType, subject, cause, affects: getSelectedAffects(), mypart, date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), dateStamp: new Date().toDateString(), reflection: '', followup: '' };
+  entries.unshift(entry);
+  await saveEntryToDb(entry);
+  saveEntries();
+  document.getElementById('save-btn').disabled = true;
+  showReflectionScreen(entry);
+  clearForm();
+  await getReflectionFull(entry);
+  document.getElementById('save-btn').disabled = false;
+}
+
+function showReflectionScreen(entry) {
+  document.getElementById('main-app').style.display = 'none';
+  document.getElementById('reflection-screen').style.display = 'block';
+  window.scrollTo(0, 0);
+  var typeLabel = entry.type.charAt(0).toUpperCase() + entry.type.slice(1);
+  document.getElementById('reflection-entry-type').textContent = typeLabel + ' — ' + entry.date;
+  document.getElementById('reflection-loading').style.display = 'flex';
+  document.getElementById('reflection-text').style.display = 'none';
+  document.getElementById('followup-section').style.display = 'none';
+  document.getElementById('reflection-divider').style.display = 'none';
+  document.getElementById('reflection-actions').style.display = 'none';
+  document.getElementById('reflection-secondary').style.display = 'none';
+  document.getElementById('share-sponsor-wrap').style.display = 'none';
+  document.getElementById('reflection-save-prompt').style.display = 'none';
+  document.getElementById('followup-response').style.display = 'none';
+  document.getElementById('followup-input').value = '';
+  var rfb = document.getElementById('reflection-feedback');
+  if (rfb) rfb.style.display = 'none';
+  var up = document.getElementById('feedback-up');
+  var down = document.getElementById('feedback-down');
+  if (up) { up.style.background = 'var(--surface)'; up.style.borderColor = 'var(--border2)'; up.style.opacity = '1'; up.style.transform = 'scale(1)'; }
+  if (down) { down.style.background = 'var(--surface)'; down.style.borderColor = 'var(--border2)'; down.style.opacity = '1'; down.style.transform = 'scale(1)'; }
+}
+
+
+async function wsGetReflection(system, userMsg, loadingId, textId) {
+  try {
+    var res = await fetch(WORKER_URL, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514', max_tokens: 1200,
+        system: system,
+        messages: [{ role: 'user', content: userMsg }]
+      })
+    });
+    var data = await res.json();
+    if (data.error) throw new Error();
+    var text = data.content.map(function(b){ return b.text||''; }).join('\n');
+    document.getElementById(loadingId).style.display = 'none';
+    var textEl = document.getElementById(textId);
+    textEl.textContent = text;
+    textEl.style.display = 'block';
+    setTimeout(function(){ textEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 100);
+  } catch(e) {
+    document.getElementById(loadingId).style.display = 'none';
+    var textEl = document.getElementById(textId);
+    textEl.textContent = 'Could not connect right now. Please try again.';
+    textEl.style.display = 'block';
+  }
+}
+
+function hidePartHints() {
+  var hints = document.getElementById('part-hints');
+  if (hints && document.getElementById('mypart').value.length > 0) {
+    hints.style.display = 'none';
+  }
+}
+
+
+async function reflectionSignup() {
+  var email = document.getElementById('rs-email').value.trim();
+  var password = document.getElementById('rs-password').value.trim();
+  var errEl = document.getElementById('rs-error');
+  if (!email || !password) { errEl.textContent = 'Please enter your email and a password.'; errEl.style.display = 'block'; return; }
+  if (password.length < 6) { errEl.textContent = 'Password must be at least 6 characters.'; errEl.style.display = 'block'; return; }
+  var res = await sb.auth.signUp({ email: email, password: password });
+  if (res.error) { errEl.textContent = res.error.message; errEl.style.display = 'block'; return; }
+  var name = email.split('@')[0];
+  currentUser = { id: res.data.user.id, name: name, email: email };
+  for (var i = 0; i < entries.length; i++) { await saveEntryToDb(entries[i]); }
+  document.getElementById('reflection-save-prompt').style.display = 'none';
+  document.getElementById('user-pill').textContent = name;
+  errEl.style.display = 'none';
+  showToast(res.data.session ? 'Account created. Your entries are saved.' : 'Check your email to confirm your account.');
+}
+
+function init() {
+  const session = localStorage.getItem('distillit_session');
+  if (session) {
+    currentUser = JSON.parse(session);
+    launchApp();
+  } else {
+    document.getElementById('welcome-screen').style.display = 'flex';
+  }
+}
+
+function showSection(name, btn) {
+  document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+  document.querySelectorAll('.nav button').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('sec-' + name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'dashboard') renderDashboard();
+  if (name === 'patterns') renderPatterns();
+}
+
+
+function calcStreak() {
+  if (!entries.length) return 0;
+  var dates = [];
+  entries.forEach(function(e) { if (dates.indexOf(e.dateStamp) === -1) dates.push(e.dateStamp); });
+  var streak = 0;
+  var check = new Date();
+  for (var i = 0; i < 365; i++) {
+    if (dates.indexOf(check.toDateString()) !== -1) { streak++; check.setDate(check.getDate() - 1); }
+    else if (i === 0) { check.setDate(check.getDate() - 1); continue; }
+    else break;
+  }
+  return streak;
+}
+
+
+function setFilter(type, btn) {
+  activeFilter = type;
+  document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  renderDashboard();
+}
+
+function renderDashboard() {
+  var total = entries.length;
+  var res = entries.filter(function(e) { return e.type === 'resentment'; }).length;
+  var fear = entries.filter(function(e) { return e.type === 'fear'; }).length;
+  var harms = entries.filter(function(e) { return e.type === 'harms'; }).length;
+
+  // Show/hide stats+filters block
+  var hasEntries = document.getElementById('dashboard-has-entries');
+  if (hasEntries) hasEntries.style.display = total > 0 ? 'block' : 'none';
+
+  if (total > 0) {
+    document.getElementById('d-total').textContent = total;
+    document.getElementById('d-res').textContent = res;
+    document.getElementById('d-fear').textContent = fear;
+    document.getElementById('d-harms').textContent = harms;
+  }
+
+  var streak = calcStreak();
+  var streakEl = document.getElementById('streak-display');
+  streakEl.innerHTML = streak > 0 ? '<div class="streak-badge">&#128293; ' + streak + ' day streak</div>' : '';
+
+  function trackDepth(n) {
+    if (n === 0) return { label: 'Not started', level: 'thin', pct: 0 };
+    if (n < 3) return { label: 'Just getting started', level: 'thin', pct: Math.min(n * 10, 25) };
+    if (n < 8) return { label: 'Building depth', level: 'medium', pct: Math.min(n * 8, 65) };
+    return { label: 'Thorough work', level: 'good', pct: Math.min(70 + n * 2, 100) };
+  }
+  var tracks = [
+    { label: 'Resentments', count: res, info: 'List everyone and everything you resent' },
+    { label: 'Fears', count: fear, info: 'What are you afraid of losing, facing, or experiencing?' },
+    { label: 'Harms Done', count: harms, info: 'Who have you harmed and what amends may be needed?' }
+  ];
+  var tg = document.getElementById('track-grid');
+  if (tg) {
+    tg.innerHTML = tracks.map(function(t) {
+      var d = trackDepth(t.count);
+      return '<div class="track-row">' +
+        '<div class="track-header"><span class="track-name">' + t.label + '</span><span class="track-count">' + t.count + (t.count === 1 ? ' entry' : ' entries') + '</span></div>' +
+        '<div class="track-bar-bg"><div class="track-bar-fill ' + d.level + '" style="width:' + d.pct + '%"></div></div>' +
+        '<div class="track-depth">' + d.label + ' — ' + t.info + '</div>' +
+        '</div>';
+    }).join('');
+  }
+
+
+  var query = (document.getElementById('search-input').value || '').toLowerCase();
+  var filtered = entries.filter(function(e) {
+    var matchType = activeFilter === 'all' || e.type === activeFilter;
+    var matchSearch = !query || e.subject.toLowerCase().includes(query) || e.cause.toLowerCase().includes(query) || (e.mypart || '').toLowerCase().includes(query);
+    return matchType && matchSearch;
+  });
+
+  var list = document.getElementById('dashboard-entries');
+  if (total === 0) {
+    list.innerHTML = '<div style="text-align:center; padding:3rem 1.5rem;">' +
+      '<div style="font-size:32px; margin-bottom:1rem;">&#128221;</div>' +
+      '<div style="font-size:17px; font-weight:700; letter-spacing:-0.02em; color:var(--text); margin-bottom:0.5rem;">Your inventory starts here</div>' +
+      '<div style="font-size:14px; color:var(--text2); line-height:1.7; margin-bottom:1.5rem;">Complete your first entry and Bill will reflect on what you wrote.<br>Every entry you make will appear here.</div>' +
+      '</div>';
+    return;
+  }
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty-state" style="padding:1.5rem 0; color:var(--text3); font-size:14px;">No entries match that search.</div>';
+    return;
+  }
+  list.innerHTML = filtered.map(function(e, idx) {
+    var bc = e.type === 'resentment' ? 'badge-resentment' : e.type === 'fear' ? 'badge-fear' : 'badge-harms';
+    var hasReflection = e.reflection && e.reflection.length > 0;
+    var cardId = 'entry-card-' + e.id;
+    return '<div class="entry-card" onclick="toggleEntry(\&apos;&apos; + cardId + &apos;\&apos;)">' +
+      '<span class="entry-type-badge ' + bc + '">' + e.type + '</span>' +
+      '<div class="entry-subject">' + esc(e.subject) + '</div>' +
+      '<div class="entry-body">' + esc(e.cause) + '</div>' +
+      (e.mypart ? '<div class="entry-part"><strong>My part:</strong> ' + esc(e.mypart) + '</div>' : '') +
+      '<div class="entry-meta-row"><span class="entry-affects">' + (e.affects || []).join(', ') + '</span><span class="entry-date">' + e.date + '</span></div>' +
+      (hasReflection ? '<div class="entry-expand-hint">Tap to see Bill&#39;s reflection</div>' : '') +
+      (hasReflection ? '<div class="entry-reflection" id="' + cardId + '"><div class="entry-reflection-label">Bill&#39;s reflection</div><div class="entry-reflection-text">' + esc(e.reflection) + '</div></div>' : '') +
+      '</div>';
+  }).join('');
+}
+
+function renderPatterns() {
+  var total = entries.length;
+  var res = entries.filter(function(e) { return e.type === 'resentment'; }).length;
+  var fear = entries.filter(function(e) { return e.type === 'fear'; }).length;
+  document.getElementById('p-total').textContent = total;
+  document.getElementById('p-res').textContent = res;
+  document.getElementById('p-fear').textContent = fear;
+  var ac = {};
+  entries.forEach(function(e) { (e.affects || []).forEach(function(a) { ac[a] = (ac[a] || 0) + 1; }); });
+  var sa = Object.entries(ac).sort(function(a,b) { return b[1]-a[1]; });
+  document.getElementById('affects-pattern').innerHTML = sa.length
+    ? sa.map(function(x) { return '<div class="pattern-row"><span>' + x[0] + '</span><span class="pattern-count">' + x[1] + '</span></div>'; }).join('')
+    : '<div style="font-size:14px;color:var(--text3);padding:0.5rem 0">No data yet — add a few entries first.</div>';
+  var sc = {};
+  entries.forEach(function(e) { var s = e.subject.toLowerCase().trim(); sc[s] = (sc[s] || 0) + 1; });
+  var repeats = Object.entries(sc).filter(function(x) { return x[1] > 1; }).sort(function(a,b) { return b[1]-a[1]; });
+  document.getElementById('subjects-pattern').innerHTML = repeats.length
+    ? repeats.map(function(x) { return '<div class="pattern-row"><span style="text-transform:capitalize">' + x[0] + '</span><span class="pattern-count">' + x[1] + 'x</span></div>'; }).join('')
+    : '<div style="font-size:14px;color:var(--text3);padding:0.5rem 0">Patterns appear once you have multiple entries about the same person or topic.</div>';
+}
+
+function esc(s) { return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function toggleEntry(cardId) {
+  var el = document.getElementById(cardId);
+  if (!el) return;
+  el.classList.toggle('open');
+}
+
+function setType(type, el) { selectType(type); }
+
+function getSelectedAffects() {
+  return Array.from(document.querySelectorAll('#affects-checks .check-pill.selected')).map(function(b) { return b.textContent.trim(); });
+}
+
+async function saveEntry() {
+  const subject = document.getElementById('subject').value.trim();
+  const cause = document.getElementById('cause').value.trim();
+  const mypart = document.getElementById('mypart').value.trim();
+  if (!subject || !cause) { alert('Please fill in at least the subject and cause.'); return; }
+  const entry = { id: Date.now(), type: currentType, subject, cause, affects: getSelectedAffects(), mypart, date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), dateStamp: new Date().toDateString(), reflection: '', followup: '' };
+  entries.unshift(entry);
+  await saveEntryToDb(entry);
+  saveEntries();
+  document.getElementById('save-btn').disabled = true;
+  showReflectionScreen(entry);
+  clearForm();
+  await getReflectionFull(entry);
+  document.getElementById('save-btn').disabled = false;
+}
+
+function showReflectionScreen(entry) {
+  document.getElementById('main-app').style.display = 'none';
+  document.getElementById('reflection-screen').style.display = 'block';
+  window.scrollTo(0, 0);
+  var typeLabel = entry.type.charAt(0).toUpperCase() + entry.type.slice(1);
+  document.getElementById('reflection-entry-type').textContent = typeLabel + ' — ' + entry.date;
+  document.getElementById('reflection-loading').style.display = 'flex';
+  document.getElementById('reflection-text').style.display = 'none';
+  document.getElementById('followup-section').style.display = 'none';
+  document.getElementById('reflection-divider').style.display = 'none';
+  document.getElementById('reflection-actions').style.display = 'none';
+  document.getElementById('reflection-secondary').style.display = 'none';
+  document.getElementById('share-sponsor-wrap').style.display = 'none';
+  document.getElementById('reflection-save-prompt').style.display = 'none';
+  document.getElementById('followup-response').style.display = 'none';
+  document.getElementById('followup-input').value = '';
+  var rfb = document.getElementById('reflection-feedback');
+  if (rfb) rfb.style.display = 'none';
+  var up = document.getElementById('feedback-up');
+  var down = document.getElementById('feedback-down');
+  if (up) { up.style.background = 'var(--surface)'; up.style.borderColor = 'var(--border2)'; up.style.opacity = '1'; up.style.transform = 'scale(1)'; }
+  if (down) { down.style.background = 'var(--surface)'; down.style.borderColor = 'var(--border2)'; down.style.opacity = '1'; down.style.transform = 'scale(1)'; }
+}
+
+async function getReflectionFull(entry) {
+  try {
+    var res = await fetch(WORKER_URL, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514', max_tokens: 1000,
+        system: 'You are Bill. You are the kind of person who has been through the fire — your own addiction, your own wrongs, your own hard-won clarity — and come out the other side with something real to offer. You have deep roots in AA and the Big Book, and you have absorbed everything useful from modern psychology, neuroscience, and addiction science along the way. You are not defined by any of it. You are defined by what you have lived. Your one goal in every response is to help the person move toward serenity — to help them see clearly, take honest stock of themselves, and begin to release whatever has a grip on them. You know that resentment is poison the person is drinking themselves. You know that fear is almost always about something older than the situation in front of them. You know that the my part question is where the real work lives. In every response, your first job is to find the most true thing in what the person wrote — the insight that, if they genuinely sat with it, would shift something — and deliver it clearly enough that they feel it. That moment of recognition is the beginning of relief. Serenity comes later, through sustained honest work. Your job right now is to create the conditions for that first shift. You respond to what is actually in front of you, not to a formula. You read what the person wrote carefully — the words they chose, what they emphasized, what they skipped over — and you respond to that specific thing. Sometimes that means starting soft and asking a question that opens something up. Sometimes it means going straight to the hard truth because dancing around it would be a disservice. Sometimes it means naming a psychological pattern they may not have words for. Sometimes it means sitting with them in the weight of something before moving anywhere. You decide based on what you read. You are honest because you believe honesty is an act of love, not cruelty. You trust the person to be able to handle truth — that trust is a form of respect. When you push back on someone for skipping their part or staying safely in the other person\'s wrongs, you do it because you know what freedom is on the other side of that honesty, and you want that for them. You will be given context about the person — how many entries they have written, what types, what recurring subjects appear, and their recent prior entries. Use all of this to meet them exactly where they are. Someone writing their first entry needs something different from someone who has written fifty. A person just starting out needs encouragement and clarity. Someone deep in the work needs depth and honesty. Someone who keeps returning to the same subject needs that pattern named. Someone whose fears and harms sections are thin compared to their resentments may need gentle direction toward those areas. Read the context carefully and let it shape everything about how you respond — your tone, your depth, your directness, your focus. You are also aware that this practice serves both Step 4 — the initial thorough inventory — and Step 10 — the ongoing daily practice of continued personal inventory. Both are equally valid. Both deserve the same honesty.  When the entry is a resentment, your primary lens is the self. The other person\'s behavior is context — it is not the subject. The subject is always what this situation revealed about the person writing: what they needed, what they believed they were owed, what wound got touched. Resentment is almost always a secondary emotion sitting on top of hurt, fear, or shame. Your job is to find what\'s underneath it without dismissing the legitimate pain on the surface. The Big Book\'s insight — that resentment is the number one offender — is not a moral judgment. It is a clinical observation about what keeps people sick. Hold that.  When the entry is a fear, resist the temptation to reassure. Reassurance is the wrong medicine for fear. Your job is to help the person see what the fear is actually about — which is almost never the surface situation. Fear in recovery is almost always a signal about something being threatened: security, esteem, control, love, identity. Name what is actually being threatened. Then ask what belief about themselves or the world would have to be true for this fear to make sense. That question, asked honestly, usually opens more than any reassurance could.  When the entry is a harms done, the work is different from resentment in one crucial way: the person is already in ownership. That is not a small thing — honor it briefly before going deeper. Your job here is not to pile on. It is to help them understand the mechanism — what drove the behavior, what need it was serving, what they were afraid of at the time. The character defect question is not about labeling themselves. It is about understanding the pattern well enough to interrupt it. A person who understands why they did something has far more power to change than someone who simply feels bad about it.  Pay close attention to how the person answered the my part question — it tells you as much as everything else combined. Three patterns require specific responses. If they left it blank or wrote almost nothing, do not ignore it and do not shame them — acknowledge the difficulty directly and name one specific, honest question about their part that emerges from what they did write. Give them the entry point they couldn\'t find themselves. If they wrote something vague or generic — I could have handled it better, I wasn\'t perfect either — that is deflection wearing the clothes of honesty. Name it gently but clearly. Vague ownership is not ownership. If they wrote a genuine, specific, honest my part — something that cost them something to admit — acknowledge that directly before anything else. It matters. People who do this work honestly deserve to have that recognized.  When the person has selected areas that were affected — self-esteem, security, ambitions, personal relations, sex relations, pride, fear, pocket-book — treat that combination as psychological signal, not a checklist. Someone who checks self-esteem and pride together is usually dealing with a wound to their sense of worth that they have covered with performance or image. Someone who checks security and fear is living in a chronic low-level threat state that probably predates this situation. Someone who checks personal relations and sex relations together may be dealing with something about intimacy and trust running deeper than the surface event. Someone who checks pocket-book alongside self-esteem is often telling you that money and worth are fused in ways worth examining. You don\'t need to name all of this explicitly — but let it inform the shape of what you offer. The combination of what they chose reveals what this situation actually threatened. You are aware that you are not this person\'s sponsor and you know it. You are something different — a space for reflection between the human conversations that matter most. When something emerges that their sponsor needs to hear, you say so naturally, the way anyone would. You encourage the human relationships in their life. You know that you supplement the program — you do not replace it. If someone asks whether this app is private or where their entries go, you can tell them honestly: their entries live only on their device, nothing is stored on servers, and the reflection exchange is processed in real time and not saved anywhere. You do not moralize. You do not lecture. You do not repeat yourself. You never use terms of address like friend, buddy, or pal — you just talk to the person directly. You do not use therapy-speak. You talk like someone who has actually lived, not someone who has read about living. When the entry calls for depth — draw on everything you know. Psychology, neuroscience, the Big Book, human nature. Use it in plain language, in service of the person, never to show off. 3-5 short paragraphs. Then on a new line write FOLLOWUP: followed by the single question this specific entry is asking for — the one that, if they sat with it honestly, would move them forward. Plain prose only. No bullet points. No headers.',
+        messages: [{ role: 'user', content: buildPrompt(entry) }]
+      })
+    });
+    var data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    var full = data.content.map(function(b) { return b.text || ''; }).join('\n');
+    var parts = full.split(/FOLLOWUP:/i);
+    var reflectionText = parts[0].trim();
+    var followupQ = parts[1] ? parts[1].trim() : 'What came up for you reading this?';
+    document.getElementById('reflection-loading').style.display = 'none';
+    document.getElementById('reflection-text').style.display = 'block';
+    document.getElementById('reflection-text').textContent = reflectionText;
+    document.getElementById('reflection-feedback').style.display = 'flex';
+    // Store reflection on the entry
+    if (entries.length > 0) {
+      entries[0].reflection = reflectionText;
+      entries[0].followupQ = followupQ;
+      saveEntries();
+      saveEntryToDb(entries[0]);
+    }
+    setTimeout(function() {
+      document.getElementById('followup-section').style.display = 'block';
+      document.getElementById('followup-question').textContent = followupQ;
+      setTimeout(function() { document.getElementById('followup-section').scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 100);
+      document.getElementById('reflection-divider').style.display = 'block';
+      if (!currentUser) { document.getElementById('reflection-save-prompt').style.display = 'block'; }
+      document.getElementById('reflection-actions').style.display = 'flex';
+      document.getElementById('reflection-secondary').style.display = 'flex';
+      document.getElementById('share-sponsor-wrap').style.display = 'block';
+    }, 800);
+  } catch(e) {
+    document.getElementById('reflection-loading').style.display = 'none';
+    document.getElementById('reflection-text').style.display = 'block';
+    document.getElementById('reflection-text').textContent = 'Could not connect right now. Your entry has been saved — try again in a moment.';
+    document.getElementById('reflection-actions').style.display = 'flex';
+  }
+}
+
+async function submitFollowup() {
+  var input = document.getElementById('followup-input').value.trim();
+  if (!input) return;
+  var btn = document.getElementById('followup-btn');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  var responseEl = document.getElementById('followup-response');
+  responseEl.style.display = 'none';
+  try {
+    var res = await fetch(WORKER_URL, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514', max_tokens: 600,
+        system: 'You are Bill. You are warm, plain-spoken, and wise. The person has just responded to a follow-up question about their inventory entry. Your job is the same as always — find the most true thing in what they just said and respond to that. Go one level deeper. Draw on psychology, neuroscience, or the Big Book if it genuinely illuminates something — in plain language only. Be direct and human. Do not use terms of address like friend, buddy, or pal. Do not repeat what they said back at length. End with one final thought or observation that gives them something to carry — something that feels like a gift, not a burden. The goal is relief through honest clarity. 2-3 short paragraphs. Plain prose only.',
+        messages: [{ role: 'user', content: 'My response to your question: ' + input }]
+      })
+    });
+    var data = await res.json();
+    if (data.error) throw new Error();
+    var text = data.content.map(function(b) { return b.text || ''; }).join('\n');
+    responseEl.textContent = text;
+    responseEl.style.display = 'block';
+    setTimeout(function() { responseEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 100);
+    document.getElementById('followup-input').style.display = 'none';
+    btn.style.display = 'none';
+  } catch(e) {
+    responseEl.textContent = 'Could not connect right now. Please try again.';
+    responseEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Send';
+  }
+}
+
+
+
+async function getPatternReflection() {
+  if (!entries.length) { alert('Add some entries first.'); return; }
+  document.getElementById('pattern-ai').style.display = 'block';
+  document.getElementById('pattern-ai-text').innerHTML = '<span class="ai-loading">Looking for patterns across your entries</span>';
+  var summary = entries.map(function(e) { return '[' + e.type + '] ' + e.subject + ': ' + e.cause + '. My part: ' + (e.mypart || 'not written'); }).join('\n');
+  try {
+    var res = await fetch(WORKER_URL, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514', max_tokens: 1000,
+        system: 'You are Bill. You are warm, plain-spoken, and wise in the way that comes from having lived through things rather than studied them. You have deep roots in AA and a thorough command of modern psychology, neuroscience, and addiction science. You are not righteous about any of it — you use whatever is genuinely useful to the person in front of you. When you review someone\'s inventory entries, look across all of them and find the most true thing — the pattern or insight that, if they genuinely saw it, would shift something for them. Name what you actually see: recurring subjects, dominant emotional themes, patterns in how they describe their own part or avoid it. Draw on your knowledge of attachment theory, trauma, cognitive patterns, and addiction research when it helps explain what is happening beneath the surface — always in plain language, never as a lecture. Be direct. Be warm. Be honest. Do not use terms of address like friend, buddy, or pal. Do not shame — illuminate. The goal is that moment of recognition that begins to loosen the grip of whatever they are carrying. End with one question — not a gentle check-in, but the question the pattern is genuinely calling for. Plain prose, 4-6 paragraphs. No bullet points. No headers.',
+        messages: [{ role: 'user', content: 'Here are my journal entries:\n\n' + summary }]
+      })
+    });
+    var data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    document.getElementById('pattern-ai-text').textContent = data.content.map(function(b) { return b.text || ''; }).join('\n');
+  } catch(e) {
+    document.getElementById('pattern-ai-text').textContent = 'Could not connect right now. Please try again in a moment.';
+  }
+}
+
+
+function clearForm() {
+  document.getElementById('subject').value = '';
+  document.getElementById('cause').value = '';
+  document.getElementById('mypart').value = '';
+  document.querySelectorAll('#affects-checks .check-pill.selected').forEach(function(p) { p.classList.remove('selected'); });
+  var defList = document.getElementById('affects-definition-list');
+  if (defList) defList.innerHTML = '';
+  currentType = 'resentment';
+  document.querySelectorAll('.type-card').forEach(function(c) { c.classList.remove('selected'); });
+  var tc = document.getElementById('tc-resentment');
+  if (tc) tc.classList.add('selected');
+  goToStep(1);
+}
+
+function buildPrompt(entry) {
+  // Build current entry
+  var current = 'CURRENT ENTRY\nType: ' + entry.type + '\n';
+  if (entry.type === 'resentment') current += 'Who/what: ' + entry.subject + '\nWhat happened: ' + entry.cause + '\nAreas affected: ' + (entry.affects.join(', ') || 'not specified') + '\nMy part: ' + (entry.mypart || '(left blank)');
+  else if (entry.type === 'fear') current += 'The fear: ' + entry.subject + '\nWhy this fear exists: ' + entry.cause + '\nHow it has driven behavior: ' + (entry.mypart || '(left blank)');
+  else current += 'Who was harmed: ' + entry.subject + '\nWhat I did: ' + entry.cause + '\nAreas affected: ' + (entry.affects.join(', ') || 'not specified') + '\nMy character defect: ' + (entry.mypart || '(left blank)');
+
+  // Build history context (exclude current entry, last 10 max)
+  var prior = entries.filter(function(e) { return e.id !== entry.id; }).slice(0, 10);
+  var res = entries.filter(function(e) { return e.type === 'resentment'; }).length;
+  var fear = entries.filter(function(e) { return e.type === 'fear'; }).length;
+  var harms = entries.filter(function(e) { return e.type === 'harms'; }).length;
+  var total = entries.length;
+
+  var context = 'PERSON CONTEXT\n';
+  context += 'Total entries written: ' + total + '\n';
+  context += 'Resentments: ' + res + ', Fears: ' + fear + ', Harms done: ' + harms + '\n';
+  if (total === 0) context += 'Experience level: This appears to be their first entry.\n';
+  else if (total < 5) context += 'Experience level: Early in their inventory — handle with care and encouragement.\n';
+  else if (total < 15) context += 'Experience level: Building momentum — they are doing real work.\n';
+  else context += 'Experience level: Experienced — they have shown up consistently and can handle depth.\n';
+
+  if (prior.length > 0) {
+    context += '\nRECENT PRIOR ENTRIES (for context — do not repeat these back, just let them inform your response):\n';
+    prior.slice(0, 5).forEach(function(e) {
+      context += '[' + e.type + '] ' + e.subject + ': ' + e.cause.substring(0, 80) + (e.cause.length > 80 ? '...' : '') + '\n';
+    });
+    // Recurring subjects
+    var subjectCount = {};
+    entries.forEach(function(e) { var s = e.subject.toLowerCase().trim(); subjectCount[s] = (subjectCount[s] || 0) + 1; });
+    var recurring = Object.entries(subjectCount).filter(function(x) { return x[1] > 1; }).sort(function(a,b) { return b[1]-a[1]; }).slice(0, 3);
+    if (recurring.length) {
+      context += 'Recurring subjects: ' + recurring.map(function(x) { return x[0] + ' (' + x[1] + 'x)'; }).join(', ') + '\n';
+    }
+  }
+
+  return context + '\n' + current;
+}
+
+function btfCloseOverlay() {
+  document.getElementById('btf-routing-overlay').style.display = 'none';
+}
+
+function btfBackToType() {
+  document.getElementById('btf-panel-mode').style.display = 'none';
+  document.getElementById('btf-panel-type').style.display = 'block';
+}
+
+var btfSelectedType = '';
+
+function btfKeepGoing() {
+  var val = document.getElementById('btf-open-field').value.trim();
+  if (!val) {
+    document.getElementById('btf-open-field').style.borderColor = '#E24B4A';
+    document.getElementById('btf-open-field').focus();
+    return;
+  }
+  document.getElementById('btf-panel-type').style.display = 'block';
+  document.getElementById('btf-panel-mode').style.display = 'none';
+  document.getElementById('btf-routing-overlay').style.display = 'flex';
+}
+
+function btfPickType(type) {
+  btfSelectedType = type;
+  document.getElementById('btf-panel-type').style.display = 'none';
+  document.getElementById('btf-panel-mode').style.display = 'block';
+}
+
+function btfSelectMode(mode) {
+  var text = document.getElementById('btf-open-field').value.trim();
+  btfCloseOverlay();
+  document.getElementById('btf-open-field').value = '';
+  if (mode === 'worksheet') {
+    if (!currentUser) { startFree(); setTimeout(function() { showWorksheet(); }, 100); }
+    else { showWorksheet(); }
+    return;
+  }
+  if (!currentUser) {
+    startFree();
+    setTimeout(function() { selectType(btfSelectedType); goToStep(2); document.getElementById('cause').value = text; }, 100);
+  } else {
+    showSection('new', document.querySelector('.nav button'));
+    setTimeout(function() { selectType(btfSelectedType); goToStep(2); document.getElementById('cause').value = text; }, 100);
+  }
+}
+
+var _feedbackVote = null;
+
+function submitFeedback(vote) {
+  var up = document.getElementById('feedback-up');
+  var down = document.getElementById('feedback-down');
+  up.style.background = 'var(--surface)';
+  up.style.borderColor = 'var(--border2)';
+  up.style.opacity = '1';
+  down.style.background = 'var(--surface)';
+  down.style.borderColor = 'var(--border2)';
+  down.style.opacity = '1';
+  var active = vote === 'up' ? up : down;
+  var inactive = vote === 'up' ? down : up;
+  active.style.transform = 'scale(1.4)';
+  active.style.background = vote === 'up' ? '#E8F5F3' : '#FCEBEB';
+  active.style.borderColor = vote === 'up' ? '#2A9D8F' : '#E24B4A';
+  setTimeout(function() {
+    active.style.transform = 'scale(1)';
+    inactive.style.opacity = '0.4';
+  }, 200);
+  _feedbackVote = vote;
+  if (entries.length > 0) {
+    entries[entries.length - 1].feedbackVote = vote;
+    saveEntries();
+    saveEntryToDb(entries[entries.length - 1]);
+  }
+}
+
+init();
+</script>
+</body>
+</html>
