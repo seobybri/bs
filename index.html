@@ -329,6 +329,9 @@
   .ws-table td textarea::placeholder { color: var(--text3); }
   .ws-row-del { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 16px; padding: 4px 8px; line-height: 1; }
   .ws-row-del:hover { color: #E24B4A; }
+  .ws-affects-select { width: 100%; font-size: 13px; color: var(--text); background: transparent; border: none; font-family: inherit; line-height: 1.6; padding: 4px; outline: none; cursor: pointer; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 4px center; padding-right: 20px; }
+  .ws-affects-select:focus { background-color: var(--surface2); border-radius: 4px; }
+  .ws-affects-select option { color: var(--text); background: var(--surface); }
   .ws-add-row { background: none; border: 0.5px dashed var(--border2); border-radius: var(--radius-sm); padding: 8px 16px; font-size: 13px; color: var(--text2); cursor: pointer; font-family: inherit; width: 100%; margin-top: 0.25rem; transition: all 0.15s; }
   .ws-add-row:hover { border-color: var(--accent); color: var(--accent); }
   .ws-submit-wrap { margin-top: 2rem; text-align: center; }
@@ -1537,7 +1540,7 @@ function addWsRow(type) {
     tr.innerHTML =
       '<td><textarea placeholder="e.g. My father, money, my employer..."></textarea></td>' +
       '<td><textarea placeholder="What did they do? What happened?"></textarea></td>' +
-      '<td><textarea placeholder="e.g. Self-esteem, Security, Pride..."></textarea></td>' +
+      '<td><select class="ws-affects-select"><option value="">Select...</option><option value="Self-esteem">Self-esteem (how I feel about myself)</option><option value="Security">Security (financial, physical, emotional safety)</option><option value="Ambitions">Ambitions (my goals and plans)</option><option value="Personal relations">Personal relations (relationships with others)</option><option value="Sex relations">Sex relations (intimate relationships)</option><option value="Pride">Pride (my reputation or image)</option><option value="Fear">Fear (something I am afraid of)</option><option value="Pocket-book">Pocket-book (money or finances)</option></select></td>' +
       '<td><textarea placeholder="Where were you selfish, dishonest, or frightened?"></textarea></td>' +
       '<td><button class="ws-row-del" onclick="delWsRow(' + id + ')">&#215;</button></td>';
   } else if (type === 'fear') {
@@ -1545,7 +1548,7 @@ function addWsRow(type) {
       '<td><textarea placeholder="e.g. Losing my job, being alone..."></textarea></td>' +
       '<td><textarea placeholder="Why do you have this fear?"></textarea></td>' +
       '<td><textarea placeholder="How has this fear affected your behavior?"></textarea></td>' +
-      '<td><textarea placeholder="e.g. Security, Self-esteem..."></textarea></td>' +
+      '<td><select class="ws-affects-select"><option value="">Select...</option><option value="Self-esteem">Self-esteem (how I feel about myself)</option><option value="Security">Security (financial, physical, emotional safety)</option><option value="Ambitions">Ambitions (my goals and plans)</option><option value="Personal relations">Personal relations (relationships with others)</option><option value="Sex relations">Sex relations (intimate relationships)</option><option value="Pride">Pride (my reputation or image)</option><option value="Fear">Fear (something I am afraid of)</option><option value="Pocket-book">Pocket-book (money or finances)</option></select></td>' +
       '<td><button class="ws-row-del" onclick="delWsRow(' + id + ')">&#215;</button></td>';
   } else {
     tr.innerHTML =
@@ -1568,8 +1571,13 @@ function getWsRows(tbodyId) {
   var tbody = document.getElementById(tbodyId);
   if (!tbody) return rows;
   Array.from(tbody.querySelectorAll('tr')).forEach(function(tr) {
-    var cells = tr.querySelectorAll('textarea');
-    var vals = Array.from(cells).map(function(t) { return t.value.trim(); });
+    var vals = [];
+    Array.from(tr.querySelectorAll('td')).forEach(function(td) {
+      var ta = td.querySelector('textarea');
+      var sel = td.querySelector('select');
+      if (ta) vals.push(ta.value.trim());
+      else if (sel) vals.push(sel.value.trim());
+    });
     if (vals.some(function(v) { return v.length > 0; })) rows.push(vals);
   });
   return rows;
@@ -1597,15 +1605,23 @@ async function submitWorksheet() {
   var dateStamp = now.toDateString();
 
   resRows.forEach(function(r) {
-    if (r[0]) entries.unshift({ id: Date.now() + Math.random(), type: 'resentment', subject: r[0] || '', cause: r[1] || '', affects: r[2] ? r[2].split(',').map(function(s){return s.trim();}).filter(Boolean) : [], mypart: r[3] || '', date: dateStr, dateStamp: dateStamp, reflection: '', source: 'worksheet' });
+    if (r[0]) entries.unshift({ id: Date.now() + Math.floor(Math.random()*1000), type: 'resentment', subject: r[0] || '', cause: r[1] || '', affects: r[2] ? r[2].split(',').map(function(s){return s.trim();}).filter(Boolean) : [], mypart: r[3] || '', date: dateStr, dateStamp: dateStamp, reflection: '', source: 'worksheet' });
   });
   fearRows.forEach(function(r) {
-    if (r[0]) entries.unshift({ id: Date.now() + Math.random(), type: 'fear', subject: r[0] || '', cause: r[1] || '', affects: r[3] ? r[3].split(',').map(function(s){return s.trim();}).filter(Boolean) : [], mypart: r[2] || '', date: dateStr, dateStamp: dateStamp, reflection: '', source: 'worksheet' });
+    if (r[0]) entries.unshift({ id: Date.now() + Math.floor(Math.random()*1000), type: 'fear', subject: r[0] || '', cause: r[1] || '', affects: r[3] ? r[3].split(',').map(function(s){return s.trim();}).filter(Boolean) : [], mypart: r[2] || '', date: dateStr, dateStamp: dateStamp, reflection: '', source: 'worksheet' });
   });
   harmRows.forEach(function(r) {
-    if (r[0]) entries.unshift({ id: Date.now() + Math.random(), type: 'harms', subject: r[0] || '', cause: r[1] || '', affects: [], mypart: r[2] || '', date: dateStr, dateStamp: dateStamp, reflection: '', source: 'worksheet' });
+    if (r[0]) entries.unshift({ id: Date.now() + Math.floor(Math.random()*1000), type: 'harms', subject: r[0] || '', cause: r[1] || '', affects: [], mypart: r[2] || '', date: dateStr, dateStamp: dateStamp, reflection: '', source: 'worksheet' });
   });
   saveEntries();
+  // Save worksheet entries to Supabase if logged in
+  if (currentUser && sb) {
+    for (var i = 0; i < entries.length; i++) {
+      if (entries[i].source === 'worksheet' && !entries[i]._dbId) {
+        await saveEntryToDb(entries[i]);
+      }
+    }
+  }
 
   // Show reflection screen
   document.getElementById('worksheet-screen').style.display = 'none';
@@ -2093,6 +2109,24 @@ function buildPrompt(entry) {
 
   return context + '\n' + current;
 }
+async function recoverLocalEntries() {
+  if (!currentUser || !sb) return;
+  var local = JSON.parse(localStorage.getItem('distillit_guest_entries') || '[]');
+  if (!local.length) return;
+  var recovered = 0;
+  for (var i = 0; i < local.length; i++) {
+    var e = local[i];
+    var row = { user_id: currentUser.id, type: e.type, subject: e.subject || '', cause: e.cause || '', mypart: e.mypart || '', affects: e.affects || [], reflection: e.reflection || '', date: e.date || '' };
+    var res = await sb.from('entries').insert(row).select().single();
+    if (!res.error) recovered++;
+  }
+  if (recovered > 0) {
+    localStorage.removeItem('distillit_guest_entries');
+    await loadEntries();
+    showToast(recovered + ' saved entries restored to your account.');
+  }
+}
+
 init();
 
 var currentFeedbackEntry = null;
