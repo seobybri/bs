@@ -1,0 +1,334 @@
+
+<style>
+  .wrap { font-family: var(--font-sans); width: 100%; }
+  .option-label { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); padding: 20px 0 8px; border-bottom: 0.5px solid var(--color-border-tertiary); margin-bottom: 0; }
+  .option-title { font-size: 17px; font-weight: 500; color: var(--color-text-primary); margin: 12px 0 4px; }
+  .option-desc { font-size: 13px; color: var(--color-text-secondary); margin: 0 0 16px; }
+
+  /* SHARED STRUCTURE */
+  .hs { width: 100%; font-family: var(--font-sans); }
+  .hs-nav { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; }
+  .hs-logo { font-size: 15px; font-weight: 500; }
+  .hs-logo span { font-size: 10px; display: block; font-weight: 400; letter-spacing: 1px; text-transform: uppercase; }
+  .hs-nav-links { display: flex; gap: 16px; align-items: center; }
+  .hs-nav-links a { font-size: 12px; text-decoration: none; opacity: 0.8; }
+  .hs-nav-btn { font-size: 12px; padding: 7px 14px; border-radius: 5px; border: none; cursor: pointer; }
+  .hs-hero { padding: 48px 24px 56px; text-align: center; }
+  .hs-badge { display: inline-block; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; margin-bottom: 18px; }
+  .hs-hero h1 { font-size: 26px; font-weight: 500; margin: 0 0 12px; line-height: 1.3; }
+  .hs-hero p { font-size: 13px; max-width: 400px; margin: 0 auto 24px; line-height: 1.7; }
+  .hs-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .hs-btn { font-size: 13px; padding: 10px 20px; border-radius: 5px; border: none; cursor: pointer; }
+  .hs-btn-outline { font-size: 13px; padding: 10px 20px; border-radius: 5px; cursor: pointer; background: transparent; }
+  .hs-trust { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; padding: 14px 24px; border-top: 0.5px solid rgba(0,0,0,0.08); border-bottom: 0.5px solid rgba(0,0,0,0.08); }
+  .hs-trust-item { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 500; }
+  .hs-trust-item i { font-size: 15px; }
+  .hs-section { padding: 36px 24px; }
+  .hs-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; margin-bottom: 6px; }
+  .hs-section h2 { font-size: 20px; font-weight: 500; margin: 0 0 8px; }
+  .hs-section p { font-size: 13px; line-height: 1.7; margin: 0 0 20px; }
+  .hs-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .hs-card { border-radius: 8px; padding: 14px; border: 0.5px solid rgba(0,0,0,0.08); }
+  .hs-card i { font-size: 20px; margin-bottom: 8px; display: block; }
+  .hs-card h3 { font-size: 12px; font-weight: 500; margin: 0 0 4px; }
+  .hs-card p { font-size: 11px; line-height: 1.5; margin: 0; }
+  .hs-dark { padding: 36px 24px; }
+  .hs-dark .hs-label { opacity: 0.6; }
+  .hs-dark h2 { font-size: 20px; font-weight: 500; color: #fff; margin: 0 0 8px; }
+  .hs-dark p { font-size: 13px; color: rgba(255,255,255,0.7); margin: 0 0 20px; line-height: 1.7; }
+  .hs-admit-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .hs-admit-item { border-radius: 7px; padding: 12px; }
+  .hs-admit-item .lbl { font-size: 10px; opacity: 0.5; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px; }
+  .hs-admit-item .val { font-size: 12px; color: #fff; font-weight: 500; }
+  .hs-cta { padding: 32px 24px; text-align: center; }
+  .hs-cta h2 { font-size: 18px; font-weight: 500; color: #fff; margin: 0 0 6px; }
+  .hs-cta p { font-size: 13px; color: rgba(255,255,255,0.85); margin: 0 0 20px; }
+  .hs-cta-btn { font-size: 13px; padding: 10px 24px; border-radius: 5px; border: none; cursor: pointer; }
+  .hs-footer { padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .hs-footer-logo { font-size: 13px; font-weight: 500; }
+  .hs-footer-logo span { font-size: 11px; display: block; font-weight: 400; margin-top: 2px; opacity: 0.4; }
+  .hs-footer-badge { font-size: 10px; padding: 5px 12px; border-radius: 5px; letter-spacing: 0.5px; }
+
+  /* OPTION A — Original blue */
+  .a-nav { background: #1E3A5F; }
+  .a-nav .hs-logo { color: #fff; }
+  .a-nav .hs-logo span { color: #4A90C4; }
+  .a-nav-links a { color: rgba(255,255,255,0.8); }
+  .a-btn-nav { background: #4A90C4; color: #fff; }
+  .a-hero { background: #1E3A5F; }
+  .a-badge { background: rgba(74,144,196,0.2); color: #7BB8E0; border: 1px solid rgba(74,144,196,0.35); }
+  .a-hero h1 { color: #fff; }
+  .a-hero p { color: rgba(255,255,255,0.7); }
+  .a-btn { background: #4A90C4; color: #fff; }
+  .a-btn-outline { border: 1px solid rgba(255,255,255,0.4); color: #fff; }
+  .a-trust { background: #F4F7FA; }
+  .a-trust-item { color: #2C4A6E; }
+  .a-trust-item i { color: #4A90C4; }
+  .a-section { background: #fff; }
+  .a-label { color: #4A90C4; }
+  .a-section h2 { color: #2C4A6E; }
+  .a-section p { color: #7A8A99; }
+  .a-card { background: #fff; }
+  .a-card i { color: #4A90C4; }
+  .a-card h3 { color: #2C4A6E; }
+  .a-card p { color: #7A8A99; }
+  .a-section-gray { background: #F4F7FA; }
+  .a-dark { background: #1E3A5F; }
+  .a-dark .hs-label { color: #7BB8E0; }
+  .a-admit { background: rgba(255,255,255,0.07); border: 0.5px solid rgba(255,255,255,0.15); }
+  .a-cta { background: #4A90C4; }
+  .a-cta-btn { background: #fff; color: #2C4A6E; }
+  .a-footer { background: #12243A; }
+  .a-footer .hs-footer-logo { color: #fff; }
+  .a-footer-badge { background: rgba(74,144,196,0.2); border: 1px solid rgba(74,144,196,0.3); color: #7BB8E0; }
+
+  /* OPTION B — Forest green / earthy */
+  .b-nav { background: #1B3A2D; }
+  .b-nav .hs-logo { color: #fff; }
+  .b-nav .hs-logo span { color: #5FAD82; }
+  .b-nav-links a { color: rgba(255,255,255,0.8); }
+  .b-btn-nav { background: #5FAD82; color: #fff; }
+  .b-hero { background: #1B3A2D; }
+  .b-badge { background: rgba(95,173,130,0.2); color: #8ECBA8; border: 1px solid rgba(95,173,130,0.35); }
+  .b-hero h1 { color: #fff; }
+  .b-hero p { color: rgba(255,255,255,0.7); }
+  .b-btn { background: #5FAD82; color: #fff; }
+  .b-btn-outline { border: 1px solid rgba(255,255,255,0.4); color: #fff; }
+  .b-trust { background: #F2F7F4; }
+  .b-trust-item { color: #1B3A2D; }
+  .b-trust-item i { color: #5FAD82; }
+  .b-section { background: #fff; }
+  .b-label { color: #5FAD82; }
+  .b-section h2 { color: #1B3A2D; }
+  .b-section p { color: #7A8A80; }
+  .b-card { background: #fff; border-color: #C8DDD1; }
+  .b-card i { color: #5FAD82; }
+  .b-card h3 { color: #1B3A2D; }
+  .b-card p { color: #7A8A80; }
+  .b-section-gray { background: #F2F7F4; }
+  .b-dark { background: #1B3A2D; }
+  .b-dark .hs-label { color: #8ECBA8; }
+  .b-admit { background: rgba(255,255,255,0.07); border: 0.5px solid rgba(255,255,255,0.15); }
+  .b-cta { background: #5FAD82; }
+  .b-cta-btn { background: #fff; color: #1B3A2D; }
+  .b-footer { background: #0F2419; }
+  .b-footer .hs-footer-logo { color: #fff; }
+  .b-footer-badge { background: rgba(95,173,130,0.2); border: 1px solid rgba(95,173,130,0.3); color: #8ECBA8; }
+
+  /* OPTION C — Warm slate / gold */
+  .c-nav { background: #2D3142; }
+  .c-nav .hs-logo { color: #fff; }
+  .c-nav .hs-logo span { color: #C9A84C; }
+  .c-nav-links a { color: rgba(255,255,255,0.8); }
+  .c-btn-nav { background: #C9A84C; color: #fff; }
+  .c-hero { background: #2D3142; }
+  .c-badge { background: rgba(201,168,76,0.2); color: #DFC47A; border: 1px solid rgba(201,168,76,0.35); }
+  .c-hero h1 { color: #fff; }
+  .c-hero p { color: rgba(255,255,255,0.7); }
+  .c-btn { background: #C9A84C; color: #fff; }
+  .c-btn-outline { border: 1px solid rgba(255,255,255,0.4); color: #fff; }
+  .c-trust { background: #F7F6F2; }
+  .c-trust-item { color: #2D3142; }
+  .c-trust-item i { color: #C9A84C; }
+  .c-section { background: #fff; }
+  .c-label { color: #C9A84C; }
+  .c-section h2 { color: #2D3142; }
+  .c-section p { color: #8A8A99; }
+  .c-card { background: #fff; border-color: #E0DDD5; }
+  .c-card i { color: #C9A84C; }
+  .c-card h3 { color: #2D3142; }
+  .c-card p { color: #8A8A99; }
+  .c-section-gray { background: #F7F6F2; }
+  .c-dark { background: #2D3142; }
+  .c-dark .hs-label { color: #DFC47A; }
+  .c-admit { background: rgba(255,255,255,0.07); border: 0.5px solid rgba(255,255,255,0.15); }
+  .c-cta { background: #C9A84C; }
+  .c-cta-btn { background: #fff; color: #2D3142; }
+  .c-footer { background: #1A1D2E; }
+  .c-footer .hs-footer-logo { color: #fff; }
+  .c-footer-badge { background: rgba(201,168,76,0.2); border: 1px solid rgba(201,168,76,0.3); color: #DFC47A; }
+</style>
+
+<div class="wrap">
+  <h2 class="sr-only">Hope Street Sober Living — three color scheme options</h2>
+
+  <!-- OPTION A -->
+  <p class="option-label">Option 1</p>
+  <p class="option-title">Steel blue — trust & credibility</p>
+  <p class="option-desc">Current direction. Professional, referral-friendly, clinical credibility.</p>
+  <div class="hs">
+    <nav class="hs-nav a-nav">
+      <div class="hs-logo a-nav">Hope Street<span>Sober Living</span></div>
+      <div class="hs-nav-links a-nav-links">
+        <a href="#">About</a><a href="#">Program</a><a href="#">Admissions</a><a href="#">Contact</a>
+        <button class="hs-nav-btn a-btn-nav"><i class="ti ti-phone" aria-hidden="true"></i> (774) 000-0000</button>
+      </div>
+    </nav>
+    <div class="hs-hero a-hero">
+      <div class="hs-badge a-badge"><i class="ti ti-rosette" aria-hidden="true"></i> MASH certified · Attleboro, MA</div>
+      <h1 style="color:#fff">A safe, structured path to long-term recovery</h1>
+      <p style="color:rgba(255,255,255,0.7)">MASH-certified housing for men committed to building a sober life in a supportive, accountable community.</p>
+      <div class="hs-btns">
+        <button class="hs-btn a-btn"><i class="ti ti-phone" aria-hidden="true"></i> Call now</button>
+        <button class="hs-btn-outline a-btn-outline">Apply online</button>
+      </div>
+    </div>
+    <div class="hs-trust a-trust">
+      <div class="hs-trust-item a-trust-item"><i class="ti ti-rosette-discount-check a-trust-item" aria-hidden="true"></i> MASH certified</div>
+      <div class="hs-trust-item a-trust-item"><i class="ti ti-users" aria-hidden="true"></i> Men's sober living</div>
+      <div class="hs-trust-item a-trust-item"><i class="ti ti-map-pin" aria-hidden="true"></i> Attleboro, MA</div>
+      <div class="hs-trust-item a-trust-item"><i class="ti ti-phone" aria-hidden="true"></i> Beds available</div>
+    </div>
+    <div class="hs-section a-section">
+      <div class="hs-label a-label">Our program</div>
+      <h2 style="color:#2C4A6E">Structure, accountability, and community</h2>
+      <p style="color:#7A8A99">Hope Street is more than a place to stay — it's a program built around the habits that make recovery stick.</p>
+      <div class="hs-cards">
+        <div class="hs-card a-card"><i class="ti ti-home-check a-card" style="color:#4A90C4" aria-hidden="true"></i><h3 style="color:#2C4A6E">Safe environment</h3><p style="color:#7A8A99">Clean, stable, zero tolerance.</p></div>
+        <div class="hs-card a-card"><i class="ti ti-users" style="color:#4A90C4" aria-hidden="true"></i><h3 style="color:#2C4A6E">Peer support</h3><p style="color:#7A8A99">Men serious about recovery.</p></div>
+        <div class="hs-card a-card"><i class="ti ti-calendar-check" style="color:#4A90C4" aria-hidden="true"></i><h3 style="color:#2C4A6E">Meetings daily</h3><p style="color:#7A8A99">6–8pm, 12-step required.</p></div>
+        <div class="hs-card a-card"><i class="ti ti-rosette-discount-check" style="color:#4A90C4" aria-hidden="true"></i><h3 style="color:#2C4A6E">MASH certified</h3><p style="color:#7A8A99">Independently verified.</p></div>
+      </div>
+    </div>
+    <div class="hs-dark a-dark">
+      <div class="hs-label" style="color:#7BB8E0">Admissions</div>
+      <h2>Is Hope Street a fit for you?</h2>
+      <p>We work with men serious about recovery. Here's what to know before you call.</p>
+      <div class="hs-admit-grid">
+        <div class="hs-admit-item a-admit"><div class="lbl">Cost</div><div class="val">Call for rate</div></div>
+        <div class="hs-admit-item a-admit"><div class="lbl">Availability</div><div class="val">Call to check</div></div>
+        <div class="hs-admit-item a-admit"><div class="lbl">Requirement</div><div class="val">Sober at move-in</div></div>
+        <div class="hs-admit-item a-admit"><div class="lbl">Location</div><div class="val">Attleboro, MA</div></div>
+      </div>
+    </div>
+    <div class="hs-cta a-cta">
+      <h2>Ready to take the next step?</h2>
+      <p>Beds are limited. Call today or complete the short screener.</p>
+      <button class="hs-cta-btn a-cta-btn">Start the application</button>
+    </div>
+    <footer class="hs-footer a-footer">
+      <div class="hs-footer-logo">Hope Street Sober Living<span>Attleboro, MA · (774) 000-0000</span></div>
+      <div class="hs-footer-badge a-footer-badge"><i class="ti ti-rosette" aria-hidden="true"></i> MASH certified</div>
+    </footer>
+  </div>
+
+  <!-- OPTION B -->
+  <p class="option-label" style="margin-top:32px">Option 2</p>
+  <p class="option-title">Forest green — warmth & community</p>
+  <p class="option-desc">Earthy, recovery-forward. Feels human and welcoming for prospective residents.</p>
+  <div class="hs">
+    <nav class="hs-nav b-nav">
+      <div class="hs-logo" style="color:#fff">Hope Street<span style="color:#5FAD82">Sober Living</span></div>
+      <div class="hs-nav-links">
+        <a href="#" style="color:rgba(255,255,255,0.8)">About</a><a href="#" style="color:rgba(255,255,255,0.8)">Program</a><a href="#" style="color:rgba(255,255,255,0.8)">Admissions</a><a href="#" style="color:rgba(255,255,255,0.8)">Contact</a>
+        <button class="hs-nav-btn b-btn-nav"><i class="ti ti-phone" aria-hidden="true"></i> (774) 000-0000</button>
+      </div>
+    </nav>
+    <div class="hs-hero b-hero">
+      <div class="hs-badge b-badge"><i class="ti ti-rosette" aria-hidden="true"></i> MASH certified · Attleboro, MA</div>
+      <h1 style="color:#fff">A safe, structured path to long-term recovery</h1>
+      <p style="color:rgba(255,255,255,0.7)">MASH-certified housing for men committed to building a sober life in a supportive, accountable community.</p>
+      <div class="hs-btns">
+        <button class="hs-btn b-btn"><i class="ti ti-phone" aria-hidden="true"></i> Call now</button>
+        <button class="hs-btn-outline b-btn-outline">Apply online</button>
+      </div>
+    </div>
+    <div class="hs-trust b-trust">
+      <div class="hs-trust-item" style="color:#1B3A2D"><i class="ti ti-rosette-discount-check" style="color:#5FAD82" aria-hidden="true"></i> MASH certified</div>
+      <div class="hs-trust-item" style="color:#1B3A2D"><i class="ti ti-users" style="color:#5FAD82" aria-hidden="true"></i> Men's sober living</div>
+      <div class="hs-trust-item" style="color:#1B3A2D"><i class="ti ti-map-pin" style="color:#5FAD82" aria-hidden="true"></i> Attleboro, MA</div>
+      <div class="hs-trust-item" style="color:#1B3A2D"><i class="ti ti-phone" style="color:#5FAD82" aria-hidden="true"></i> Beds available</div>
+    </div>
+    <div class="hs-section b-section">
+      <div class="hs-label" style="color:#5FAD82">Our program</div>
+      <h2 style="color:#1B3A2D">Structure, accountability, and community</h2>
+      <p style="color:#7A8A80">Hope Street is more than a place to stay — it's a program built around the habits that make recovery stick.</p>
+      <div class="hs-cards">
+        <div class="hs-card b-card"><i class="ti ti-home-check" style="color:#5FAD82" aria-hidden="true"></i><h3 style="color:#1B3A2D">Safe environment</h3><p style="color:#7A8A80">Clean, stable, zero tolerance.</p></div>
+        <div class="hs-card b-card"><i class="ti ti-users" style="color:#5FAD82" aria-hidden="true"></i><h3 style="color:#1B3A2D">Peer support</h3><p style="color:#7A8A80">Men serious about recovery.</p></div>
+        <div class="hs-card b-card"><i class="ti ti-calendar-check" style="color:#5FAD82" aria-hidden="true"></i><h3 style="color:#1B3A2D">Meetings daily</h3><p style="color:#7A8A80">6–8pm, 12-step required.</p></div>
+        <div class="hs-card b-card"><i class="ti ti-rosette-discount-check" style="color:#5FAD82" aria-hidden="true"></i><h3 style="color:#1B3A2D">MASH certified</h3><p style="color:#7A8A80">Independently verified.</p></div>
+      </div>
+    </div>
+    <div class="hs-dark b-dark">
+      <div class="hs-label" style="color:#8ECBA8">Admissions</div>
+      <h2>Is Hope Street a fit for you?</h2>
+      <p>We work with men serious about recovery. Here's what to know before you call.</p>
+      <div class="hs-admit-grid">
+        <div class="hs-admit-item b-admit"><div class="lbl">Cost</div><div class="val">Call for rate</div></div>
+        <div class="hs-admit-item b-admit"><div class="lbl">Availability</div><div class="val">Call to check</div></div>
+        <div class="hs-admit-item b-admit"><div class="lbl">Requirement</div><div class="val">Sober at move-in</div></div>
+        <div class="hs-admit-item b-admit"><div class="lbl">Location</div><div class="val">Attleboro, MA</div></div>
+      </div>
+    </div>
+    <div class="hs-cta b-cta">
+      <h2>Ready to take the next step?</h2>
+      <p>Beds are limited. Call today or complete the short screener.</p>
+      <button class="hs-cta-btn b-cta-btn">Start the application</button>
+    </div>
+    <footer class="hs-footer b-footer">
+      <div class="hs-footer-logo" style="color:#fff">Hope Street Sober Living<span>Attleboro, MA · (774) 000-0000</span></div>
+      <div class="hs-footer-badge b-footer-badge"><i class="ti ti-rosette" aria-hidden="true"></i> MASH certified</div>
+    </footer>
+  </div>
+
+  <!-- OPTION C -->
+  <p class="option-label" style="margin-top:32px">Option 3</p>
+  <p class="option-title">Warm slate + gold — premium & established</p>
+  <p class="option-desc">Sophisticated, trustworthy. Works well for families and referral sources looking for a premium feel.</p>
+  <div class="hs">
+    <nav class="hs-nav c-nav">
+      <div class="hs-logo" style="color:#fff">Hope Street<span style="color:#C9A84C">Sober Living</span></div>
+      <div class="hs-nav-links">
+        <a href="#" style="color:rgba(255,255,255,0.8)">About</a><a href="#" style="color:rgba(255,255,255,0.8)">Program</a><a href="#" style="color:rgba(255,255,255,0.8)">Admissions</a><a href="#" style="color:rgba(255,255,255,0.8)">Contact</a>
+        <button class="hs-nav-btn c-btn-nav"><i class="ti ti-phone" aria-hidden="true"></i> (774) 000-0000</button>
+      </div>
+    </nav>
+    <div class="hs-hero c-hero">
+      <div class="hs-badge c-badge"><i class="ti ti-rosette" aria-hidden="true"></i> MASH certified · Attleboro, MA</div>
+      <h1 style="color:#fff">A safe, structured path to long-term recovery</h1>
+      <p style="color:rgba(255,255,255,0.7)">MASH-certified housing for men committed to building a sober life in a supportive, accountable community.</p>
+      <div class="hs-btns">
+        <button class="hs-btn c-btn"><i class="ti ti-phone" aria-hidden="true"></i> Call now</button>
+        <button class="hs-btn-outline c-btn-outline">Apply online</button>
+      </div>
+    </div>
+    <div class="hs-trust c-trust">
+      <div class="hs-trust-item" style="color:#2D3142"><i class="ti ti-rosette-discount-check" style="color:#C9A84C" aria-hidden="true"></i> MASH certified</div>
+      <div class="hs-trust-item" style="color:#2D3142"><i class="ti ti-users" style="color:#C9A84C" aria-hidden="true"></i> Men's sober living</div>
+      <div class="hs-trust-item" style="color:#2D3142"><i class="ti ti-map-pin" style="color:#C9A84C" aria-hidden="true"></i> Attleboro, MA</div>
+      <div class="hs-trust-item" style="color:#2D3142"><i class="ti ti-phone" style="color:#C9A84C" aria-hidden="true"></i> Beds available</div>
+    </div>
+    <div class="hs-section c-section">
+      <div class="hs-label" style="color:#C9A84C">Our program</div>
+      <h2 style="color:#2D3142">Structure, accountability, and community</h2>
+      <p style="color:#8A8A99">Hope Street is more than a place to stay — it's a program built around the habits that make recovery stick.</p>
+      <div class="hs-cards">
+        <div class="hs-card c-card"><i class="ti ti-home-check" style="color:#C9A84C" aria-hidden="true"></i><h3 style="color:#2D3142">Safe environment</h3><p style="color:#8A8A99">Clean, stable, zero tolerance.</p></div>
+        <div class="hs-card c-card"><i class="ti ti-users" style="color:#C9A84C" aria-hidden="true"></i><h3 style="color:#2D3142">Peer support</h3><p style="color:#8A8A99">Men serious about recovery.</p></div>
+        <div class="hs-card c-card"><i class="ti ti-calendar-check" style="color:#C9A84C" aria-hidden="true"></i><h3 style="color:#2D3142">Meetings daily</h3><p style="color:#8A8A99">6–8pm, 12-step required.</p></div>
+        <div class="hs-card c-card"><i class="ti ti-rosette-discount-check" style="color:#C9A84C" aria-hidden="true"></i><h3 style="color:#2D3142">MASH certified</h3><p style="color:#8A8A99">Independently verified.</p></div>
+      </div>
+    </div>
+    <div class="hs-dark c-dark">
+      <div class="hs-label" style="color:#DFC47A">Admissions</div>
+      <h2>Is Hope Street a fit for you?</h2>
+      <p>We work with men serious about recovery. Here's what to know before you call.</p>
+      <div class="hs-admit-grid">
+        <div class="hs-admit-item c-admit"><div class="lbl">Cost</div><div class="val">Call for rate</div></div>
+        <div class="hs-admit-item c-admit"><div class="lbl">Availability</div><div class="val">Call to check</div></div>
+        <div class="hs-admit-item c-admit"><div class="lbl">Requirement</div><div class="val">Sober at move-in</div></div>
+        <div class="hs-admit-item c-admit"><div class="lbl">Location</div><div class="val">Attleboro, MA</div></div>
+      </div>
+    </div>
+    <div class="hs-cta c-cta">
+      <h2>Ready to take the next step?</h2>
+      <p>Beds are limited. Call today or complete the short screener.</p>
+      <button class="hs-cta-btn c-cta-btn">Start the application</button>
+    </div>
+    <footer class="hs-footer c-footer">
+      <div class="hs-footer-logo" style="color:#fff">Hope Street Sober Living<span>Attleboro, MA · (774) 000-0000</span></div>
+      <div class="hs-footer-badge c-footer-badge"><i class="ti ti-rosette" aria-hidden="true"></i> MASH certified</div>
+    </footer>
+  </div>
+</div>
